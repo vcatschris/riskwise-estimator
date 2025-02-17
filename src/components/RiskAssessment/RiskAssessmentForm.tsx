@@ -67,8 +67,8 @@ const getTitleAndDescription = (step: Step) => {
       };
     case 'results':
       return {
-        title: "Your IT Resilience Score",
-        description: "Based on industry standards and best practices for your business profile"
+        title: "",
+        description: ""
       };
     default:
       return {
