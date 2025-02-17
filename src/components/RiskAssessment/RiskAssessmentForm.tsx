@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration } from './types';
@@ -352,7 +353,7 @@ const renderProviderInfo = () => (
           className="h-5 w-5"
         />
         <Label htmlFor="currentProvider" className="text-lg font-medium flex items-center gap-2">
-          I have an IT support company
+          I currently have IT support or a managed service provider
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -370,7 +371,7 @@ const renderProviderInfo = () => (
     {formData.currentProvider && (
       <div className="space-y-2">
         <Label className="flex items-center gap-2">
-          How long have they been in place?
+          Length of time with current IT provider
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
@@ -384,7 +385,7 @@ const renderProviderInfo = () => (
         </Label>
         <Select onValueChange={(value) => handleInputChange('providerDuration', value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Select duration" />
+            <SelectValue placeholder="How long have you been with your provider?" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
@@ -398,7 +399,7 @@ const renderProviderInfo = () => (
 
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        What is your main cloud provider?
+        Email and document storage provider (Microsoft 365, Google Workspace, etc.)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -412,13 +413,13 @@ const renderProviderInfo = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('cloudProvider', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select cloud provider" />
+          <SelectValue placeholder="Where do you store your emails and documents?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Microsoft">Microsoft</SelectItem>
-          <SelectItem value="Google">Google</SelectItem>
-          <SelectItem value="Other">Other</SelectItem>
-          <SelectItem value="Don't Know">Don't Know</SelectItem>
+          <SelectItem value="Microsoft">Microsoft (Office 365)</SelectItem>
+          <SelectItem value="Google">Google Workspace</SelectItem>
+          <SelectItem value="Other">Other Provider</SelectItem>
+          <SelectItem value="Don't Know">Not Sure</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -434,7 +435,7 @@ const renderBusinessProfile = () => (
   >
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Select your industry
+        Type of business (for compliance requirements)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -448,22 +449,22 @@ const renderBusinessProfile = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('industry', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select industry" />
+          <SelectValue placeholder="What industry are you in?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Accounting">Accounting</SelectItem>
-          <SelectItem value="Legal">Legal</SelectItem>
-          <SelectItem value="Finance">Finance</SelectItem>
-          <SelectItem value="Retail">Retail</SelectItem>
-          <SelectItem value="Healthcare">Healthcare</SelectItem>
-          <SelectItem value="Other">Other</SelectItem>
+          <SelectItem value="Accounting">Accounting & Bookkeeping</SelectItem>
+          <SelectItem value="Legal">Legal Services</SelectItem>
+          <SelectItem value="Finance">Financial Services</SelectItem>
+          <SelectItem value="Retail">Retail & E-commerce</SelectItem>
+          <SelectItem value="Healthcare">Healthcare & Medical</SelectItem>
+          <SelectItem value="Other">Other Industry</SelectItem>
         </SelectContent>
       </Select>
     </div>
 
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Business size
+        Number of employees (for IT support planning)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -477,21 +478,21 @@ const renderBusinessProfile = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('businessSize', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select size" />
+          <SelectValue placeholder="How many people work at your company?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="1-5">1-5 employees</SelectItem>
-          <SelectItem value="6-20">6-20 employees</SelectItem>
-          <SelectItem value="21-50">21-50 employees</SelectItem>
-          <SelectItem value="51-100">51-100 employees</SelectItem>
-          <SelectItem value="100+">100+ employees</SelectItem>
+          <SelectItem value="1-5">Small Team (1-5 employees)</SelectItem>
+          <SelectItem value="6-20">Growing Business (6-20 employees)</SelectItem>
+          <SelectItem value="21-50">Mid-sized Company (21-50 employees)</SelectItem>
+          <SelectItem value="51-100">Large Business (51-100 employees)</SelectItem>
+          <SelectItem value="100+">Enterprise (100+ employees)</SelectItem>
         </SelectContent>
       </Select>
     </div>
 
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Do you handle sensitive data?
+        Protected information handling (customer data, financial records, etc.)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -505,12 +506,12 @@ const renderBusinessProfile = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('sensitiveData', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select option" />
+          <SelectValue placeholder="Do you handle sensitive information?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Yes">Yes</SelectItem>
-          <SelectItem value="No">No</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
+          <SelectItem value="Yes">Yes, we handle sensitive data</SelectItem>
+          <SelectItem value="No">No, we don't handle sensitive data</SelectItem>
+          <SelectItem value="Not Sure">I'm not sure</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -526,7 +527,7 @@ const renderSecurityQuestions = () => (
   >
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Last security audit
+        Last IT security review (checking for vulnerabilities)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -540,20 +541,20 @@ const renderSecurityQuestions = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('lastAudit', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select timeframe" />
+          <SelectValue placeholder="When was your last security check?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Less than 6 months ago">Less than 6 months ago</SelectItem>
-          <SelectItem value="6-12 months ago">6-12 months ago</SelectItem>
-          <SelectItem value="Over a year ago">Over a year ago</SelectItem>
-          <SelectItem value="Never">Never</SelectItem>
+          <SelectItem value="Less than 6 months ago">Recently (Less than 6 months ago)</SelectItem>
+          <SelectItem value="6-12 months ago">Within the last year</SelectItem>
+          <SelectItem value="Over a year ago">More than a year ago</SelectItem>
+          <SelectItem value="Never">Never had a security review</SelectItem>
         </SelectContent>
       </Select>
     </div>
 
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Multi-factor authentication
+        Two-factor authentication (2FA/MFA security)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -567,19 +568,19 @@ const renderSecurityQuestions = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('mfaEnabled', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select option" />
+          <SelectValue placeholder="Do you use two-factor authentication?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Yes">Yes</SelectItem>
-          <SelectItem value="No">No</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
+          <SelectItem value="Yes">Yes, we use 2FA/MFA</SelectItem>
+          <SelectItem value="No">No, we don't use 2FA/MFA</SelectItem>
+          <SelectItem value="Not Sure">I'm not sure what this is</SelectItem>
         </SelectContent>
       </Select>
     </div>
 
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Backup frequency
+        Data backup schedule (how often we save copies)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -593,14 +594,14 @@ const renderSecurityQuestions = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('backupFrequency', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select frequency" />
+          <SelectValue placeholder="How often do you back up your data?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Daily">Daily</SelectItem>
-          <SelectItem value="Weekly">Weekly</SelectItem>
-          <SelectItem value="Monthly">Monthly</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
-          <SelectItem value="We don't back up data">We don't back up data</SelectItem>
+          <SelectItem value="Daily">Every day</SelectItem>
+          <SelectItem value="Weekly">Once a week</SelectItem>
+          <SelectItem value="Monthly">Once a month</SelectItem>
+          <SelectItem value="Not Sure">Not sure about our backups</SelectItem>
+          <SelectItem value="We don't back up data">We don't back up our data</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -616,7 +617,7 @@ const renderComplianceQuestions = () => (
   >
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Data regulations
+        Regulatory compliance (GDPR, HIPAA, etc.)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -630,19 +631,19 @@ const renderComplianceQuestions = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('dataRegulations', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select option" />
+          <SelectValue placeholder="Do you need to follow specific data regulations?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Yes">Yes</SelectItem>
-          <SelectItem value="No">No</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
+          <SelectItem value="Yes">Yes, we have compliance requirements</SelectItem>
+          <SelectItem value="No">No specific requirements</SelectItem>
+          <SelectItem value="Not Sure">Not sure about our requirements</SelectItem>
         </SelectContent>
       </Select>
     </div>
 
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        IT issue frequency
+        IT problems frequency (computer issues, network problems, etc.)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -656,21 +657,21 @@ const renderComplianceQuestions = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('itIssues', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select frequency" />
+          <SelectValue placeholder="How often do you have IT problems?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Daily">Daily</SelectItem>
-          <SelectItem value="Weekly">Weekly</SelectItem>
-          <SelectItem value="Occasionally">Occasionally</SelectItem>
-          <SelectItem value="Rarely">Rarely</SelectItem>
-          <SelectItem value="Never">Never</SelectItem>
+          <SelectItem value="Daily">Multiple times per day</SelectItem>
+          <SelectItem value="Weekly">A few times per week</SelectItem>
+          <SelectItem value="Occasionally">A few times per month</SelectItem>
+          <SelectItem value="Rarely">Very rarely</SelectItem>
+          <SelectItem value="Never">Never have issues</SelectItem>
         </SelectContent>
       </Select>
     </div>
 
     <div className="space-y-2">
       <Label className="flex items-center gap-2">
-        Required response time
+        IT support response time needs (how fast you need help)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
@@ -684,14 +685,14 @@ const renderComplianceQuestions = () => (
       </Label>
       <Select onValueChange={(value) => handleInputChange('responseNeeded', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select response time" />
+          <SelectValue placeholder="How quickly do you need IT support to respond?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Within minutes">Within minutes</SelectItem>
-          <SelectItem value="Within an hour">Within an hour</SelectItem>
-          <SelectItem value="Same day">Same day</SelectItem>
-          <SelectItem value="Within a few days">Within a few days</SelectItem>
-          <SelectItem value="No urgency">No urgency</SelectItem>
+          <SelectItem value="Within minutes">Immediate response (within minutes)</SelectItem>
+          <SelectItem value="Within an hour">Quick response (within an hour)</SelectItem>
+          <SelectItem value="Same day">Same business day</SelectItem>
+          <SelectItem value="Within a few days">Within 2-3 business days</SelectItem>
+          <SelectItem value="No urgency">No specific time requirement</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -867,27 +868,3 @@ const renderComplianceQuestions = () => (
                     Your Top Risks
                   </h4>
                   <ul className="space-y-3">
-                    {assessment.executiveSummary.topRisks.map((risk, i) => (
-                      <motion.li 
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="flex items-start gap-2 text-red-600 dark:text-red-400"
-                      >
-                        <span className="mt-1">❌</span>
-                        <span>{risk}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  Value of Managed IT Services
-                </h4>
-                <ul className="grid md:grid-cols-2 gap-4">
-                  {assessment.executiveSummary.industryInsights.values.map((value, i) => (
-                    <
