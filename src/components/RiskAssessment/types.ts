@@ -1,3 +1,4 @@
+
 export type BusinessSize = '1-5' | '6-20' | '21-50' | '51-100' | '100+';
 export type Industry = 'Accounting' | 'Legal' | 'Finance' | 'Retail' | 'Healthcare' | 'Other';
 export type ITSupport = 'Yes' | 'No' | 'We outsource IT';
@@ -28,6 +29,12 @@ export interface IndustryInsight {
   values: string[];
 }
 
+export interface CategoryInsight {
+  description: string;
+  industrySpecific: string[];
+  sizeSpecific: string[];
+}
+
 export interface ExecutiveSummary {
   industryInsights: IndustryInsight;
   riskLevel: string;
@@ -46,5 +53,6 @@ export interface RiskScore {
     riskScore: number;
     valueScore: number;
     recommendations: string[];
+    insights: CategoryInsight;
   }[];
 }

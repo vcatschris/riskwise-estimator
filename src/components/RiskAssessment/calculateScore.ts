@@ -104,6 +104,142 @@ const INDUSTRY_INSIGHTS: Record<string, IndustryInsight> = {
   }
 };
 
+const CATEGORY_INSIGHTS = {
+  'Business Profile': {
+    Legal: {
+      description: "Legal firms require robust IT infrastructure to protect client confidentiality and ensure compliance.",
+      industrySpecific: [
+        "Law firms are prime targets for cybercriminals due to sensitive client data",
+        "Regulatory compliance with SRA and GDPR is mandatory",
+        "Client confidentiality breaches can result in severe reputational damage"
+      ],
+      sizeSpecific: {
+        small: ["Small firms often lack dedicated IT resources", "Cost-effective solutions needed"],
+        medium: ["Growing complexity requires structured IT management", "Balance between security and accessibility"],
+        large: ["Multiple office locations need unified IT strategy", "Complex compliance requirements"]
+      }
+    },
+    Finance: {
+      description: "Financial services demand the highest levels of security and system reliability.",
+      industrySpecific: [
+        "Financial data requires maximum security protection",
+        "FCA compliance and audit requirements",
+        "Zero tolerance for system downtime"
+      ],
+      sizeSpecific: {
+        small: ["Limited IT budget but high security needs", "Need for enterprise-grade security"],
+        medium: ["Growing transaction volumes require scalable systems", "Multiple regulatory requirements"],
+        large: ["Complex integration needs", "International compliance requirements"]
+      }
+    },
+    Retail: {
+      description: "Retail businesses need reliable systems to maintain customer service and sales operations.",
+      industrySpecific: [
+        "POS system reliability is critical",
+        "Customer data protection requirements",
+        "Ecommerce integration needs"
+      ],
+      sizeSpecific: {
+        small: ["Basic POS and inventory management", "Limited IT budget"],
+        medium: ["Multiple locations need centralized management", "Growing online presence"],
+        large: ["Complex supply chain integration", "Multi-channel retail requirements"]
+      }
+    },
+    Healthcare: {
+      description: "Healthcare providers must maintain patient data security and system availability.",
+      industrySpecific: [
+        "Patient confidentiality is paramount",
+        "Healthcare compliance requirements",
+        "Critical system reliability needs"
+      ],
+      sizeSpecific: {
+        small: ["Basic patient record management", "Limited IT resources"],
+        medium: ["Multiple practitioner coordination", "Growing patient data volumes"],
+        large: ["Complex integration with health systems", "Multi-location challenges"]
+      }
+    }
+  },
+  'Security': {
+    Legal: {
+      description: "Security measures must protect sensitive client information and communications.",
+      industrySpecific: [
+        "Advanced encryption for client communications",
+        "Secure document management systems",
+        "Protection against targeted attacks"
+      ],
+      sizeSpecific: {
+        small: ["Basic security measures may be insufficient", "Limited security budget"],
+        medium: ["Need for comprehensive security framework", "Remote access security"],
+        large: ["Enterprise-grade security requirements", "Multiple attack surfaces"]
+      }
+    },
+    Finance: {
+      description: "Financial institutions require advanced security measures to protect transactions and data.",
+      industrySpecific: [
+        "Transaction security is critical",
+        "Protection against financial fraud",
+        "Secure client portal requirements"
+      ],
+      sizeSpecific: {
+        small: ["Basic financial data protection", "Limited security resources"],
+        medium: ["Growing security complexity", "Multiple system integrations"],
+        large: ["Enterprise security framework needed", "International security standards"]
+      }
+    }
+  },
+  'Compliance & Support': {
+    Legal: {
+      description: "Legal compliance and rapid IT support are essential for law firm operations.",
+      industrySpecific: [
+        "SRA compliance requirements",
+        "Legal document retention policies",
+        "Client confidentiality standards"
+      ],
+      sizeSpecific: {
+        small: ["Basic compliance needs", "Limited support resources"],
+        medium: ["Growing compliance complexity", "Need for dedicated support"],
+        large: ["Complex compliance framework", "24/7 support requirements"]
+      }
+    },
+    Finance: {
+      description: "Financial services require strict compliance monitoring and immediate support response.",
+      industrySpecific: [
+        "FCA compliance requirements",
+        "Transaction monitoring needs",
+        "Audit trail requirements"
+      ],
+      sizeSpecific: {
+        small: ["Basic compliance framework", "Limited support availability"],
+        medium: ["Multiple compliance standards", "Growing support needs"],
+        large: ["Complex compliance environment", "Global support requirements"]
+      }
+    }
+  }
+};
+
+function getCategoryInsights(category: string, industry: Industry, businessSize: BusinessSize): CategoryInsight {
+  const categoryData = CATEGORY_INSIGHTS[category as keyof typeof CATEGORY_INSIGHTS]?.[industry] || 
+    CATEGORY_INSIGHTS[category as keyof typeof CATEGORY_INSIGHTS]?.Other;
+
+  if (!categoryData) {
+    return {
+      description: "General business IT requirements apply.",
+      industrySpecific: ["Standard industry practices apply"],
+      sizeSpecific: ["Size-appropriate solutions recommended"]
+    };
+  }
+
+  const sizeCategory = 
+    businessSize === '1-5' || businessSize === '6-20' ? 'small' :
+    businessSize === '21-50' ? 'medium' : 'large';
+
+  return {
+    description: categoryData.description,
+    industrySpecific: categoryData.industrySpecific,
+    sizeSpecific: categoryData.sizeSpecific[sizeCategory]
+  };
+}
+
 export function calculateRiskScore(data: AssessmentData): RiskScore {
   let totalRiskPoints = 0;
   let totalValuePoints = 0;
@@ -151,6 +287,7 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.sensitiveData === 'Yes' ? 'Implement enhanced data protection measures' : '',
       data.internalIT === 'No' ? 'Consider managed IT support for better security' : '',
     ].filter(Boolean),
+    insights: getCategoryInsights('Business Profile', data.industry, data.businessSize)
   });
 
   // Security Risk
@@ -209,6 +346,7 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.backupFrequency === "We don't back up data" ? 'Implement regular backup strategy' : '',
       data.endpointProtection === 'No' ? 'Deploy endpoint protection solutions' : '',
     ].filter(Boolean),
+    insights: getCategoryInsights('Security', data.industry, data.businessSize)
   });
 
   // Compliance & Support Risk
@@ -267,6 +405,7 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.dataRegulations === 'Yes' ? 'Implement compliance monitoring' : '',
       data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Consider proactive IT monitoring' : '',
     ].filter(Boolean),
+    insights: getCategoryInsights('Compliance & Support', data.industry, data.businessSize)
   });
 
   let riskLevel: 'Low' | 'Medium' | 'High';

@@ -264,12 +264,37 @@ export function RiskAssessmentForm() {
                   Risk Score: {detail.riskScore} | Value Score: {detail.valueScore}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  {detail.recommendations.map((rec, i) => (
-                    <li key={i}>{rec}</li>
-                  ))}
-                </ul>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {detail.insights.description}
+                  </p>
+                  
+                  <h4 className="font-semibold mt-4 mb-2">Industry-Specific Considerations:</h4>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {detail.insights.industrySpecific.map((insight, i) => (
+                      <li key={i} className="text-sm">{insight}</li>
+                    ))}
+                  </ul>
+
+                  <h4 className="font-semibold mt-4 mb-2">Size-Specific Considerations:</h4>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {detail.insights.sizeSpecific.map((insight, i) => (
+                      <li key={i} className="text-sm">{insight}</li>
+                    ))}
+                  </ul>
+
+                  {detail.recommendations.length > 0 && (
+                    <>
+                      <h4 className="font-semibold mt-4 mb-2">Recommendations:</h4>
+                      <ul className="list-disc pl-6 space-y-1">
+                        {detail.recommendations.map((rec, i) => (
+                          <li key={i} className="text-sm text-risk-high">{rec}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
