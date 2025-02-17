@@ -5,7 +5,7 @@ import { ShieldCheck, Network, Search, Zap, Activity, CheckCheck } from "lucide-
 const Index = () => {
   return (
     <div className="min-h-screen bg-secondary py-12 px-4 sm:px-6 lg:px-8">
-      <div className="space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8"> {/* Changed from default width to max-w-7xl */}
         <div className="text-center">
           <img 
             src="/lovable-uploads/f724b08e-c8db-4821-97cb-9bc3354753fa.png" 
@@ -52,11 +52,12 @@ const Index = () => {
             </div>
           </div>
         </div>
-        <RiskAssessmentForm />
+        <div className="w-full max-w-[1200px] mx-auto"> {/* Added wider container for the form */}
+          <RiskAssessmentForm />
+        </div>
       </div>
     </div>
   );
 };
 
 export default Index;
-
