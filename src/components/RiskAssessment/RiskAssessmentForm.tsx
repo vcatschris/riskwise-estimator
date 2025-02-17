@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AssessmentData, CloudProvider, SupportDuration } from './types';
+import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
 import { calculateRiskScore } from './calculateScore';
 import { Button } from '@/components/ui/button';
 import {
@@ -556,7 +556,7 @@ export function RiskAssessmentForm() {
     const assessment = calculateRiskScore(formData as AssessmentData);
 
     const renderRiskAndValueList = (category: string) => {
-      const categoryData = assessment.details.find(detail => detail.category === category);
+      const categoryData = assessment.details.find(detail => detail.category === category) as CategoryDetail;
       if (!categoryData) return null;
 
       return (

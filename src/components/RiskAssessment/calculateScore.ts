@@ -242,7 +242,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       ],
       sizeSpecific: {
         small: ["Basic patient data security", "Limited security resources"],
-        medium: ["Growing patient data volumes", "Multiple practitioner access"],
+        medium: ["Growing patient data volumes", "Multiple provider access"],
         large: ["Enterprise healthcare security", "Multi-facility protection"]
       }
     },
@@ -430,7 +430,17 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.sensitiveData === 'Yes' ? 'Implement enhanced data protection measures' : '',
       data.internalIT === 'No' ? 'Consider managed IT support for better security' : '',
     ].filter(Boolean),
-    insights: getCategoryInsights('Business Profile', data.industry, data.businessSize)
+    insights: getCategoryInsights('Business Profile', data.industry, data.businessSize),
+    riskAreas: [
+      data.sensitiveData === 'Yes' ? 'Handling sensitive data requires additional protection' : '',
+      data.internalIT === 'No' ? 'Lack of internal IT support increases vulnerability' : '',
+      data.cloudServices === 'Yes' ? 'Cloud services need proper security configuration' : '',
+    ].filter(Boolean),
+    valueAreas: [
+      'Structured IT management approach',
+      'Enhanced data protection measures',
+      'Professional IT expertise and support',
+    ]
   });
 
   // Security Risk
@@ -489,7 +499,17 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.backupFrequency === "We don't back up data" ? 'Implement regular backup strategy' : '',
       data.endpointProtection === 'No' ? 'Deploy endpoint protection solutions' : '',
     ].filter(Boolean),
-    insights: getCategoryInsights('Security', data.industry, data.businessSize)
+    insights: getCategoryInsights('Security', data.industry, data.businessSize),
+    riskAreas: [
+      data.lastAudit === 'Never' ? 'No recent security audit' : '',
+      data.mfaEnabled === 'No' ? 'Missing multi-factor authentication' : '',
+      data.backupFrequency === "We don't back up data" ? 'No data backup strategy' : '',
+    ].filter(Boolean),
+    valueAreas: [
+      'Enhanced security measures',
+      'Regular security assessments',
+      'Comprehensive data protection',
+    ]
   });
 
   // Compliance & Support Risk
@@ -548,7 +568,17 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.dataRegulations === 'Yes' ? 'Implement compliance monitoring' : '',
       data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Consider proactive IT monitoring' : '',
     ].filter(Boolean),
-    insights: getCategoryInsights('Compliance & Support', data.industry, data.businessSize)
+    insights: getCategoryInsights('Compliance & Support', data.industry, data.businessSize),
+    riskAreas: [
+      data.dataRegulations === 'Not Sure' ? 'Unclear regulatory compliance status' : '',
+      data.itIssues === 'Daily' ? 'Frequent IT disruptions' : '',
+      data.responseNeeded === 'Within minutes' ? 'Critical response time requirements' : '',
+    ].filter(Boolean),
+    valueAreas: [
+      'Compliance management system',
+      'Proactive IT support',
+      'Business continuity planning',
+    ]
   });
 
   let riskLevel: 'Low' | 'Medium' | 'High';

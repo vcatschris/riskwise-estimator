@@ -49,6 +49,16 @@ export interface CategoryInsight {
   sizeSpecific: string[];
 }
 
+export interface CategoryDetail {
+  category: string;
+  riskScore: number;
+  valueScore: number;
+  recommendations: string[];
+  insights: CategoryInsight;
+  riskAreas: string[];
+  valueAreas: string[];
+}
+
 export interface ExecutiveSummary {
   industryInsights: IndustryInsight;
   riskLevel: string;
@@ -64,11 +74,5 @@ export interface RiskScore {
   maxValuePossible: number;
   level: 'Low' | 'Medium' | 'High';
   executiveSummary: ExecutiveSummary;
-  details: {
-    category: string;
-    riskScore: number;
-    valueScore: number;
-    recommendations: string[];
-    insights: CategoryInsight;
-  }[];
+  details: CategoryDetail[];
 }
