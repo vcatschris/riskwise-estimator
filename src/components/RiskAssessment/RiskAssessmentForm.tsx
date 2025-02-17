@@ -736,12 +736,23 @@ export function RiskAssessmentForm() {
                   </div>
                 </div>
 
-                <div className="mt-8 p-4 bg-muted/50 rounded-lg">
-                  <h4 className="font-semibold mb-2">Estimated Total for Your Business</h4>
-                  <p className="text-2xl font-bold text-brand-orange">
-                    £{costs.basePrice + (costs.perUserPrice * userRange)}/month
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
+                <div className="mt-8 p-4 bg-muted/50 rounded-lg space-y-4">
+                  <h4 className="font-semibold">Estimated Total for Your Business</h4>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Monthly Investment</p>
+                      <p className="text-2xl font-bold text-brand-orange">
+                        £{costs.basePrice + (costs.perUserPrice * userRange)}/month
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Annual Investment</p>
+                      <p className="text-2xl font-bold text-brand-orange">
+                        £{(costs.basePrice + (costs.perUserPrice * userRange)) * 12}/year
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
                     Based on {userRange} users. Actual costs may vary based on specific requirements and customizations.
                     Contact us for a detailed quote tailored to your exact needs.
                   </p>
