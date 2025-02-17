@@ -99,6 +99,7 @@ const isBusinessEmail = (email: string): boolean => {
 export function RiskAssessmentForm() {
   const [step, setStep] = useState<Step>('contact');
   const [progress, setProgress] = useState(0);
+  const [showEstimate, setShowEstimate] = useState(false);
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
     newsletter: false,
     currentProvider: false,
@@ -527,16 +528,15 @@ export function RiskAssessmentForm() {
 
   const renderResults = () => {
     const assessment = calculateRiskScore(formData as AssessmentData);
-    const [showEstimate, setShowEstimate] = useState(false);
 
     const calculateMonthlyCost = () => {
       let basePrice = 0;
       let perUserPrice = 0;
       
       // Base price factors
-      if (formData.dataRegulations === 'Yes') basePrice += 200; // Compliance needs
-      if (formData.sensitiveData === 'Yes') basePrice += 150; // Extra security
-      if (formData.backupFrequency === 'Daily') basePrice += 100; // Daily backups
+      if (formData.dataRegulations === 'Yes') basePrice += 200;
+      if (formData.sensitiveData === 'Yes') basePrice += 150;
+      if (formData.backupFrequency === 'Daily') basePrice += 100;
       
       // Response time pricing
       switch(formData.responseNeeded) {
@@ -571,12 +571,11 @@ export function RiskAssessmentForm() {
       '100+': 150
     }[formData.businessSize || '1-5'];
 
-    const riskColor =
-      assessment.level === 'Low'
-        ? 'text-green-500 bg-green-50 dark:bg-green-950/30'
-        : assessment.level === 'Medium'
-        ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30'
-        : 'text-red-500 bg-red-50 dark:bg-red-950/30';
+    const riskColor = assessment.level === 'Low'
+      ? 'text-green-500 bg-green-50 dark:bg-green-950/30'
+      : assessment.level === 'Medium'
+      ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30'
+      : 'text-red-500 bg-red-50 dark:bg-red-950/30';
 
     const getCTAContent = (level: string) => {
       switch(level) {
@@ -829,6 +828,62 @@ export function RiskAssessmentForm() {
             ))}
           </div>
         </div>
+
+        {showEstimate && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="my-12"
+          >
+            <Card>
+              <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <DollarSign className="w-6 h-6 text-brand-orange" />
+                  Monthly Cost Estimate
+                </CardTitle>
+                <CardDescription>
+                  Based on your business needs and industry standards
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <h4 className="text-xl font-semibold text-brand-orange">Base Package</h4>
+                    <p className="text-3xl font-bold">£{costs.basePrice}/month</p>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      <p>✓ {formData.dataRegulations === 'Yes' ? 'Compliance management' : 'Basic compliance support'}</p>
+                      <p>✓ {formData.sensitiveData === 'Yes' ? 'Enhanced security measures' : 'Standard security package'}</p>
+                      <p>✓ {formData.backupFrequency} data backups</p>
+                      <p>✓ {formData.responseNeeded} support response time</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-xl font-semibold text-brand-orange">Per User Cost</h4>
+                    <p className="text-3xl font-bold">£{costs.perUserPrice}/user/month</p>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      <p>✓ User support and management</p>
+                      <p>✓ {formData.mfaEnabled === 'Yes' ? 'Multi-factor authentication' : 'Basic authentication'}</p>
+                      <p>✓ Software licenses and management</p>
+                      <p>✓ Device monitoring and support</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 p-4 bg-muted/50 rounded-lg">
+                  <h4 className="font-semibold mb-2">Estimated Total for Your Business</h4>
+                  <p className="text-2xl font-bold text-brand-orange">
+                    £{costs.basePrice + (costs.perUserPrice * userRange)}/month
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Based on {userRange} users. Actual costs may vary based on specific requirements and customizations.
+                    Contact us for a detailed quote tailored to your exact needs.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
       </motion.div>
     );
   };
