@@ -642,7 +642,7 @@ export function RiskAssessmentForm() {
             className="w-full max-w-md flex items-center gap-2 text-lg py-6"
           >
             <Calculator className="w-5 h-5" />
-            Show Estimate
+            Show Estimate (£)
           </Button>
           <p className="text-muted-foreground text-sm">
             How much should the IT support you need roughly cost
@@ -831,15 +831,16 @@ export function RiskAssessmentForm() {
 
         {showEstimate && (
           <motion.div
+            id="cost-estimate"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="my-12"
+            className="my-12 scroll-mt-8"
           >
             <Card>
               <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <DollarSign className="w-6 h-6 text-brand-orange" />
-                  Monthly Cost Estimate
+                  Monthly Cost Estimate (£)
                 </CardTitle>
                 <CardDescription>
                   Based on your business needs and industry standards
