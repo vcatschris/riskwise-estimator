@@ -295,7 +295,7 @@ export function RiskAssessmentForm() {
       className="space-y-4"
     >
       <div className="space-y-2">
-        <Label htmlFor="name">Full Name</Label>
+        <Label htmlFor="name">Full Name (main point of contact)</Label>
         <Input
           id="name"
           value={formData.name || ''}
@@ -305,23 +305,23 @@ export function RiskAssessmentForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Work Email</Label>
+        <Label htmlFor="email">Business Email (for your IT assessment report)</Label>
         <Input
           id="email"
           type="email"
           value={formData.email || ''}
           onChange={(e) => handleInputChange('email', e.target.value)}
-          placeholder="Enter your work email"
+          placeholder="Enter your work email (e.g., name@company.com)"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="businessName">Business Name</Label>
+        <Label htmlFor="businessName">Company or Organization Name</Label>
         <Input
           id="businessName"
           value={formData.businessName || ''}
           onChange={(e) => handleInputChange('businessName', e.target.value)}
-          placeholder="Enter your business name"
+          placeholder="Your company's legal or trading name"
         />
       </div>
 
@@ -331,7 +331,7 @@ export function RiskAssessmentForm() {
           checked={formData.newsletter}
           onCheckedChange={(checked) => handleInputChange('newsletter', checked)}
         />
-        <Label htmlFor="newsletter">Subscribe to our newsletter for IT security updates</Label>
+        <Label htmlFor="newsletter">Receive monthly security tips & IT best practices newsletter</Label>
       </div>
     </motion.div>
   );
@@ -352,7 +352,7 @@ export function RiskAssessmentForm() {
             className="h-5 w-5"
           />
           <Label htmlFor="currentProvider" className="text-lg font-medium">
-            I have an IT support company?
+            We currently have IT support (internal team or external provider)
           </Label>
         </div>
       </div>
@@ -360,26 +360,26 @@ export function RiskAssessmentForm() {
       {formData.currentProvider && (
         <Select onValueChange={(value) => handleInputChange('providerDuration', value)}>
           <SelectTrigger>
-            <SelectValue placeholder="How long have they been in place?" />
+            <SelectValue placeholder="How long have you had this IT support?" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
-            <SelectItem value="1-3 years">1-3 years</SelectItem>
-            <SelectItem value="3-5 years">3-5 years</SelectItem>
-            <SelectItem value="More than 5 years">More than 5 years</SelectItem>
+            <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
+            <SelectItem value="1-3 years">Established (1-3 years)</SelectItem>
+            <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
+            <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
           </SelectContent>
         </Select>
       )}
 
       <Select onValueChange={(value) => handleInputChange('cloudProvider', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="What is your main cloud provider?" />
+          <SelectValue placeholder="Which platform do you use for email & documents?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Microsoft">Microsoft</SelectItem>
-          <SelectItem value="Google">Google</SelectItem>
-          <SelectItem value="Other">Other</SelectItem>
-          <SelectItem value="Don't Know">Don't Know</SelectItem>
+          <SelectItem value="Microsoft">Microsoft 365 (formerly Office 365)</SelectItem>
+          <SelectItem value="Google">Google Workspace (formerly G Suite)</SelectItem>
+          <SelectItem value="Other">Another provider or on-premise system</SelectItem>
+          <SelectItem value="Don't Know">Not sure which system we use</SelectItem>
         </SelectContent>
       </Select>
     </motion.div>
@@ -394,39 +394,39 @@ export function RiskAssessmentForm() {
     >
       <Select onValueChange={(value) => handleInputChange('industry', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Select industry" />
+          <SelectValue placeholder="What type of business are you? (for compliance needs)" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Accounting">Accounting</SelectItem>
-          <SelectItem value="Legal">Legal</SelectItem>
-          <SelectItem value="Finance">Finance</SelectItem>
-          <SelectItem value="Retail">Retail</SelectItem>
-          <SelectItem value="Healthcare">Healthcare</SelectItem>
-          <SelectItem value="Other">Other</SelectItem>
+          <SelectItem value="Accounting">Accounting & Tax Services (e.g., CPAs, Bookkeepers)</SelectItem>
+          <SelectItem value="Legal">Legal Services (e.g., Law Firms, Notaries)</SelectItem>
+          <SelectItem value="Finance">Financial Services (e.g., Advisory, Planning)</SelectItem>
+          <SelectItem value="Retail">Retail & E-commerce (e.g., Shops, Online Stores)</SelectItem>
+          <SelectItem value="Healthcare">Healthcare & Medical (e.g., Clinics, Practices)</SelectItem>
+          <SelectItem value="Other">Other Industry</SelectItem>
         </SelectContent>
       </Select>
 
       <Select onValueChange={(value) => handleInputChange('businessSize', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Business size" />
+          <SelectValue placeholder="How many employees need IT support?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="1-5">1-5 employees</SelectItem>
-          <SelectItem value="6-20">6-20 employees</SelectItem>
-          <SelectItem value="21-50">21-50 employees</SelectItem>
-          <SelectItem value="51-100">51-100 employees</SelectItem>
-          <SelectItem value="100+">100+ employees</SelectItem>
+          <SelectItem value="1-5">Small Team (1-5 users)</SelectItem>
+          <SelectItem value="6-20">Growing Business (6-20 users)</SelectItem>
+          <SelectItem value="21-50">Mid-sized (21-50 users)</SelectItem>
+          <SelectItem value="51-100">Large Organization (51-100 users)</SelectItem>
+          <SelectItem value="100+">Enterprise (100+ users)</SelectItem>
         </SelectContent>
       </Select>
 
       <Select onValueChange={(value) => handleInputChange('sensitiveData', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Do you handle sensitive data?" />
+          <SelectValue placeholder="Do you handle sensitive information? (customer data, financial records, etc.)" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Yes">Yes</SelectItem>
-          <SelectItem value="No">No</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
+          <SelectItem value="Yes">Yes - We handle confidential data (needs protection)</SelectItem>
+          <SelectItem value="No">No - We don't handle sensitive information</SelectItem>
+          <SelectItem value="Not Sure">Not sure what counts as sensitive data</SelectItem>
         </SelectContent>
       </Select>
     </motion.div>
@@ -441,37 +441,37 @@ export function RiskAssessmentForm() {
     >
       <Select onValueChange={(value) => handleInputChange('lastAudit', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Last security audit" />
+          <SelectValue placeholder="When was your last IT security check? (e.g., vulnerability scan)" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Less than 6 months ago">Less than 6 months ago</SelectItem>
-          <SelectItem value="6-12 months ago">6-12 months ago</SelectItem>
-          <SelectItem value="Over a year ago">Over a year ago</SelectItem>
-          <SelectItem value="Never">Never</SelectItem>
+          <SelectItem value="Less than 6 months ago">Recent (within last 6 months)</SelectItem>
+          <SelectItem value="6-12 months ago">Within the past year</SelectItem>
+          <SelectItem value="Over a year ago">More than a year ago</SelectItem>
+          <SelectItem value="Never">Never had a security assessment</SelectItem>
         </SelectContent>
       </Select>
 
       <Select onValueChange={(value) => handleInputChange('mfaEnabled', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Multi-factor authentication" />
+          <SelectValue placeholder="Do you use two-step login? (phone code + password)" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Yes">Yes</SelectItem>
-          <SelectItem value="No">No</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
+          <SelectItem value="Yes">Yes - We use extra security steps when logging in</SelectItem>
+          <SelectItem value="No">No - Just username and password</SelectItem>
+          <SelectItem value="Not Sure">Not sure what this means</SelectItem>
         </SelectContent>
       </Select>
 
       <Select onValueChange={(value) => handleInputChange('backupFrequency', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Backup frequency" />
+          <SelectValue placeholder="How often do you backup your business data?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Daily">Daily</SelectItem>
-          <SelectItem value="Weekly">Weekly</SelectItem>
-          <SelectItem value="Monthly">Monthly</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
-          <SelectItem value="We don't back up data">We don't back up data</SelectItem>
+          <SelectItem value="Daily">Daily backups (recommended)</SelectItem>
+          <SelectItem value="Weekly">Weekly backups</SelectItem>
+          <SelectItem value="Monthly">Monthly backups</SelectItem>
+          <SelectItem value="Not Sure">Not sure about our backup schedule</SelectItem>
+          <SelectItem value="We don't back up data">We don't have backups in place</SelectItem>
         </SelectContent>
       </Select>
     </motion.div>
@@ -486,38 +486,38 @@ export function RiskAssessmentForm() {
     >
       <Select onValueChange={(value) => handleInputChange('dataRegulations', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Data regulations" />
+          <SelectValue placeholder="Do you need to follow data protection laws? (e.g., GDPR, HIPAA)" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Yes">Yes</SelectItem>
-          <SelectItem value="No">No</SelectItem>
-          <SelectItem value="Not Sure">Not Sure</SelectItem>
+          <SelectItem value="Yes">Yes - We must follow specific regulations</SelectItem>
+          <SelectItem value="No">No - No special requirements</SelectItem>
+          <SelectItem value="Not Sure">Not sure about our obligations</SelectItem>
         </SelectContent>
       </Select>
 
       <Select onValueChange={(value) => handleInputChange('itIssues', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="IT issue frequency" />
+          <SelectValue placeholder="How often do you face IT problems? (e.g., crashes, slowness)" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Daily">Daily</SelectItem>
-          <SelectItem value="Weekly">Weekly</SelectItem>
-          <SelectItem value="Occasionally">Occasionally</SelectItem>
-          <SelectItem value="Rarely">Rarely</SelectItem>
-          <SelectItem value="Never">Never</SelectItem>
+          <SelectItem value="Daily">Very frequently (multiple times per day)</SelectItem>
+          <SelectItem value="Weekly">Often (several times per week)</SelectItem>
+          <SelectItem value="Occasionally">Sometimes (few times per month)</SelectItem>
+          <SelectItem value="Rarely">Rarely (once every few months)</SelectItem>
+          <SelectItem value="Never">Never have technical issues</SelectItem>
         </SelectContent>
       </Select>
 
       <Select onValueChange={(value) => handleInputChange('responseNeeded', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Required response time" />
+          <SelectValue placeholder="How quickly do you need IT problems fixed?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Within minutes">Within minutes</SelectItem>
-          <SelectItem value="Within an hour">Within an hour</SelectItem>
-          <SelectItem value="Same day">Same day</SelectItem>
-          <SelectItem value="Within a few days">Within a few days</SelectItem>
-          <SelectItem value="No urgency">No urgency</SelectItem>
+          <SelectItem value="Within minutes">Emergency response (within minutes)</SelectItem>
+          <SelectItem value="Within an hour">Urgent response (within an hour)</SelectItem>
+          <SelectItem value="Same day">Same business day response</SelectItem>
+          <SelectItem value="Within a few days">Within 2-3 business days</SelectItem>
+          <SelectItem value="No urgency">No urgent requirements</SelectItem>
         </SelectContent>
       </Select>
     </motion.div>
