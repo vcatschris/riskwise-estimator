@@ -781,13 +781,25 @@ export function RiskAssessmentForm() {
       </CardContent>
       <CardFooter className="flex justify-between">
         {step !== 'contact' && (
-          <Button variant="outline" onClick={previousStep}>
+          <Button variant="outline" onClick={previousStep} size="lg" className="gap-2">
+            <ArrowRight className="h-4 w-4 rotate-180" />
             Previous
           </Button>
         )}
         {step !== 'results' && (
           <Button className="ml-auto" onClick={nextStep}>
             {step === 'compliance' ? 'View Results' : 'Next'}
+          </Button>
+        )}
+        {step === 'results' && (
+          <Button
+            onClick={() => window.location.reload()}
+            className="w-full"
+            variant="secondary"
+            size="lg"
+          >
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+            Start New Assessment
           </Button>
         )}
       </CardFooter>
