@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration } from './types';
@@ -152,7 +151,7 @@ const getComplianceDescription = () => {
 export function RiskAssessmentForm() {
   const [step, setStep] = useState<Step>('contact');
   const [progress, setProgress] = useState(0);
-  const [showEstimate, setShowEstimate] = useState(false);
+  const [showEstimate, setShowEstimate] = useState(true); // Changed to true by default
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
     newsletter: false,
     currentProvider: false,
@@ -818,4 +817,4 @@ export function RiskAssessmentForm() {
                         key={i}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (
+                        transition={{ delay: 0.
