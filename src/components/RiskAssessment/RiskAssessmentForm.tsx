@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData } from './types';
@@ -200,11 +199,11 @@ export function RiskAssessmentForm() {
   );
 
   const renderResults = () => {
-    const riskScore = calculateRiskScore(formData as AssessmentData);
+    const assessment = calculateRiskScore(formData as AssessmentData);
     const riskColor =
-      riskScore.level === 'Low'
+      assessment.level === 'Low'
         ? 'text-risk-low'
-        : riskScore.level === 'Medium'
+        : assessment.level === 'Medium'
         ? 'text-risk-medium'
         : 'text-risk-high';
 
@@ -216,15 +215,19 @@ export function RiskAssessmentForm() {
       >
         <div className="text-center">
           <h3 className="text-2xl font-bold">Risk Assessment Results</h3>
-          <p className={`text-4xl font-bold mt-4 ${riskColor}`}>{riskScore.level} Risk</p>
+          <p className={`text-4xl font-bold mt-4 ${riskColor}`}>{assessment.level} Risk</p>
+          <p className="text-lg mt-2">Risk Score: {assessment.total}</p>
+          <p className="text-lg mt-1">Value Score: {assessment.valueScore}</p>
         </div>
 
         <div className="space-y-4">
-          {riskScore.details.map((detail, index) => (
+          {assessment.details.map((detail, index) => (
             <Card key={index}>
               <CardHeader>
                 <CardTitle className="text-lg">{detail.category}</CardTitle>
-                <CardDescription>Risk Score: {detail.score}</CardDescription>
+                <CardDescription>
+                  Risk Score: {detail.riskScore} | Value Score: {detail.valueScore}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-6 space-y-2">

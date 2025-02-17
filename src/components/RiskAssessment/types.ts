@@ -26,10 +26,12 @@ export interface AssessmentData {
 
 export interface RiskScore {
   total: number;
+  valueScore: number;
   level: 'Low' | 'Medium' | 'High';
   details: {
     category: string;
-    score: number;
+    riskScore: number;
+    valueScore: number;
     recommendations: string[];
   }[];
 }
