@@ -322,13 +322,18 @@ export function RiskAssessmentForm() {
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4"
     >
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="currentProvider"
-          checked={formData.currentProvider}
-          onCheckedChange={(checked) => handleInputChange('currentProvider', checked)}
-        />
-        <Label htmlFor="currentProvider">Do you have an IT support company?</Label>
+      <div className="rounded-lg border bg-secondary/50 p-4 shadow-sm">
+        <div className="flex items-center space-x-3">
+          <Checkbox
+            id="currentProvider"
+            checked={formData.currentProvider}
+            onCheckedChange={(checked) => handleInputChange('currentProvider', checked)}
+            className="h-5 w-5"
+          />
+          <Label htmlFor="currentProvider" className="text-lg font-medium">
+            Do you have an IT support company?
+          </Label>
+        </div>
       </div>
 
       {formData.currentProvider && (
