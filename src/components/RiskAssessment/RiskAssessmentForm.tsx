@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AssessmentData } from './types';
+import { AssessmentData, CloudProvider, SupportDuration } from './types';
 import { calculateRiskScore } from './calculateScore';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,29 +18,137 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { toast } from 'sonner';
 
-type Step = 'profile' | 'security' | 'compliance' | 'results';
+type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
+
+const isBusinessEmail = (email: string): boolean => {
+  const personalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com'];
+  const domain = email.split('@')[1]?.toLowerCase();
+  return domain ? !personalDomains.includes(domain) : false;
+};
 
 export function RiskAssessmentForm() {
-  const [step, setStep] = useState<Step>('profile');
+  const [step, setStep] = useState<Step>('contact');
   const [progress, setProgress] = useState(0);
-  const [formData, setFormData] = useState<Partial<AssessmentData>>({});
+  const [formData, setFormData] = useState<Partial<AssessmentData>>({
+    newsletter: false,
+    currentProvider: false,
+  });
 
-  const handleInputChange = (field: keyof AssessmentData, value: string) => {
+  const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
+  const validateStep = (): boolean => {
+    switch (step) {
+      case 'contact':
+        if (!formData.name?.trim()) {
+          toast.error("Please enter your name");
+          return false;
+        }
+        if (!formData.email?.trim()) {
+          toast.error("Please enter your email");
+          return false;
+        }
+        if (!isBusinessEmail(formData.email)) {
+          toast.error("Please use a business email address");
+          return false;
+        }
+        if (!formData.businessName?.trim()) {
+          toast.error("Please enter your business name");
+          return false;
+        }
+        return true;
+
+      case 'provider':
+        if (formData.currentProvider === undefined) {
+          toast.error("Please indicate if you have an IT provider");
+          return false;
+        }
+        if (formData.currentProvider && !formData.providerDuration) {
+          toast.error("Please select how long you've been with your provider");
+          return false;
+        }
+        if (!formData.cloudProvider) {
+          toast.error("Please select your cloud provider");
+          return false;
+        }
+        return true;
+
+      case 'profile':
+        if (!formData.industry?.trim()) {
+          toast.error("Please select your industry");
+          return false;
+        }
+        if (!formData.businessSize?.trim()) {
+          toast.error("Please select your business size");
+          return false;
+        }
+        if (!formData.sensitiveData?.trim()) {
+          toast.error("Please select if you handle sensitive data");
+          return false;
+        }
+        return true;
+
+      case 'security':
+        if (!formData.lastAudit?.trim()) {
+          toast.error("Please select when your last security audit was");
+          return false;
+        }
+        if (!formData.mfaEnabled?.trim()) {
+          toast.error("Please select if multi-factor authentication is enabled");
+          return false;
+        }
+        if (!formData.backupFrequency?.trim()) {
+          toast.error("Please select your backup frequency");
+          return false;
+        }
+        return true;
+
+      case 'compliance':
+        if (!formData.dataRegulations?.trim()) {
+          toast.error("Please select if you handle data regulations");
+          return false;
+        }
+        if (!formData.itIssues?.trim()) {
+          toast.error("Please select your IT issue frequency");
+          return false;
+        }
+        if (!formData.responseNeeded?.trim()) {
+          toast.error("Please select your required response time");
+          return false;
+        }
+        return true;
+
+      case 'results':
+        return true;
+    }
+    return true;
+  };
+
   const nextStep = () => {
-    if (step === 'profile') {
+    if (!validateStep()) return;
+
+    if (step === 'contact') {
+      setStep('provider');
+      setProgress(20);
+    } else if (step === 'provider') {
+      setStep('profile');
+      setProgress(40);
+    } else if (step === 'profile') {
       setStep('security');
-      setProgress(33);
+      setProgress(60);
     } else if (step === 'security') {
       setStep('compliance');
-      setProgress(66);
+      setProgress(80);
     } else if (step === 'compliance') {
       setStep('results');
       setProgress(100);
@@ -48,17 +156,116 @@ export function RiskAssessmentForm() {
   };
 
   const previousStep = () => {
-    if (step === 'security') {
-      setStep('profile');
+    if (step === 'provider') {
+      setStep('contact');
       setProgress(0);
+    } else if (step === 'profile') {
+      setStep('provider');
+      setProgress(20);
+    } else if (step === 'security') {
+      setStep('profile');
+      setProgress(40);
     } else if (step === 'compliance') {
       setStep('security');
-      setProgress(33);
+      setProgress(60);
     } else if (step === 'results') {
       setStep('compliance');
-      setProgress(66);
+      setProgress(80);
     }
   };
+
+  const renderContactInfo = () => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-4"
+    >
+      <div className="space-y-2">
+        <Label htmlFor="name">Full Name</Label>
+        <Input
+          id="name"
+          value={formData.name || ''}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          placeholder="Enter your full name"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="email">Work Email</Label>
+        <Input
+          id="email"
+          type="email"
+          value={formData.email || ''}
+          onChange={(e) => handleInputChange('email', e.target.value)}
+          placeholder="Enter your work email"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="businessName">Business Name</Label>
+        <Input
+          id="businessName"
+          value={formData.businessName || ''}
+          onChange={(e) => handleInputChange('businessName', e.target.value)}
+          placeholder="Enter your business name"
+        />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="newsletter"
+          checked={formData.newsletter}
+          onCheckedChange={(checked) => handleInputChange('newsletter', checked)}
+        />
+        <Label htmlFor="newsletter">Subscribe to our newsletter for IT security updates</Label>
+      </div>
+    </motion.div>
+  );
+
+  const renderProviderInfo = () => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-4"
+    >
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="currentProvider"
+          checked={formData.currentProvider}
+          onCheckedChange={(checked) => handleInputChange('currentProvider', checked)}
+        />
+        <Label htmlFor="currentProvider">Do you have an IT support company?</Label>
+      </div>
+
+      {formData.currentProvider && (
+        <Select onValueChange={(value) => handleInputChange('providerDuration', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="How long have they been in place?" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
+            <SelectItem value="1-3 years">1-3 years</SelectItem>
+            <SelectItem value="3-5 years">3-5 years</SelectItem>
+            <SelectItem value="More than 5 years">More than 5 years</SelectItem>
+          </SelectContent>
+        </Select>
+      )}
+
+      <Select onValueChange={(value) => handleInputChange('cloudProvider', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="What is your main cloud provider?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Microsoft">Microsoft</SelectItem>
+          <SelectItem value="Google">Google</SelectItem>
+          <SelectItem value="Other">Other</SelectItem>
+          <SelectItem value="Don't Know">Don't Know</SelectItem>
+        </SelectContent>
+      </Select>
+    </motion.div>
+  );
 
   const renderBusinessProfile = () => (
     <motion.div
@@ -321,13 +528,15 @@ export function RiskAssessmentForm() {
         <Progress value={progress} className="mt-2" />
       </CardHeader>
       <CardContent>
+        {step === 'contact' && renderContactInfo()}
+        {step === 'provider' && renderProviderInfo()}
         {step === 'profile' && renderBusinessProfile()}
         {step === 'security' && renderSecurityQuestions()}
         {step === 'compliance' && renderComplianceQuestions()}
         {step === 'results' && renderResults()}
       </CardContent>
       <CardFooter className="flex justify-between">
-        {step !== 'profile' && (
+        {step !== 'contact' && (
           <Button variant="outline" onClick={previousStep}>
             Previous
           </Button>

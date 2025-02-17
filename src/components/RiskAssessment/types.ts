@@ -7,8 +7,22 @@ export type BackupFrequency = 'Daily' | 'Weekly' | 'Monthly' | 'Not Sure' | "We 
 export type DisruptionFrequency = 'Daily' | 'Weekly' | 'Occasionally' | 'Rarely' | 'Never';
 export type ResponseTime = 'Within minutes' | 'Within an hour' | 'Same day' | 'Within a few days' | 'No urgency';
 export type YesNoNotSure = 'Yes' | 'No' | 'Not Sure';
+export type CloudProvider = 'Microsoft' | 'Google' | 'Other' | "Don't Know";
+export type SupportDuration = 'Less than 1 year' | '1-3 years' | '3-5 years' | 'More than 5 years' | 'No current provider';
 
 export interface AssessmentData {
+  // Personal Info
+  name: string;
+  email: string;
+  businessName: string;
+  newsletter: boolean;
+  
+  // IT Provider Info
+  currentProvider: boolean;
+  providerDuration: SupportDuration;
+  cloudProvider: CloudProvider;
+  
+  // Original fields
   industry: Industry;
   businessSize: BusinessSize;
   sensitiveData: YesNoNotSure;
