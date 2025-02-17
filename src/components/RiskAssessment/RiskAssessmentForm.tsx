@@ -629,6 +629,13 @@ export function RiskAssessmentForm() {
       }
     };
 
+    const scrollToEstimate = () => {
+      const estimateElement = document.getElementById('cost-estimate');
+      if (estimateElement) {
+        estimateElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -637,11 +644,11 @@ export function RiskAssessmentForm() {
       >
         <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
           <Button
-            onClick={() => setShowEstimate(!showEstimate)}
+            onClick={scrollToEstimate}
             size="lg"
-            className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6"
+            className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
           >
-            <Calculator className="w-4 h-4 sm:w-5 sm:h-5" />
+            <Calculator className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
             Show Estimate (£)
           </Button>
           <p className="text-muted-foreground text-xs sm:text-sm text-center">
@@ -700,11 +707,13 @@ export function RiskAssessmentForm() {
               <Button
                 size="lg"
                 variant={ctaContent.variant}
-                className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto"
+                className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto whitespace-normal text-center min-h-[3rem]"
                 onClick={() => window.open('https://calendly.com/your-link', '_blank')}
               >
-                {ctaContent.buttonText}
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="flex items-center gap-2 justify-center">
+                  {ctaContent.buttonText}
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
+                </span>
               </Button>
             </div>
             <p className="text-xs sm:text-sm text-center text-muted-foreground mt-4">
