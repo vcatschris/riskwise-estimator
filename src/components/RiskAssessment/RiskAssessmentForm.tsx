@@ -37,8 +37,7 @@ import {
   HelpCircle,
   FileDown,
   Calculator,
-  DollarSign,
-  Pound
+  PoundSterling
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -687,7 +686,7 @@ export function RiskAssessmentForm() {
             size="lg"
             className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
           >
-            <Calculator className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+            <Calculator className="w-4 h-4" />
             Show Estimate (£)
           </Button>
           <p className="text-muted-foreground text-xs sm:text-sm text-center">
@@ -705,7 +704,7 @@ export function RiskAssessmentForm() {
             <Card>
               <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <Pound className="w-6 h-6 text-brand-orange" />
+                  <PoundSterling className="w-6 h-6 text-brand-orange" />
                   Monthly Cost Estimate (£)
                 </CardTitle>
                 <CardDescription>
