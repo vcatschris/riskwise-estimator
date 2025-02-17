@@ -331,7 +331,7 @@ export function RiskAssessmentForm() {
             className="h-5 w-5"
           />
           <Label htmlFor="currentProvider" className="text-lg font-medium">
-            Do you have an IT support company?
+            I have an IT support company?
           </Label>
         </div>
       </div>
