@@ -216,8 +216,8 @@ export function RiskAssessmentForm() {
         <div className="text-center">
           <h3 className="text-2xl font-bold">Risk Assessment Results</h3>
           <p className={`text-4xl font-bold mt-4 ${riskColor}`}>{assessment.level} Risk</p>
-          <p className="text-lg mt-2">Risk Score: {assessment.total}</p>
-          <p className="text-lg mt-1">Value Score: {assessment.valueScore}</p>
+          <p className="text-lg mt-2">Risk Score: {assessment.total} / {assessment.maxPossible}</p>
+          <p className="text-lg mt-1">Value Score: {assessment.valueScore} / {assessment.maxValuePossible}</p>
         </div>
 
         <Card>

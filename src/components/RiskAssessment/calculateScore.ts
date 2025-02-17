@@ -1,4 +1,4 @@
-import { AssessmentData, RiskScore, IndustryInsight } from './types';
+import { AssessmentData, RiskScore, IndustryInsight, Industry, BusinessSize, CategoryInsight } from './types';
 
 const INDUSTRY_WEIGHTS = {
   Accounting: { risk: 2, rp: 5, vp: 5 },
@@ -157,6 +157,19 @@ const CATEGORY_INSIGHTS = {
         medium: ["Multiple practitioner coordination", "Growing patient data volumes"],
         large: ["Complex integration with health systems", "Multi-location challenges"]
       }
+    },
+    Other: {
+      description: "General business IT requirements apply across all industries.",
+      industrySpecific: [
+        "Standard security practices required",
+        "Basic compliance requirements",
+        "General IT reliability needs"
+      ],
+      sizeSpecific: {
+        small: ["Focus on essential IT services", "Cost-effective solutions"],
+        medium: ["Balanced IT infrastructure needed", "Growing complexity management"],
+        large: ["Enterprise-level requirements", "Comprehensive IT strategy"]
+      }
     }
   },
   'Security': {
@@ -184,6 +197,19 @@ const CATEGORY_INSIGHTS = {
         small: ["Basic financial data protection", "Limited security resources"],
         medium: ["Growing security complexity", "Multiple system integrations"],
         large: ["Enterprise security framework needed", "International security standards"]
+      }
+    },
+    Other: {
+      description: "Basic security measures are essential for all businesses.",
+      industrySpecific: [
+        "Standard security protocols",
+        "Basic threat protection",
+        "Data security requirements"
+      ],
+      sizeSpecific: {
+        small: ["Essential security measures", "Basic protection needs"],
+        medium: ["Enhanced security framework", "Growing security demands"],
+        large: ["Comprehensive security", "Complex threat protection"]
       }
     }
   },
@@ -213,6 +239,19 @@ const CATEGORY_INSIGHTS = {
         medium: ["Multiple compliance standards", "Growing support needs"],
         large: ["Complex compliance environment", "Global support requirements"]
       }
+    },
+    Other: {
+      description: "Standard compliance and support requirements apply.",
+      industrySpecific: [
+        "Basic compliance needs",
+        "Standard support requirements",
+        "General IT management"
+      ],
+      sizeSpecific: {
+        small: ["Basic support needs", "Essential compliance"],
+        medium: ["Growing support demands", "Increased compliance needs"],
+        large: ["Complex support structure", "Comprehensive compliance"]
+      }
     }
   }
 };
@@ -239,6 +278,12 @@ function getCategoryInsights(category: string, industry: Industry, businessSize:
     sizeSpecific: categoryData.sizeSpecific[sizeCategory]
   };
 }
+
+const calculateMaxScores = () => {
+  const maxRiskPoints = 200; // Based on maximum possible risk points
+  const maxValuePoints = 150; // Based on maximum possible value points
+  return { maxRiskPoints, maxValuePoints };
+};
 
 export function calculateRiskScore(data: AssessmentData): RiskScore {
   let totalRiskPoints = 0;
@@ -461,9 +506,13 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
     valueProposition: getValueProposition()
   };
 
+  const { maxRiskPoints, maxValuePoints } = calculateMaxScores();
+
   return {
     total: totalRiskPoints,
+    maxPossible: maxRiskPoints,
     valueScore: totalValuePoints,
+    maxValuePossible: maxValuePoints,
     level: riskLevel,
     executiveSummary,
     details,

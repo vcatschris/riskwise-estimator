@@ -45,7 +45,9 @@ export interface ExecutiveSummary {
 
 export interface RiskScore {
   total: number;
+  maxPossible: number;
   valueScore: number;
+  maxValuePossible: number;
   level: 'Low' | 'Medium' | 'High';
   executiveSummary: ExecutiveSummary;
   details: {
