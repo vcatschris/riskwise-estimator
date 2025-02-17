@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration } from './types';
@@ -35,7 +36,9 @@ import {
   Lightbulb, 
   ArrowRight,
   HelpCircle,
-  FileDown 
+  FileDown,
+  Calculator,
+  DollarSign
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -525,6 +528,50 @@ export function RiskAssessmentForm() {
 
   const renderResults = () => {
     const assessment = calculateRiskScore(formData as AssessmentData);
+    const [showEstimate, setShowEstimate] = useState(false);
+
+    const calculateMonthlyCost = () => {
+      let basePrice = 0;
+      let perUserPrice = 0;
+      
+      // Base price factors
+      if (formData.dataRegulations === 'Yes') basePrice += 200; // Compliance needs
+      if (formData.sensitiveData === 'Yes') basePrice += 150; // Extra security
+      if (formData.backupFrequency === 'Daily') basePrice += 100; // Daily backups
+      
+      // Response time pricing
+      switch(formData.responseNeeded) {
+        case 'Within minutes': basePrice += 500; break;
+        case 'Within an hour': basePrice += 300; break;
+        case 'Same day': basePrice += 200; break;
+        case 'Within a few days': basePrice += 100; break;
+      }
+      
+      // Per user pricing based on service level
+      switch(formData.businessSize) {
+        case '1-5': perUserPrice = 45; break;
+        case '6-20': perUserPrice = 40; break;
+        case '21-50': perUserPrice = 35; break;
+        case '51-100': perUserPrice = 30; break;
+        case '100+': perUserPrice = 25; break;
+      }
+      
+      // Additional factors
+      if (formData.mfaEnabled === 'Yes') perUserPrice += 5;
+      if (formData.itIssues === 'Daily') perUserPrice += 10;
+      
+      return { basePrice, perUserPrice };
+    };
+
+    const costs = calculateMonthlyCost();
+    const userRange = {
+      '1-5': 5,
+      '6-20': 20,
+      '21-50': 50,
+      '51-100': 100,
+      '100+': 150
+    }[formData.businessSize || '1-5'];
+
     const riskColor =
       assessment.level === 'Low'
         ? 'text-green-500 bg-green-50 dark:bg-green-950/30'
@@ -590,6 +637,20 @@ export function RiskAssessmentForm() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-8"
       >
+        <div className="flex flex-col items-center gap-4 mb-12">
+          <Button
+            onClick={() => setShowEstimate(!showEstimate)}
+            size="lg"
+            className="w-full max-w-md flex items-center gap-2 text-lg py-6"
+          >
+            <Calculator className="w-5 h-5" />
+            Show Estimate
+          </Button>
+          <p className="text-muted-foreground text-sm">
+            How much should the IT support you need roughly cost
+          </p>
+        </div>
+
         <div className="flex justify-end">
           <Button
             onClick={handlePDFDownload}
@@ -761,99 +822,4 @@ export function RiskAssessmentForm() {
                     </p>
                     
                     <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-lg flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-blue-500" />
-                          Industry-Specific Considerations
-                        </h4>
-                        <ul className="space-y-2">
-                          {detail.insights.industrySpecific.map((insight, i) => (
-                            <li key={i} className="flex items-start gap-2 text-slate-600 dark:text-slate-300">
-                              <span className="mt-1">💡</span>
-                              <span>{insight}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-lg flex items-center gap-2">
-                          <Users className="h-4 w-4 text-purple-500" />
-                          Size-Specific Considerations
-                        </h4>
-                        <ul className="space-y-2">
-                          {detail.insights.sizeSpecific.map((insight, i) => (
-                            <li key={i} className="flex items-start gap-2 text-slate-600 dark:text-slate-300">
-                              <span className="mt-1">📊</span>
-                              <span>{insight}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {detail.recommendations.length > 0 && (
-                      <div className="mt-6 p-4 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-200 dark:border-red-800">
-                        <h4 className="font-semibold text-lg mb-3 flex items-center gap-2 text-red-700 dark:text-red-300">
-                          <Lightbulb className="h-4 w-4" />
-                          Critical Recommendations
-                        </h4>
-                        <ul className="space-y-2">
-                          {detail.recommendations.map((rec, i) => (
-                            <li key={i} className="flex items-start gap-2 text-red-700 dark:text-red-300">
-                              <span className="mt-1">⚠️</span>
-                              <span>{rec}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          <Button
-            onClick={() => window.location.reload()}
-            className="w-full mt-8"
-            variant="outline"
-            size="lg"
-          >
-            Start New Assessment
-          </Button>
-        </div>
-      </motion.div>
-    );
-  };
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-        <Progress value={progress} className="mt-2" />
-      </CardHeader>
-      <CardContent>
-        {step === 'contact' && renderContactInfo()}
-        {step === 'provider' && renderProviderInfo()}
-        {step === 'profile' && renderBusinessProfile()}
-        {step === 'security' && renderSecurityQuestions()}
-        {step === 'compliance' && renderComplianceQuestions()}
-        {step === 'results' && renderResults()}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {step !== 'contact' && (
-          <Button variant="outline" onClick={previousStep}>
-            Previous
-          </Button>
-        )}
-        {step !== 'results' && (
-          <Button className="ml-auto" onClick={nextStep}>
-            {step === 'compliance' ? 'View Results' : 'Next'}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
-  );
-}
+                      <
