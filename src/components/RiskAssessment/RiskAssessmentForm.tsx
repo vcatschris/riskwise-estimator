@@ -220,6 +220,41 @@ export function RiskAssessmentForm() {
           <p className="text-lg mt-1">Value Score: {assessment.valueScore}</p>
         </div>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Executive Summary</CardTitle>
+            <CardDescription>Based on your {formData.industry} industry profile</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <h4 className="font-semibold mb-2">Key Industry Risks:</h4>
+              <ul className="list-disc pl-6 space-y-1">
+                {assessment.executiveSummary.industryInsights.risks.map((risk, i) => (
+                  <li key={i}>{risk}</li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-2">Your Top Risks:</h4>
+              <ul className="list-disc pl-6 space-y-1">
+                {assessment.executiveSummary.topRisks.map((risk, i) => (
+                  <li key={i} className="text-risk-high">{risk}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Value of Managed IT Services:</h4>
+              <ul className="list-disc pl-6 space-y-1">
+                {assessment.executiveSummary.industryInsights.values.map((value, i) => (
+                  <li key={i} className="text-risk-low">✓ {value}</li>
+                ))}
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="space-y-4">
           {assessment.details.map((detail, index) => (
             <Card key={index}>

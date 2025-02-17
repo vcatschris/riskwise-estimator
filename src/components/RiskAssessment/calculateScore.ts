@@ -1,5 +1,4 @@
-
-import { AssessmentData, RiskScore } from './types';
+import { AssessmentData, RiskScore, IndustryInsight } from './types';
 
 const INDUSTRY_WEIGHTS = {
   Accounting: { risk: 2, rp: 5, vp: 5 },
@@ -16,6 +15,93 @@ const BUSINESS_SIZE_WEIGHTS = {
   '21-50': { rp: 3, vp: 5, weight: 1.5 },
   '51-100': { rp: 4, vp: 7, weight: 2 },
   '100+': { rp: 5, vp: 10, weight: 2.5 },
+};
+
+const INDUSTRY_INSIGHTS: Record<string, IndustryInsight> = {
+  Legal: {
+    risks: [
+      "High risk of ransomware & data breaches due to confidential client data",
+      "Regulatory compliance exposure to GDPR and SRA standards",
+      "Service outages can disrupt critical casework",
+      "Frequent targets of email fraud & phishing attacks"
+    ],
+    values: [
+      "Regulatory compliance support for legal requirements",
+      "Advanced cybersecurity protection against breaches",
+      "Business continuity & disaster recovery systems",
+      "Secure client communication & document management"
+    ]
+  },
+  Finance: {
+    risks: [
+      "High risk of financial data breaches and theft",
+      "Strict FCA compliance requirements",
+      "Critical transaction system reliability",
+      "Targeted financial fraud attempts"
+    ],
+    values: [
+      "Financial compliance and audit support",
+      "Advanced fraud prevention systems",
+      "High-availability transaction processing",
+      "Secure financial data management"
+    ]
+  },
+  Accounting: {
+    risks: [
+      "Sensitive financial data protection",
+      "Tax and financial compliance requirements",
+      "System reliability during peak seasons",
+      "Financial fraud and phishing attempts"
+    ],
+    values: [
+      "Comprehensive data security measures",
+      "Compliance and audit support",
+      "Reliable system performance",
+      "Advanced threat protection"
+    ]
+  },
+  Retail: {
+    risks: [
+      "Payment system security risks",
+      "Customer data protection requirements",
+      "POS system reliability",
+      "Website and ecommerce vulnerabilities"
+    ],
+    values: [
+      "24/7 system monitoring and support",
+      "PCI DSS compliance management",
+      "Reliable POS and inventory systems",
+      "Secure payment processing"
+    ]
+  },
+  Healthcare: {
+    risks: [
+      "Patient data confidentiality risks",
+      "Healthcare compliance requirements",
+      "Critical system reliability",
+      "Ransomware targeting medical systems"
+    ],
+    values: [
+      "HIPAA/GDPR compliance support",
+      "Advanced patient data protection",
+      "24/7 systems availability",
+      "Secure medical record management"
+    ]
+  },
+  Other: {
+    risks: [
+      "Data security vulnerabilities",
+      "System reliability concerns",
+      "Compliance requirements",
+      "Cybersecurity threats"
+    ],
+    values: [
+      "Comprehensive IT security",
+      "Reliable system support",
+      "Compliance guidance",
+      "Cost-effective IT management"
+    ]
+  }
 };
 
 export function calculateRiskScore(data: AssessmentData): RiskScore {
@@ -188,10 +274,59 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
   else if (totalRiskPoints < 60) riskLevel = 'Medium';
   else riskLevel = 'High';
 
+  // Generate executive summary
+  const industryInsights = INDUSTRY_INSIGHTS[data.industry] || INDUSTRY_INSIGHTS.Other;
+  
+  const getTopRisks = () => {
+    const risks = [];
+    if (data.sensitiveData === 'Yes') {
+      risks.push("Handles sensitive data requiring enhanced protection");
+    }
+    if (data.lastAudit === 'Never' || data.lastAudit === 'Over a year ago') {
+      risks.push("Overdue for security audit");
+    }
+    if (data.backupFrequency === "We don't back up data" || data.backupFrequency === 'Not Sure') {
+      risks.push("Inadequate data backup procedures");
+    }
+    if (data.mfaEnabled === 'No') {
+      risks.push("Missing multi-factor authentication");
+    }
+    if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {
+      risks.push("Frequent IT disruptions impacting business");
+    }
+    return risks.slice(0, 3); // Return top 3 risks
+  };
+
+  const getValueProposition = () => {
+    const values = [];
+    if (data.sensitiveData === 'Yes') {
+      values.push("Enhanced data protection and compliance support");
+    }
+    if (data.internalIT === 'No') {
+      values.push("Professional IT management and support");
+    }
+    if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {
+      values.push("Reduced downtime and improved system reliability");
+    }
+    if (data.responseNeeded === 'Within minutes' || data.responseNeeded === 'Within an hour') {
+      values.push("Rapid response IT support available 24/7");
+    }
+    return values;
+  };
+
+  const executiveSummary = {
+    industryInsights,
+    riskLevel: riskLevel,
+    topRisks: getTopRisks(),
+    recommendations: details.flatMap(d => d.recommendations),
+    valueProposition: getValueProposition()
+  };
+
   return {
     total: totalRiskPoints,
     valueScore: totalValuePoints,
     level: riskLevel,
+    executiveSummary,
     details,
   };
 }
