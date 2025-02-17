@@ -104,7 +104,15 @@ const INDUSTRY_INSIGHTS: Record<string, IndustryInsight> = {
   }
 };
 
-const CATEGORY_INSIGHTS = {
+const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
+  description: string;
+  industrySpecific: string[];
+  sizeSpecific: {
+    small: string[];
+    medium: string[];
+    large: string[];
+  };
+}>> = {
   'Business Profile': {
     Legal: {
       description: "Legal firms require robust IT infrastructure to protect client confidentiality and ensure compliance.",
@@ -158,6 +166,19 @@ const CATEGORY_INSIGHTS = {
         large: ["Complex integration with health systems", "Multi-location challenges"]
       }
     },
+    Accounting: {
+      description: "Accounting firms need secure and reliable IT systems for financial data management.",
+      industrySpecific: [
+        "Financial data security requirements",
+        "Tax season peak performance needs",
+        "Client confidentiality standards"
+      ],
+      sizeSpecific: {
+        small: ["Basic financial software needs", "Limited IT resources"],
+        medium: ["Growing client data management", "Multiple service lines"],
+        large: ["Enterprise financial systems", "Multiple office locations"]
+      }
+    },
     Other: {
       description: "General business IT requirements apply across all industries.",
       industrySpecific: [
@@ -197,6 +218,45 @@ const CATEGORY_INSIGHTS = {
         small: ["Basic financial data protection", "Limited security resources"],
         medium: ["Growing security complexity", "Multiple system integrations"],
         large: ["Enterprise security framework needed", "International security standards"]
+      }
+    },
+    Retail: {
+      description: "Retail security focuses on payment systems and customer data protection.",
+      industrySpecific: [
+        "PCI DSS compliance requirements",
+        "Point-of-sale system security",
+        "Customer data protection"
+      ],
+      sizeSpecific: {
+        small: ["Basic payment security", "Limited security budget"],
+        medium: ["Multi-location security needs", "Growing digital presence"],
+        large: ["Enterprise retail security", "Multi-channel protection"]
+      }
+    },
+    Healthcare: {
+      description: "Healthcare security must protect sensitive patient data and medical systems.",
+      industrySpecific: [
+        "HIPAA compliance requirements",
+        "Medical device security",
+        "Patient data protection"
+      ],
+      sizeSpecific: {
+        small: ["Basic patient data security", "Limited security resources"],
+        medium: ["Growing patient data volumes", "Multiple practitioner access"],
+        large: ["Enterprise healthcare security", "Multi-facility protection"]
+      }
+    },
+    Accounting: {
+      description: "Accounting security focuses on financial data protection.",
+      industrySpecific: [
+        "Financial data security",
+        "Client confidentiality",
+        "Tax information protection"
+      ],
+      sizeSpecific: {
+        small: ["Basic financial security", "Limited resources"],
+        medium: ["Growing security needs", "Multiple client types"],
+        large: ["Enterprise financial security", "Complex data protection"]
       }
     },
     Other: {
@@ -240,6 +300,45 @@ const CATEGORY_INSIGHTS = {
         large: ["Complex compliance environment", "Global support requirements"]
       }
     },
+    Retail: {
+      description: "Retail compliance focuses on payment and customer data regulations.",
+      industrySpecific: [
+        "PCI compliance requirements",
+        "Consumer protection regulations",
+        "Payment system standards"
+      ],
+      sizeSpecific: {
+        small: ["Basic retail compliance", "Limited support needs"],
+        medium: ["Multi-store compliance", "Growing support requirements"],
+        large: ["Enterprise retail compliance", "Complex support needs"]
+      }
+    },
+    Healthcare: {
+      description: "Healthcare compliance is critical for patient data protection.",
+      industrySpecific: [
+        "HIPAA compliance requirements",
+        "Medical record regulations",
+        "Patient privacy standards"
+      ],
+      sizeSpecific: {
+        small: ["Basic healthcare compliance", "Essential support"],
+        medium: ["Growing compliance needs", "Multiple provider support"],
+        large: ["Enterprise healthcare compliance", "Complex support structure"]
+      }
+    },
+    Accounting: {
+      description: "Accounting compliance focuses on financial data regulations.",
+      industrySpecific: [
+        "Financial compliance requirements",
+        "Tax regulation standards",
+        "Data retention policies"
+      ],
+      sizeSpecific: {
+        small: ["Basic compliance needs", "Limited support"],
+        medium: ["Growing compliance demands", "Multiple service support"],
+        large: ["Enterprise compliance framework", "Complex support needs"]
+      }
+    },
     Other: {
       description: "Standard compliance and support requirements apply.",
       industrySpecific: [
@@ -257,9 +356,8 @@ const CATEGORY_INSIGHTS = {
 };
 
 function getCategoryInsights(category: string, industry: Industry, businessSize: BusinessSize): CategoryInsight {
-  const categoryData = CATEGORY_INSIGHTS[category as keyof typeof CATEGORY_INSIGHTS]?.[industry] || 
-    CATEGORY_INSIGHTS[category as keyof typeof CATEGORY_INSIGHTS]?.Other;
-
+  const categoryData = CATEGORY_INSIGHTS[category as keyof typeof CATEGORY_INSIGHTS]?.[industry];
+  
   if (!categoryData) {
     return {
       description: "General business IT requirements apply.",
