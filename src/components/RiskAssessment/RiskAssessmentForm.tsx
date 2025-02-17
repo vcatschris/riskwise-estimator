@@ -35,7 +35,7 @@ import {
   Lightbulb, 
   ArrowRight 
 } from 'lucide-react';
-import { FileDown, Share2, Facebook, X, Linkedin, Mail } from 'lucide-react';
+import { FileDown } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -549,54 +549,13 @@ export function RiskAssessmentForm() {
       }
     };
 
-    const captureScoreImage = async () => {
-      const scoreElement = document.querySelector('.score-section');
-      if (!scoreElement) return null;
-      
-      try {
-        const canvas = await html2canvas(scoreElement as HTMLElement);
-        return canvas.toDataURL('image/png');
-      } catch (error) {
-        console.error('Error capturing score:', error);
-        return null;
-      }
-    };
-
-    const shareToSocial = async (platform: 'facebook' | 'x' | 'linkedin' | 'email') => {
-      const text = `Our IT Risk Assessment Results: ${assessment.level} Risk Level (Score: ${assessment.total}/${assessment.maxPossible})`;
-      const url = window.location.href;
-      const scoreImage = await captureScoreImage();
-      
-      let shareUrl = '';
-      switch (platform) {
-        case 'facebook':
-          shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
-          break;
-        case 'x':
-          shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-          break;
-        case 'linkedin':
-          shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`;
-          break;
-        case 'email':
-          shareUrl = `mailto:?subject=${encodeURIComponent('My IT Risk Assessment Results')}&body=${encodeURIComponent(text + '\n\nView the full report at: ' + url)}`;
-          break;
-      }
-      
-      if (platform === 'email') {
-        window.location.href = shareUrl;
-      } else {
-        window.open(shareUrl, '_blank', 'width=600,height=400');
-      }
-    };
-
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="space-y-8"
       >
-        <div className="flex justify-between items-center gap-4 flex-wrap">
+        <div className="flex justify-end">
           <Button
             onClick={handlePDFDownload}
             variant="secondary"
@@ -606,44 +565,6 @@ export function RiskAssessmentForm() {
             <FileDown className="h-4 w-4" />
             Save as PDF
           </Button>
-          
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-muted-foreground">Share my report:</span>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => shareToSocial('facebook')}
-                variant="outline"
-                size="icon"
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                <Facebook className="h-4 w-4" />
-              </Button>
-              <Button
-                onClick={() => shareToSocial('x')}
-                variant="outline"
-                size="icon"
-                className="bg-black text-white hover:bg-gray-800"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <Button
-                onClick={() => shareToSocial('linkedin')}
-                variant="outline"
-                size="icon"
-                className="bg-blue-700 text-white hover:bg-blue-800"
-              >
-                <Linkedin className="h-4 w-4" />
-              </Button>
-              <Button
-                onClick={() => shareToSocial('email')}
-                variant="outline"
-                size="icon"
-                className="bg-green-600 text-white hover:bg-green-700"
-              >
-                <Mail className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
         </div>
 
         <div id="risk-report">
