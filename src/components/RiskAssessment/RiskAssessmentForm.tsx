@@ -529,7 +529,7 @@ export function RiskAssessmentForm() {
       switch(level) {
         case 'High':
           return {
-            title: "🚨 Critical IT Risk Detected – Immediate Action Required! 🚨",
+            title: "🚨 Critical IT Risk Detected – Immediate Action Recommended! 🚨",
             message: "Your results show critical security gaps that could lead to costly breaches or downtime. Don't wait for a cyber attack that could cost you thousands - let's secure your business today!",
             buttonText: "Book Your Free Emergency IT Consultation",
             variant: "destructive" as const
