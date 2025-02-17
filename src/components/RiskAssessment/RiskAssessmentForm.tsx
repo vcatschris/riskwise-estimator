@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration } from './types';
@@ -65,17 +66,17 @@ const getTitleAndDescription = (step: Step) => {
     case 'profile':
       return {
         title: "Business Context & Industry Requirements",
-        description: "Different industries face unique challenges and compliance needs. We'll help identify the specific security measures and support levels your business type requires. This helps us provide recommendations that match your sector's best practices and regulatory requirements."
+        description: getProfileDescription()
       };
     case 'security':
       return {
         title: "Security Measures",
-        description: "These security practices are the foundation of your IT protection. We'll assess your current security setup, from how you protect your data to how you manage access to your systems. This helps identify any gaps that could put your business at risk."
+        description: getSecurityDescription()
       };
     case 'compliance':
       return {
         title: "Compliance & Support Requirements",
-        description: "Every business has different needs when it comes to data protection laws and IT support response times. Understanding these requirements helps us recommend the right level of support and compliance measures to keep your business running smoothly and legally compliant."
+        description: getComplianceDescription()
       };
     case 'results':
       return {
@@ -644,7 +645,7 @@ export function RiskAssessmentForm() {
       >
         <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
           <Button
-            onClick={scrollToEstimate}
+            onClick={() => setShowEstimate(true)}
             size="lg"
             className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
           >
@@ -816,115 +817,4 @@ export function RiskAssessmentForm() {
                           <AlertTriangle className="h-4 w-4" />
                           Risk: {detail.riskScore}
                         </span>
-                        <span className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
-                          <TrendingUp className="h-4 w-4" />
-                          Value: {detail.valueScore}
-                        </span>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6 p-6">
-                    <p className="text-slate-600 dark:text-slate-300">
-                      {detail.insights.description}
-                    </p>
-                    
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Additional details can be rendered here */}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {showEstimate && (
-          <motion.div
-            id="cost-estimate"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="my-12 scroll-mt-8"
-          >
-            <Card>
-              <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <DollarSign className="w-6 h-6 text-brand-orange" />
-                  Monthly Cost Estimate (£)
-                </CardTitle>
-                <CardDescription>
-                  Based on your business needs and industry standards
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 space-y-6">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Base Package</h4>
-                    <p className="text-3xl font-bold">£{costs.basePrice}/month</p>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ {formData.dataRegulations === 'Yes' ? 'Compliance management' : 'Basic compliance support'}</p>
-                      <p>✓ {formData.sensitiveData === 'Yes' ? 'Enhanced security measures' : 'Standard security package'}</p>
-                      <p>✓ {formData.backupFrequency} data backups</p>
-                      <p>✓ {formData.responseNeeded} support response time</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Per User Cost</h4>
-                    <p className="text-3xl font-bold">£{costs.perUserPrice}/user/month</p>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ User support and management</p>
-                      <p>✓ {formData.mfaEnabled === 'Yes' ? 'Multi-factor authentication' : 'Basic authentication'}</p>
-                      <p>✓ Software licenses and management</p>
-                      <p>✓ Device monitoring and support</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 p-4 bg-muted/50 rounded-lg">
-                  <h4 className="font-semibold mb-2">Estimated Total for Your Business</h4>
-                  <p className="text-2xl font-bold text-brand-orange">
-                    £{costs.basePrice + (costs.perUserPrice * userRange)}/month
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Based on {userRange} users. Actual costs may vary based on specific requirements and customizations.
-                    Contact us for a detailed quote tailored to your exact needs.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </motion.div>
-    );
-  };
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-        <Progress value={progress} className="mt-2" />
-      </CardHeader>
-      <CardContent>
-        {step === 'contact' && renderContactInfo()}
-        {step === 'provider' && renderProviderInfo()}
-        {step === 'profile' && renderBusinessProfile()}
-        {step === 'security' && renderSecurityQuestions()}
-        {step === 'compliance' && renderComplianceQuestions()}
-        {step === 'results' && renderResults()}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {step !== 'contact' && (
-          <Button variant="outline" onClick={previousStep}>
-            Previous
-          </Button>
-        )}
-        {step !== 'results' && (
-          <Button className="ml-auto" onClick={nextStep}>
-            {step === 'compliance' ? 'View Results' : 'Next'}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
-  );
-}
+                        <span className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 text-green
