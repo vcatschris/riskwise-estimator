@@ -37,7 +37,8 @@ import {
   HelpCircle,
   FileDown,
   Calculator,
-  DollarSign
+  DollarSign,
+  Pound
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -704,7 +705,7 @@ export function RiskAssessmentForm() {
             <Card>
               <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <DollarSign className="w-6 h-6 text-brand-orange" />
+                  <Pound className="w-6 h-6 text-brand-orange" />
                   Monthly Cost Estimate (£)
                 </CardTitle>
                 <CardDescription>
