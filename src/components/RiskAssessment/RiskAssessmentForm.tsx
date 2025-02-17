@@ -322,7 +322,7 @@ export function RiskAssessmentForm() {
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4"
     >
-      <div className="rounded-lg border bg-secondary/50 p-4 shadow-sm">
+      <div className="rounded-lg border p-4 shadow-sm">
         <div className="flex items-center space-x-3">
           <Checkbox
             id="currentProvider"
