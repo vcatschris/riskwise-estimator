@@ -1,5 +1,6 @@
 
 import { RiskAssessmentForm } from "@/components/RiskAssessment/RiskAssessmentForm";
+import { ShieldCheck, Network, Search, Zap, Activity, CheckCheck } from "lucide-react";
 
 const Index = () => {
   return (
@@ -18,6 +19,38 @@ const Index = () => {
             Take our no-pressure assessment to understand your IT security posture and get personalized recommendations. 
             View your results instantly - no sales calls unless you specifically request them.
           </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12">
+            <div className="flex flex-col items-center space-y-2 p-4">
+              <div className="rounded-full bg-blue-500/10 p-3">
+                <Search className="h-6 w-6 text-blue-500" />
+              </div>
+              <h3 className="font-semibold text-white">Discover Risks</h3>
+              <p className="text-sm text-gray-400 text-center">
+                Get a clear view of your IT vulnerabilities
+              </p>
+            </div>
+            
+            <div className="flex flex-col items-center space-y-2 p-4">
+              <div className="rounded-full bg-green-500/10 p-3">
+                <Activity className="h-6 w-6 text-green-500" />
+              </div>
+              <h3 className="font-semibold text-white">Measure Resilience</h3>
+              <p className="text-sm text-gray-400 text-center">
+                See how your setup compares to industry standards
+              </p>
+            </div>
+            
+            <div className="flex flex-col items-center space-y-2 p-4">
+              <div className="rounded-full bg-purple-500/10 p-3">
+                <Zap className="h-6 w-6 text-purple-500" />
+              </div>
+              <h3 className="font-semibold text-white">Get Solutions</h3>
+              <p className="text-sm text-gray-400 text-center">
+                Receive actionable recommendations
+              </p>
+            </div>
+          </div>
         </div>
         <RiskAssessmentForm />
       </div>
