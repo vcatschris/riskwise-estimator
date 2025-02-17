@@ -23,6 +23,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
@@ -134,8 +135,57 @@ export function RiskAssessmentForm() {
     return true;
   };
 
-  const nextStep = () => {
+  const saveAssessmentResults = async (assessment: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('ss_tool_risk')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          business_name: formData.businessName,
+          newsletter: formData.newsletter,
+          current_provider: formData.currentProvider,
+          provider_duration: formData.providerDuration,
+          cloud_provider: formData.cloudProvider,
+          industry: formData.industry,
+          business_size: formData.businessSize,
+          sensitive_data: formData.sensitiveData,
+          last_audit: formData.lastAudit,
+          mfa_enabled: formData.mfaEnabled,
+          backup_frequency: formData.backupFrequency,
+          data_regulations: formData.dataRegulations,
+          it_issues: formData.itIssues,
+          response_needed: formData.responseNeeded,
+          risk_score: assessment.total,
+          max_possible_score: assessment.maxPossible,
+          value_score: assessment.valueScore,
+          max_value_possible: assessment.maxValuePossible,
+          risk_level: assessment.level,
+          executive_summary: assessment.executiveSummary,
+          category_details: assessment.details
+        })
+        .select();
+
+      if (error) {
+        console.error('Error saving assessment:', error);
+        toast.error('Failed to save assessment results');
+        return;
+      }
+
+      toast.success('Assessment results saved successfully');
+    } catch (error) {
+      console.error('Error saving assessment:', error);
+      toast.error('Failed to save assessment results');
+    }
+  };
+
+  const nextStep = async () => {
     if (!validateStep()) return;
+
+    if (step === 'compliance') {
+      const assessment = calculateRiskScore(formData as AssessmentData);
+      await saveAssessmentResults(assessment);
+    }
 
     if (step === 'contact') {
       setStep('provider');
