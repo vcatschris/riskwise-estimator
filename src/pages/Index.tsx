@@ -12,11 +12,11 @@ const Index = () => {
             className="h-20 mx-auto mb-8"
           />
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            IT Risk Assessment
+            How Resilient is Your IT Setup?
           </h1>
           <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
-            Evaluate your business's IT security posture and get personalized recommendations
-            for improvement.
+            Take our no-pressure assessment to understand your IT security posture and get personalized recommendations. 
+            View your results instantly - no sales calls unless you specifically request them.
           </p>
         </div>
         <RiskAssessmentForm />
@@ -26,3 +26,4 @@ const Index = () => {
 };
 
 export default Index;
+
