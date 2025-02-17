@@ -24,6 +24,17 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { 
+  AlertTriangle, 
+  AlertCircle, 
+  CheckCircle, 
+  CheckCircle2, 
+  TrendingUp, 
+  Building2, 
+  Users, 
+  Lightbulb, 
+  ArrowRight 
+} from 'lucide-react';
 
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
