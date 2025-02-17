@@ -64,18 +64,18 @@ const getTitleAndDescription = (step: Step) => {
       };
     case 'profile':
       return {
-        title: "Business Context",
-        description: "Different industries and business sizes face unique challenges - this helps us provide targeted recommendations"
+        title: "Business Context & Industry Requirements",
+        description: "Different industries face unique challenges and compliance needs. We'll help identify the specific security measures and support levels your business type requires. This helps us provide recommendations that match your sector's best practices and regulatory requirements."
       };
     case 'security':
       return {
         title: "Security Measures",
-        description: "These core security practices are critical indicators of your IT resilience"
+        description: "These security practices are the foundation of your IT protection. We'll assess your current security setup, from how you protect your data to how you manage access to your systems. This helps identify any gaps that could put your business at risk."
       };
     case 'compliance':
       return {
-        title: "Operational Requirements",
-        description: "Help us understand your specific needs around compliance and response times"
+        title: "Compliance & Support Requirements",
+        description: "Every business has different needs when it comes to data protection laws and IT support response times. Understanding these requirements helps us recommend the right level of support and compliance measures to keep your business running smoothly and legally compliant."
       };
     case 'results':
       return {
@@ -712,7 +712,7 @@ export function RiskAssessmentForm() {
               >
                 <span className="flex items-center gap-2 justify-center">
                   {ctaContent.buttonText}
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </span>
               </Button>
             </div>
