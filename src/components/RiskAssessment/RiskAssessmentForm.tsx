@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration } from './types';
@@ -822,4 +821,45 @@ export function RiskAssessmentForm() {
                     </p>
                     
                     <div className="grid md:grid-cols-2 gap-6">
-                      <
+                      {/* Additional details can be rendered here */}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+        <Progress value={progress} className="mt-2" />
+      </CardHeader>
+      <CardContent>
+        {step === 'contact' && renderContactInfo()}
+        {step === 'provider' && renderProviderInfo()}
+        {step === 'profile' && renderBusinessProfile()}
+        {step === 'security' && renderSecurityQuestions()}
+        {step === 'compliance' && renderComplianceQuestions()}
+        {step === 'results' && renderResults()}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {step !== 'contact' && (
+          <Button variant="outline" onClick={previousStep}>
+            Previous
+          </Button>
+        )}
+        {step !== 'results' && (
+          <Button className="ml-auto" onClick={nextStep}>
+            {step === 'compliance' ? 'View Results' : 'Next'}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
