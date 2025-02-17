@@ -27,6 +27,46 @@ import { supabase } from '@/integrations/supabase/client';
 
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
+const getTitleAndDescription = (step: Step) => {
+  switch (step) {
+    case 'contact':
+      return {
+        title: "Let's Get to Know You",
+        description: "We'll tailor the assessment to your specific business context and ensure you get the most relevant insights"
+      };
+    case 'provider':
+      return {
+        title: "Current IT Support",
+        description: "Understanding your current setup helps us identify potential gaps and opportunities for improvement"
+      };
+    case 'profile':
+      return {
+        title: "Business Context",
+        description: "Different industries and business sizes face unique challenges - this helps us provide targeted recommendations"
+      };
+    case 'security':
+      return {
+        title: "Security Measures",
+        description: "These core security practices are critical indicators of your IT resilience"
+      };
+    case 'compliance':
+      return {
+        title: "Operational Requirements",
+        description: "Help us understand your specific needs around compliance and response times"
+      };
+    case 'results':
+      return {
+        title: "Your IT Resilience Score",
+        description: "Based on industry standards and best practices for your business profile"
+      };
+    default:
+      return {
+        title: "",
+        description: ""
+      };
+  }
+};
+
 const isBusinessEmail = (email: string): boolean => {
   const personalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com'];
   const domain = email.split('@')[1]?.toLowerCase();
@@ -40,6 +80,8 @@ export function RiskAssessmentForm() {
     newsletter: false,
     currentProvider: false,
   });
+
+  const { title, description } = getTitleAndDescription(step);
 
   const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
     setFormData((prev) => ({
@@ -571,10 +613,8 @@ export function RiskAssessmentForm() {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>IT Risk Assessment</CardTitle>
-        <CardDescription>
-          Evaluate your business's IT security and get personalized recommendations
-        </CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
         <Progress value={progress} className="mt-2" />
       </CardHeader>
       <CardContent>
