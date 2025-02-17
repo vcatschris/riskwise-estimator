@@ -33,11 +33,18 @@ import {
   Building2, 
   Users, 
   Lightbulb, 
-  ArrowRight 
+  ArrowRight,
+  HelpCircle,
+  FileDown 
 } from 'lucide-react';
-import { FileDown } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
