@@ -526,6 +526,32 @@ export function RiskAssessmentForm() {
     </motion.div>
   );
 
+  const getCTAContent = (level: string) => {
+    switch(level) {
+      case 'High':
+        return {
+          title: "🚨 Critical IT Risk Detected – Immediate Action Recommended! 🚨",
+          message: "Your results show critical security gaps that could lead to costly breaches or downtime. Don't wait for a cyber attack that could cost you thousands - let's secure your business today!",
+          buttonText: "Book Your Free IT Consultation",
+          variant: "destructive" as const
+        };
+      case 'Medium':
+        return {
+          title: "⚠️ IT Vulnerabilities Identified - Let's Address Them",
+          message: "Your assessment reveals several risks that need attention. Take proactive steps now to prevent these from becoming major issues that could impact your business.",
+          buttonText: "Schedule Your Free IT Strategy Session",
+          variant: "default" as const
+        };
+      default: // Low
+        return {
+          title: "🔒 Good Foundation - Let's Optimize Further",
+          message: "While your IT setup is solid, there's room for optimization. Let our experts show you how to enhance your security and efficiency for long-term success.",
+          buttonText: "Book Your Free Optimization Review",
+          variant: "secondary" as const
+        };
+    }
+  };
+
   const renderResults = () => {
     const assessment = calculateRiskScore(formData as AssessmentData);
 
@@ -577,32 +603,6 @@ export function RiskAssessmentForm() {
       ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30'
       : 'text-red-500 bg-red-50 dark:bg-red-950/30';
 
-    const getCTAContent = (level: string) => {
-      switch(level) {
-        case 'High':
-          return {
-            title: "🚨 Critical IT Risk Detected – Immediate Action Recommended! 🚨",
-            message: "Your results show critical security gaps that could lead to costly breaches or downtime. Don't wait for a cyber attack that could cost you thousands - let's secure your business today!",
-            buttonText: "Book Your Free Emergency IT Consultation",
-            variant: "destructive" as const
-          };
-        case 'Medium':
-          return {
-            title: "⚠️ IT Vulnerabilities Identified - Let's Address Them",
-            message: "Your assessment reveals several risks that need attention. Take proactive steps now to prevent these from becoming major issues that could impact your business.",
-            buttonText: "Schedule Your Free IT Strategy Session",
-            variant: "default" as const
-          };
-        default: // Low
-          return {
-            title: "🔒 Good Foundation - Let's Optimize Further",
-            message: "While your IT setup is solid, there's room for optimization. Let our experts show you how to enhance your security and efficiency for long-term success.",
-            buttonText: "Book Your Free Optimization Review",
-            variant: "secondary" as const
-          };
-      }
-    };
-
     const ctaContent = getCTAContent(assessment.level);
 
     const handlePDFDownload = async () => {
@@ -635,16 +635,16 @@ export function RiskAssessmentForm() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-8"
       >
-        <div className="flex flex-col items-center gap-4 mb-12">
+        <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
           <Button
             onClick={() => setShowEstimate(!showEstimate)}
             size="lg"
-            className="w-full max-w-md flex items-center gap-2 text-lg py-6"
+            className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6"
           >
-            <Calculator className="w-5 h-5" />
+            <Calculator className="w-4 h-4 sm:w-5 sm:h-5" />
             Show Estimate (£)
           </Button>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-xs sm:text-sm text-center">
             How much should the IT support you need roughly cost
           </p>
         </div>
@@ -688,26 +688,26 @@ export function RiskAssessmentForm() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="my-8 p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20"
+            className="my-8 p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20"
           >
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4">
               {ctaContent.title}
             </h2>
-            <p className="text-lg text-center text-muted-foreground mb-6 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg text-center text-muted-foreground mb-6 max-w-3xl mx-auto">
               {ctaContent.message}
             </p>
             <div className="flex justify-center">
               <Button
                 size="lg"
                 variant={ctaContent.variant}
-                className="text-lg px-8 py-6 h-auto"
+                className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto"
                 onClick={() => window.open('https://calendly.com/your-link', '_blank')}
               >
                 {ctaContent.buttonText}
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
-            <p className="text-sm text-center text-muted-foreground mt-4">
+            <p className="text-xs sm:text-sm text-center text-muted-foreground mt-4">
               Limited Time Offer: FREE 30-day IT support trial for {assessment.level} risk businesses
             </p>
           </motion.div>
