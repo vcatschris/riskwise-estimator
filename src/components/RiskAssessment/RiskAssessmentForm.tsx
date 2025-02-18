@@ -523,7 +523,7 @@ const RiskAssessmentForm = () => {
                   <div className="space-y-4">
                     <h4 className="text-xl font-semibold text-brand-orange">Base Package Investment</h4>
                     <p className="text-3xl font-bold">
-                      <span className="text-sm italic text-brand-orange">from </span> 
+                      <span className="text-sm italic text-brand-orange">from </span>
                       £{pricing.basePrice.toLocaleString()}/month
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
@@ -612,7 +612,7 @@ const RiskAssessmentForm = () => {
                     <li key={index} className="list-disc ml-5">
                       {recommendation}
                     </li>
-                  }
+                  )
                 )}
               </ul>
             </div>
