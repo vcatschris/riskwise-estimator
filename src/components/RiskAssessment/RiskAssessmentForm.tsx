@@ -18,12 +18,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
-  ShieldCheck,
-  Network,
-  Search,
-  Zap,
-  Activity,
-  CheckCheck,
   Calculator,
   PoundSterling,
 } from "lucide-react";
@@ -43,7 +37,7 @@ import {
 import { calculateRiskScore } from "./calculateScore";
 import { calculatePricing } from './calculatePricing';
 
-const RiskAssessmentForm: React.FC = () => {
+const RiskAssessmentForm = () => {
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
     newsletter: true,
   });
