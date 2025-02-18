@@ -49,6 +49,23 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+// Pricing configuration
+const BASE_PACKAGE_PRICING = {
+  'Small': 350,  // 1-10 employees
+  'Medium': 700, // 11-50 employees
+  'Large': 1200  // 51+ employees
+};
+
+const PER_USER_PRICING = [
+  { maxUsers: 10, price: 50 },   // 1-10 users
+  { maxUsers: 25, price: 45 },   // 11-25 users
+  { maxUsers: 50, price: 40 },   // 26-50 users
+  { maxUsers: 100, price: 35 },  // 51-100 users
+  { maxUsers: Infinity, price: 30 } // 100+ users
+];
+
+const REGULATED_INDUSTRIES = ['Legal', 'Finance', 'Healthcare', 'Accounting'];
+
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
 const getTitleAndDescription = (step: Step) => {
@@ -96,23 +113,6 @@ const isBusinessEmail = (email: string): boolean => {
   const domain = email.split('@')[1]?.toLowerCase();
   return domain ? !personalDomains.includes(domain) : false;
 };
-
-// Pricing configuration
-const BASE_PACKAGE_PRICING = {
-  'Small': 350,  // 1-10 employees
-  'Medium': 700, // 11-50 employees
-  'Large': 1200  // 51+ employees
-};
-
-const PER_USER_PRICING = [
-  { maxUsers: 10, price: 50 },   // 1-10 users
-  { maxUsers: 25, price: 45 },   // 11-25 users
-  { maxUsers: 50, price: 40 },   // 26-50 users
-  { maxUsers: 100, price: 35 },  // 51-100 users
-  { maxUsers: Infinity, price: 30 } // 100+ users
-];
-
-const REGULATED_INDUSTRIES = ['Legal', 'Finance', 'Healthcare', 'Accounting'];
 
 export function RiskAssessmentForm() {
   const [step, setStep] = useState<Step>('contact');
@@ -642,7 +642,7 @@ export function RiskAssessmentForm() {
         userCount = 5;
     }
 
-    const basePrice = BASE_PACKAGE_PRICING[businessSizeCategory];
+    const basePrice = BASE_PACKAGE_PRICING[businessSizeCategory as keyof typeof BASE_PACKAGE_PRICING];
 
     // Calculate per-user price based on user count
     const perUserPrice = PER_USER_PRICING.find(tier => userCount <= tier.maxUsers)?.price || 30;
@@ -841,5 +841,4 @@ export function RiskAssessmentForm() {
           <div className="text-center space-y-4">
             <motion.div
               initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ delay
+              animate
