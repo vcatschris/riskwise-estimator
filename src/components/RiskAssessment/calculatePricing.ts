@@ -9,12 +9,13 @@ const BASE_PRICES = {
   '100+': 3000
 };
 
+// Updated per-user pricing tiers based on actual user count
 const PER_USER_PRICES = {
-  '1-5': 45,
-  '6-20': 40,
-  '21-50': 35,
-  '51-100': 30,
-  '100+': 25
+  '1-10': 45,
+  '11-25': 42,
+  '26-50': 38,
+  '51-100': 34,
+  '100+': 30
 };
 
 const USER_COUNT_ESTIMATES = {
@@ -34,55 +35,70 @@ const INDUSTRY_MULTIPLIERS = {
   'Other': 1.05
 };
 
-export const calculatePricing = (data: AssessmentData) => {
-  // Calculate base package with modifiers
-  let basePackage = BASE_PRICES[data.businessSize];
-  
-  // Apply industry multiplier to base package only
-  basePackage *= INDUSTRY_MULTIPLIERS[data.industry];
+// Helper function to determine per-user price based on user count
+const getPerUserPrice = (userCount: number): number => {
+  if (userCount <= 10) return PER_USER_PRICES['1-10'];
+  if (userCount <= 25) return PER_USER_PRICES['11-25'];
+  if (userCount <= 50) return PER_USER_PRICES['26-50'];
+  if (userCount <= 100) return PER_USER_PRICES['51-100'];
+  return PER_USER_PRICES['100+'];
+};
 
-  // Calculate additional factor increases (capped at 25%)
-  let additionalIncrease = 0;
+export const calculatePricing = (data: AssessmentData) => {
+  const basePrice = BASE_PRICES[data.businessSize];
+  const estimatedUsers = USER_COUNT_ESTIMATES[data.businessSize];
+  
+  // 1. Calculate industry multiplier component
+  const industryComponent = basePrice * INDUSTRY_MULTIPLIERS[data.industry];
+  
+  // 2. Calculate additional factors (capped at 25%)
+  let additionalFactorsPercentage = 0;
 
   if (data.sensitiveData === 'Yes') {
-    additionalIncrease += 0.10; // +10%
+    additionalFactorsPercentage += 0.10; // +10%
   }
 
   if (data.responseNeeded === 'Within minutes' || data.responseNeeded === 'Within an hour') {
-    additionalIncrease += 0.15; // +15%
+    additionalFactorsPercentage += 0.15; // +15%
   }
 
   if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {
-    additionalIncrease += 0.05; // +5%
+    additionalFactorsPercentage += 0.05; // +5%
   }
 
   if (data.dataRegulations === 'Yes') {
-    additionalIncrease += 0.10; // +10%
+    additionalFactorsPercentage += 0.10; // +10%
   }
 
   if (data.backupFrequency === "We don't back up data") {
-    additionalIncrease += 0.05; // +5%
+    additionalFactorsPercentage += 0.05; // +5%
   }
 
-  // Cap the total additional increase at 25%
-  additionalIncrease = Math.min(additionalIncrease, 0.25);
-
-  // Apply the capped additional increase to base package
-  basePackage *= (1 + additionalIncrease);
-
-  // Calculate per-user costs separately
-  const perUserCost = PER_USER_PRICES[data.businessSize] * USER_COUNT_ESTIMATES[data.businessSize];
-
-  // Final price is base package plus per-user costs
-  const totalPrice = Math.round(basePackage + perUserCost);
+  // Cap additional factors at 25%
+  additionalFactorsPercentage = Math.min(additionalFactorsPercentage, 0.25);
+  
+  // Calculate additional factors component
+  const additionalFactorsComponent = basePrice * additionalFactorsPercentage;
+  
+  // 3. Calculate final base package (industry + additional factors applied separately)
+  const finalBasePackage = industryComponent + additionalFactorsComponent;
+  
+  // 4. Calculate per-user cost using new tiered pricing
+  const perUserPrice = getPerUserPrice(estimatedUsers);
+  const perUserCost = perUserPrice * estimatedUsers;
+  
+  // 5. Calculate total price
+  const totalPrice = Math.round(finalBasePackage + perUserCost);
 
   return {
     totalPrice,
-    basePackage: Math.round(basePackage),
+    basePackage: Math.round(finalBasePackage),
     perUserCost: Math.round(perUserCost),
-    perUserPrice: PER_USER_PRICES[data.businessSize],
-    estimatedUsers: USER_COUNT_ESTIMATES[data.businessSize]
+    perUserPrice,
+    estimatedUsers,
+    industryComponent: Math.round(industryComponent),
+    additionalFactorsComponent: Math.round(additionalFactorsComponent)
   };
 };
 
-export { BASE_PRICES, PER_USER_PRICES, USER_COUNT_ESTIMATES }; // Export for use in other components
+export { BASE_PRICES, PER_USER_PRICES, USER_COUNT_ESTIMATES };
