@@ -45,7 +45,7 @@ export function SecurityQuestionsStep({ formData, handleInputChange }: SecurityQ
           <SelectValue placeholder="How often do you back up your business data?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Daily">Daily backups (recommended)</SelectItem>
+          <SelectItem value="Daily">Daily backups</SelectItem>
           <SelectItem value="Weekly">Weekly backups</SelectItem>
           <SelectItem value="Monthly">Monthly backups</SelectItem>
           <SelectItem value="Not Sure">Not sure about our backup schedule</SelectItem>

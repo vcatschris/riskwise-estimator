@@ -39,7 +39,7 @@ export function BusinessProfileStep({ formData, handleInputChange }: BusinessPro
           <SelectItem value="1-5">Small Team (1-5 users)</SelectItem>
           <SelectItem value="6-20">Growing Business (6-20 users)</SelectItem>
           <SelectItem value="21-50">Mid-sized (21-50 users)</SelectItem>
-          <SelectItem value="51-100">Large Organization (51-100 users)</SelectItem>
+          <SelectItem value="51-100">Large Organisation (51-100 users)</SelectItem>
           <SelectItem value="100+">Enterprise (100+ users)</SelectItem>
         </SelectContent>
       </Select>

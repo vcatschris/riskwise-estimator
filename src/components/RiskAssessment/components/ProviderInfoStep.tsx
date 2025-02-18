@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { AssessmentData } from '../types';
 
 interface ProviderInfoStepProps {
@@ -40,7 +40,7 @@ export function ProviderInfoStep({ formData, handleInputChange }: ProviderInfoSt
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
-            <SelectItem value="1-3 years">Established (1-3 years)</SelectItem>
+            <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
             <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
             <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
           </SelectContent>

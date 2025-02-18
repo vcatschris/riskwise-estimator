@@ -1,4 +1,3 @@
-
 export type BusinessSize = '1-5' | '6-20' | '21-50' | '51-100' | '100+';
 export type Industry = 'Accounting' | 'Legal' | 'Finance' | 'Retail' | 'Healthcare' | 'Other';
 export type ITSupport = 'Yes' | 'No' | 'We outsource IT';
@@ -8,7 +7,7 @@ export type DisruptionFrequency = 'Daily' | 'Weekly' | 'Occasionally' | 'Rarely'
 export type ResponseTime = 'Within minutes' | 'Within an hour' | 'Same day' | 'Within a few days' | 'No urgency';
 export type YesNoNotSure = 'Yes' | 'No' | 'Not Sure';
 export type CloudProvider = 'Microsoft' | 'Google' | 'Other' | "Don't Know";
-export type SupportDuration = 'Less than 1 year' | '1-3 years' | '3-5 years' | 'More than 5 years' | 'No current provider';
+export type SupportDuration = 'Less than 1 year' | '1-2 years' | '3-5 years' | 'More than 5 years' | 'No current provider';
 
 export interface AssessmentData {
   // Personal Info
