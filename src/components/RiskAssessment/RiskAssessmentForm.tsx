@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
 import { calculateRiskScore } from './calculateScore';
+import { calculatePricing, BASE_PRICES } from './calculatePricing';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -555,6 +556,8 @@ export function RiskAssessmentForm() {
 
   const renderResults = () => {
     const assessment = calculateRiskScore(formData as AssessmentData);
+    const estimatedPrice = calculatePricing(formData as AssessmentData);
+    const basePrice = BASE_PRICES[formData.businessSize || '1-5'];
 
     const renderRiskAndValueList = (category: string) => {
       const categoryData = assessment.details.find(detail => detail.category === category) as CategoryDetail;
@@ -709,7 +712,7 @@ export function RiskAssessmentForm() {
                   💡 Industry Benchmark: Monthly IT Investment (£)
                 </CardTitle>
                 <CardDescription>
-                  Based on your answers about your businesses of similar size, sector and needs
+                  Based on your answers about businesses of similar size, sector and needs
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
@@ -718,53 +721,63 @@ export function RiskAssessmentForm() {
                     <h4 className="text-xl font-semibold text-brand-orange">Base Package Investment</h4>
                     <p className="text-3xl font-bold">
                       <span className="text-sm italic text-brand-orange">from </span>
-                      £{costs.basePrice.toLocaleString()}/month
+                      £{basePrice.toLocaleString()}/month
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ {formData.dataRegulations === 'Yes' ? 'Compliance management' : 'Basic compliance support'}</p>
-                      <p>✓ {formData.sensitiveData === 'Yes' ? 'Enhanced security measures' : 'Standard security package'}</p>
-                      <p>✓ {formData.backupFrequency} data backups</p>
-                      <p>✓ {formData.responseNeeded} support response time</p>
+                      <p>✓ Basic IT support and maintenance</p>
+                      <p>✓ Standard security package</p>
+                      <p>✓ Regular data backups</p>
+                      <p>✓ Business hours support</p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Per User Investment</h4>
+                    <h4 className="text-xl font-semibold text-brand-orange">Your Estimated Investment</h4>
                     <p className="text-3xl font-bold">
-                      <span className="text-sm italic text-brand-orange">typically </span>
-                      £{costs.perUserPrice.toLocaleString()}/user/month
+                      <span className="text-sm italic text-brand-orange">from </span>
+                      £{estimatedPrice.toLocaleString()}/month
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ User support and management</p>
-                      <p>✓ {formData.mfaEnabled === 'Yes' ? 'Multi-factor authentication' : 'Basic authentication'}</p>
-                      <p>✓ Software licenses and management</p>
-                      <p>✓ Device monitoring and support</p>
+                      <p>✓ {formData.dataRegulations === 'Yes' ? 'Enhanced compliance management' : 'Basic compliance support'}</p>
+                      <p>✓ {formData.sensitiveData === 'Yes' ? 'Advanced security measures' : 'Standard security package'}</p>
+                      <p>✓ {formData.backupFrequency} data backups</p>
+                      <p>✓ {formData.responseNeeded} support response time</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-8 p-4 bg-muted/50 rounded-lg space-y-4">
-                  <h4 className="font-semibold">Estimated IT Investment Range for Your Business</h4>
-                  <div className="space-y-2">
+                  <h4 className="font-semibold">Investment Breakdown</h4>
+                  <div className="grid gap-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">Estimated Monthly Investment</p>
+                      <p className="text-sm text-muted-foreground mb-1">Base Monthly Investment</p>
+                      <p className="text-lg font-semibold">£{basePrice.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Industry-Adjusted Monthly Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{(costs.basePrice + (costs.perUserPrice * userRange)).toLocaleString()}/month
+                        £{estimatedPrice.toLocaleString()}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        (Includes adjustments for {formData.industry} sector requirements
+                        {formData.sensitiveData === 'Yes' ? ', sensitive data handling' : ''}
+                        {formData.dataRegulations === 'Yes' ? ', compliance needs' : ''}
+                        {formData.responseNeeded === 'Within minutes' || formData.responseNeeded === 'Within an hour' ? ', rapid response' : ''})
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Estimated Annual Investment</p>
+                      <p className="text-sm text-muted-foreground mb-1">Estimated Annual Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{((costs.basePrice + (costs.perUserPrice * userRange)) * 12).toLocaleString()}/year
+                        £{(estimatedPrice * 12).toLocaleString()}/year
                       </p>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    (Based on industry norms for {userRange} users. Actual investment varies based on business needs and specific service requirements.)
+                    (Based on your specific requirements and industry standards. Actual investment may vary based on detailed assessment and custom requirements.)
                   </p>
                   <div className="space-y-2 pt-4">
-                    <p className="text-sm font-medium">📞 Want a clearer picture of how your IT setup compares?</p>
-                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review to see if your current investment aligns with industry best practices.</p>
+                    <p className="text-sm font-medium">📞 Want a detailed breakdown of costs?</p>
+                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review for a customized quote tailored to your exact needs.</p>
                   </div>
                 </div>
               </CardContent>
@@ -808,12 +821,4 @@ export function RiskAssessmentForm() {
           </div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="my-8 p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20"
-          >
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4">
-              {ctaContent.title}
-            </h2>
-            <p className="text-base sm:text-lg text-center text-muted-foreground mb-6 max-w-3xl mx
+            initial={{ opacity: 0, y: 2
