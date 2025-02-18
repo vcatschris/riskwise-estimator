@@ -61,4 +61,14 @@ export function CategoryDetails({ assessment }: CategoryDetailsProps) {
             <CardHeader className="border-b bg-slate-50 dark:bg-slate-900/50">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-xl">{detail.category}</CardTitle>
-                <div className="flex gap
+              </div>
+            </CardHeader>
+            <CardContent>
+              {renderRiskAndValueList(detail.category)}
+            </CardContent>
+          </Card>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
