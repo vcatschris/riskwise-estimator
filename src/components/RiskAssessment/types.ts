@@ -1,3 +1,4 @@
+
 export type BusinessSize = '1-5' | '6-20' | '21-50' | '51-100' | '100+';
 export type Industry = 'Accounting' | 'Legal' | 'Finance' | 'Retail' | 'Healthcare' | 'Other';
 export type ITSupport = 'Yes' | 'No' | 'We outsource IT';
@@ -8,8 +9,6 @@ export type ResponseTime = 'Within minutes' | 'Within an hour' | 'Same day' | 'W
 export type YesNoNotSure = 'Yes' | 'No' | 'Not Sure';
 export type CloudProvider = 'Microsoft' | 'Google' | 'Other' | "Don't Know";
 export type SupportDuration = 'Less than 1 year' | '1-3 years' | '3-5 years' | 'More than 5 years' | 'No current provider';
-
-export type FormStep = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
 export interface AssessmentData {
   // Personal Info
@@ -76,20 +75,4 @@ export interface RiskScore {
   level: 'Low' | 'Medium' | 'High';
   executiveSummary: ExecutiveSummary;
   details: CategoryDetail[];
-}
-
-export interface StepInfo {
-  title: string;
-  description: string;
-}
-
-export interface PricingAdjustment {
-  description: string;
-  amount: number;
-}
-
-export interface PricingResult {
-  basePrice: number;
-  adjustments: PricingAdjustment[];
-  finalPrice: number;
 }
