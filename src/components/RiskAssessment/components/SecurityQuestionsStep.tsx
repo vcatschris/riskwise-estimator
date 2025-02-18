@@ -31,7 +31,7 @@ export function SecurityQuestionsStep({ formData, handleInputChange }: SecurityQ
 
       <Select onValueChange={(value) => handleInputChange('mfaEnabled', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Do you use two-step login? (phone code + password)" />
+          <SelectValue placeholder="Do you use two-step login? (mobile code + password)" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="Yes">Yes - We use extra security steps when logging in</SelectItem>
@@ -42,7 +42,7 @@ export function SecurityQuestionsStep({ formData, handleInputChange }: SecurityQ
 
       <Select onValueChange={(value) => handleInputChange('backupFrequency', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="How often do you backup your business data?" />
+          <SelectValue placeholder="How often do you back up your business data?" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="Daily">Daily backups (recommended)</SelectItem>
