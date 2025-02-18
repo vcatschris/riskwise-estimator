@@ -369,7 +369,7 @@ export function RiskAssessmentForm() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
-            <SelectItem value="1-3 years">Established (1-3 years)</SelectItem>
+            <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
             <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
             <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
           </SelectContent>
@@ -419,7 +419,7 @@ export function RiskAssessmentForm() {
           <SelectItem value="1-5">Small Team (1-5 users)</SelectItem>
           <SelectItem value="6-20">Growing Business (6-20 users)</SelectItem>
           <SelectItem value="21-50">Mid-sized (21-50 users)</SelectItem>
-          <SelectItem value="51-100">Large Organization (51-100 users)</SelectItem>
+          <SelectItem value="51-100">Large Organisation (51-100 users)</SelectItem>
           <SelectItem value="100+">Enterprise (100+ users)</SelectItem>
         </SelectContent>
       </Select>
@@ -472,7 +472,7 @@ export function RiskAssessmentForm() {
           <SelectValue placeholder="How often do you backup your business data?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Daily">Daily backups (recommended)</SelectItem>
+          <SelectItem value="Daily">Daily backups</SelectItem>
           <SelectItem value="Weekly">Weekly backups</SelectItem>
           <SelectItem value="Monthly">Monthly backups</SelectItem>
           <SelectItem value="Not Sure">Not sure about our backup schedule</SelectItem>
