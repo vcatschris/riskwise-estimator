@@ -77,18 +77,25 @@ const isHighComplianceIndustry = (industry: Industry): boolean => {
 export const calculatePricing = (data: AssessmentData) => {
   // Step 1: Determine if the business is in a high-compliance industry
   const isHighCompliance = isHighComplianceIndustry(data.industry);
+  console.log('Is High Compliance:', isHighCompliance);
+  console.log('Industry:', data.industry);
   
   // Step 2: Get the appropriate pricing band based on business size
   const pricingBand = PRICING_BANDS[data.businessSize];
+  console.log('Business Size:', data.businessSize);
+  console.log('Pricing Band:', pricingBand);
   
   // Step 3: Select standard or high-compliance pricing
   const selectedBand = isHighCompliance ? pricingBand.highCompliance : pricingBand.standard;
+  console.log('Selected Band:', selectedBand);
   
   // Step 4: Get the monthly price (midpoint)
   const monthlyPrice = selectedBand.midpoint;
+  console.log('Monthly Price (Midpoint):', monthlyPrice);
   
   // Step 5: Calculate annual price
   const annualPrice = monthlyPrice * 12;
+  console.log('Annual Price:', annualPrice);
 
   return {
     totalPrice: monthlyPrice,
