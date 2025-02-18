@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -821,4 +820,84 @@ export function RiskAssessmentForm() {
           </div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-8"
+          >
+            <div className="text-center space-y-4">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold">Risk Areas</h4>
+                  <ul className="space-y-2">
+                    {assessment.details.map((detail) => (
+                      <li key={detail.category} className="flex items-start gap-2 text-sm text-red-600 dark:text-red-400">
+                        <span className="mt-1">⚠️</span>
+                        <span>{detail.category}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold">Value Opportunities</h4>
+                  <ul className="space-y-2">
+                    {assessment.details.map((detail) => (
+                      <li key={detail.category} className="flex items-start gap-2 text-sm text-green-600 dark:text-green-400">
+                        <span className="mt-1">✅</span>
+                        <span>{detail.category}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <Button
+                onClick={previousStep}
+                variant="outline"
+              >
+                Previous
+              </Button>
+              <Button
+                onClick={nextStep}
+                className="ml-auto"
+              >
+                {step === 'compliance' ? 'View Results' : 'Next'}
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+        <Progress value={progress} className="mt-2" />
+      </CardHeader>
+      <CardContent>
+        {step === 'contact' && renderContactInfo()}
+        {step === 'provider' && renderProviderInfo()}
+        {step === 'profile' && renderBusinessProfile()}
+        {step === 'security' && renderSecurityQuestions()}
+        {step === 'compliance' && renderComplianceQuestions()}
+        {step === 'results' && renderResults()}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {step !== 'contact' && (
+          <Button variant="outline" onClick={previousStep}>
+            Previous
+          </Button>
+        )}
+        {step !== 'results' && (
+          <Button className="ml-auto" onClick={nextStep}>
+            {step === 'compliance' ? 'View Results' : 'Next'}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
