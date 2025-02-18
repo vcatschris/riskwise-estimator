@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -9,7 +8,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -821,4 +819,5 @@ export function RiskAssessmentForm() {
           </div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity:
