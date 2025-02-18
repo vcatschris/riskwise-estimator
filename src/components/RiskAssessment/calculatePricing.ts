@@ -9,7 +9,6 @@ const BASE_PRICES = {
   '100+': 3000
 };
 
-// Updated per-user pricing tiers based on actual user count
 const PER_USER_PRICES = {
   '1-10': 45,
   '11-25': 42,
@@ -35,7 +34,6 @@ const INDUSTRY_MULTIPLIERS = {
   'Other': 1.05
 };
 
-// Helper function to determine per-user price based on user count
 const getPerUserPrice = (userCount: number): number => {
   if (userCount <= 10) return PER_USER_PRICES['1-10'];
   if (userCount <= 25) return PER_USER_PRICES['11-25'];
@@ -45,12 +43,11 @@ const getPerUserPrice = (userCount: number): number => {
 };
 
 export const calculatePricing = (data: AssessmentData) => {
-  const basePrice = BASE_PRICES[data.businessSize];
-  
   // Step 1: Calculate base package with industry multiplier
-  const basePackageWithMultiplier = basePrice * INDUSTRY_MULTIPLIERS[data.industry];
+  const basePrice = BASE_PRICES[data.businessSize];
+  const industryMultipliedBase = basePrice * INDUSTRY_MULTIPLIERS[data.industry];
   
-  // Step 2: Calculate additional factors separately
+  // Step 2: Calculate additional factors
   let additionalFactorsPercentage = 0;
 
   if (data.sensitiveData === 'Yes') {
@@ -73,28 +70,33 @@ export const calculatePricing = (data: AssessmentData) => {
     additionalFactorsPercentage += 0.05; // +5%
   }
 
-  // Cap additional factors at 25% and calculate additional amount
+  // Cap additional factors at 25% and calculate addition to base price
   const cappedAdditionalPercentage = Math.min(additionalFactorsPercentage, 0.25);
-  const additionalAmount = basePrice * cappedAdditionalPercentage;
+  const additionalAmount = basePrice * cappedAdditionalPercentage; // Applied to original base price
   
-  // Step 3: Calculate final base package (industry multiplier + additional factors)
-  const finalBasePackage = basePackageWithMultiplier + additionalAmount;
+  // Step 3: Calculate final base package
+  // Industry multiplier component + Additional factors component (based on original base)
+  const finalBasePackage = industryMultipliedBase + additionalAmount;
   
   // Step 4: Calculate per-user cost
   const estimatedUsers = USER_COUNT_ESTIMATES[data.businessSize];
   const perUserPrice = getPerUserPrice(estimatedUsers);
   const perUserCost = perUserPrice * estimatedUsers;
   
-  // Step 5: Calculate total price
+  // Step 5: Calculate total monthly price
   const totalPrice = Math.round(finalBasePackage + perUserCost);
+  
+  // Calculate annual price
+  const annualPrice = totalPrice * 12;
 
   return {
     totalPrice,
+    annualPrice,
     basePackage: Math.round(finalBasePackage),
     perUserCost: Math.round(perUserCost),
     perUserPrice,
     estimatedUsers,
-    basePackageWithMultiplier: Math.round(basePackageWithMultiplier),
+    industryMultipliedBase: Math.round(industryMultipliedBase),
     additionalAmount: Math.round(additionalAmount)
   };
 };
