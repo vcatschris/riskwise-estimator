@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -679,7 +678,7 @@ export function RiskAssessmentForm() {
               <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <PoundSterling className="w-6 h-6 text-brand-orange" />
-                  💡 Industry Benchmark: Monthly IT Investment (£)
+                  💡 Industry Benchmark: Estimated IT Investment (£)
                 </CardTitle>
                 <CardDescription>
                   Based on your answers about your businesses of similar size, sector and needs
@@ -688,10 +687,10 @@ export function RiskAssessmentForm() {
               <CardContent className="p-6 space-y-6">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Base Package Investment</h4>
+                    <h4 className="text-xl font-semibold text-brand-orange">Benchmarked Monthly Investment</h4>
                     <p className="text-3xl font-bold">
                       <span className="text-sm italic text-brand-orange">from </span>
-                      £{costs.basePackage.toLocaleString()}/month
+                      ~£{costs.basePackage.toLocaleString()}/month
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       <p>✓ {costs.isHighCompliance ? 'Compliance management' : 'Basic compliance support'}</p>
@@ -716,27 +715,27 @@ export function RiskAssessmentForm() {
                 </div>
 
                 <div className="mt-8 p-4 bg-muted/50 rounded-lg space-y-4">
-                  <h4 className="font-semibold">Estimated IT Investment Range for Your Business</h4>
+                  <h4 className="font-semibold">Investment Range Summary</h4>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-muted-foreground">Estimated Monthly Investment</p>
+                      <p className="text-sm text-muted-foreground">Benchmarked Monthly Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{costs.totalPrice.toLocaleString()}/month
+                        ~£{costs.totalPrice.toLocaleString()}/month
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Estimated Annual Investment</p>
+                      <p className="text-sm text-muted-foreground">Benchmarked Annual Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{costs.annualPrice.toLocaleString()}/year
+                        ~£{costs.annualPrice.toLocaleString()}/year
                       </p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Based on industry norms for {userRange} users in {costs.isHighCompliance ? 'regulated' : 'standard'} industries.
+                  <p className="text-sm text-muted-foreground mt-4">
+                    📊 This benchmark reflects typical IT investment for businesses of your size, sector, and needs based on your responses. Actual costs may vary.
                   </p>
                   <div className="space-y-2 pt-4">
-                    <p className="text-sm font-medium">📞 Want a clearer picture of how your IT setup compares?</p>
-                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review to see if your current investment aligns with industry best practices.</p>
+                    <p className="text-sm font-medium">📞 Want to see if your IT investment aligns with best practices?</p>
+                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review for a personalized assessment of your needs.</p>
                   </div>
                 </div>
               </CardContent>
