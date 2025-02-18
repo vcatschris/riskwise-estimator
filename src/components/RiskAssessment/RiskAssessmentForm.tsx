@@ -687,10 +687,10 @@ export function RiskAssessmentForm() {
             className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
           >
             <Calculator className="w-4 h-4" />
-            Show Estimate (£)
+            📊 IT Investment Benchmark (£)
           </Button>
-          <p className="text-muted-foreground text-xs sm:text-sm text-center">
-            How much should the IT support you need roughly cost
+          <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
+            How much do businesses like yours typically invest in IT support?
           </p>
         </div>
 
@@ -705,17 +705,20 @@ export function RiskAssessmentForm() {
               <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <PoundSterling className="w-6 h-6 text-brand-orange" />
-                  Monthly Cost Estimate (£)
+                  💡 Industry Benchmark: Monthly IT Investment (£)
                 </CardTitle>
                 <CardDescription>
-                  Based on your business needs and industry standards
+                  Based on your answers about your businesses of similar size, sector and needs
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Base Package</h4>
-                    <p className="text-3xl font-bold">£{costs.basePrice}/month</p>
+                    <h4 className="text-xl font-semibold text-brand-orange">Base Package Investment</h4>
+                    <p className="text-3xl font-bold">
+                      <span className="text-sm italic text-brand-orange">from </span>
+                      £{costs.basePrice.toLocaleString()}/month
+                    </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       <p>✓ {formData.dataRegulations === 'Yes' ? 'Compliance management' : 'Basic compliance support'}</p>
                       <p>✓ {formData.sensitiveData === 'Yes' ? 'Enhanced security measures' : 'Standard security package'}</p>
@@ -725,8 +728,11 @@ export function RiskAssessmentForm() {
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Per User Cost</h4>
-                    <p className="text-3xl font-bold">£{costs.perUserPrice}/user/month</p>
+                    <h4 className="text-xl font-semibold text-brand-orange">Per User Investment</h4>
+                    <p className="text-3xl font-bold">
+                      <span className="text-sm italic text-brand-orange">typically </span>
+                      £{costs.perUserPrice.toLocaleString()}/user/month
+                    </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       <p>✓ User support and management</p>
                       <p>✓ {formData.mfaEnabled === 'Yes' ? 'Multi-factor authentication' : 'Basic authentication'}</p>
@@ -737,25 +743,28 @@ export function RiskAssessmentForm() {
                 </div>
 
                 <div className="mt-8 p-4 bg-muted/50 rounded-lg space-y-4">
-                  <h4 className="font-semibold">Estimated Total for Your Business</h4>
+                  <h4 className="font-semibold">Estimated IT Investment Range for Your Business</h4>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-muted-foreground">Monthly Investment</p>
+                      <p className="text-sm text-muted-foreground">Estimated Monthly Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{costs.basePrice + (costs.perUserPrice * userRange)}/month
+                        £{(costs.basePrice + (costs.perUserPrice * userRange)).toLocaleString()}/month
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Annual Investment</p>
+                      <p className="text-sm text-muted-foreground">Estimated Annual Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{(costs.basePrice + (costs.perUserPrice * userRange)) * 12}/year
+                        £{((costs.basePrice + (costs.perUserPrice * userRange)) * 12).toLocaleString()}/year
                       </p>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Based on {userRange} users. Actual costs may vary based on specific requirements and customizations.
-                    Contact us for a detailed quote tailored to your exact needs.
+                    (Based on industry norms for {userRange} users. Actual investment varies based on business needs and specific service requirements.)
                   </p>
+                  <div className="space-y-2 pt-4">
+                    <p className="text-sm font-medium">📞 Want a clearer picture of how your IT setup compares?</p>
+                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review to see if your current investment aligns with industry best practices.</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
