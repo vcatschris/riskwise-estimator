@@ -1,6 +1,7 @@
+<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
+import { AssessmentData, FormStep, CategoryDetail } from './types';
 import { calculateRiskScore } from './calculateScore';
 import { Button } from '@/components/ui/button';
 import {
@@ -34,6 +35,7 @@ import {
   Users, 
   Lightbulb, 
   ArrowRight,
+  ArrowLeft,
   HelpCircle,
   FileDown,
   Calculator,
@@ -48,9 +50,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
-
-const getTitleAndDescription = (step: Step) => {
+const getTitleAndDescription = (step: FormStep) => {
   switch (step) {
     case 'contact':
       return {
@@ -79,16 +79,13 @@ const getTitleAndDescription = (step: Step) => {
       };
     case 'results':
       return {
-        title: "",
-        description: ""
-      };
-    default:
-      return {
-        title: "",
-        description: ""
+        title: "Assessment Results",
+        description: "Here's what we found based on your responses"
       };
   }
 };
+
+const steps: FormStep[] = ['contact', 'provider', 'profile', 'security', 'compliance'];
 
 const isBusinessEmail = (email: string): boolean => {
   const personalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com'];
@@ -97,7 +94,7 @@ const isBusinessEmail = (email: string): boolean => {
 };
 
 export function RiskAssessmentForm() {
-  const [step, setStep] = useState<Step>('contact');
+  const [step, setStep] = useState<FormStep>('contact');
   const [progress, setProgress] = useState(0);
   const [showEstimate, setShowEstimate] = useState(false);
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
@@ -195,10 +192,9 @@ export function RiskAssessmentForm() {
         }
         return true;
 
-      case 'results':
+      default:
         return true;
     }
-    return true;
   };
 
   const saveAssessmentResults = async (assessment: any) => {
@@ -251,44 +247,36 @@ export function RiskAssessmentForm() {
     if (step === 'compliance') {
       const assessment = calculateRiskScore(formData as AssessmentData);
       await saveAssessmentResults(assessment);
-    }
-
-    if (step === 'contact') {
-      setStep('provider');
-      setProgress(20);
-    } else if (step === 'provider') {
-      setStep('profile');
-      setProgress(40);
-    } else if (step === 'profile') {
-      setStep('security');
-      setProgress(60);
-    } else if (step === 'security') {
-      setStep('compliance');
-      setProgress(80);
-    } else if (step === 'compliance') {
       setStep('results');
       setProgress(100);
+      return;
+    }
+
+    const currentIndex = steps.indexOf(step);
+    if (currentIndex < steps.length - 1) {
+      const nextStep = steps[currentIndex + 1];
+      setStep(nextStep);
+      setProgress((currentIndex + 2) * 20);
     }
   };
 
   const previousStep = () => {
-    if (step === 'provider') {
-      setStep('contact');
-      setProgress(0);
-    } else if (step === 'profile') {
-      setStep('provider');
-      setProgress(20);
-    } else if (step === 'security') {
-      setStep('profile');
-      setProgress(40);
-    } else if (step === 'compliance') {
-      setStep('security');
-      setProgress(60);
-    } else if (step === 'results') {
-      setStep('compliance');
-      setProgress(80);
+    const currentIndex = steps.indexOf(step);
+    if (currentIndex > 0) {
+      const prevStep = steps[currentIndex - 1];
+      setStep(prevStep);
+      setProgress(currentIndex * 20);
     }
   };
+
+  const renderStepIndicator = () => (
+    <div className="relative mb-8">
+      <Progress value={progress} className="h-2" />
+      <div className="mt-2 text-sm text-muted-foreground">
+        Step {steps.indexOf(step) + 1} of {steps.length}
+      </div>
+    </div>
+  );
 
   const renderContactInfo = () => (
     <motion.div
@@ -500,7 +488,7 @@ export function RiskAssessmentForm() {
 
       <Select onValueChange={(value) => handleInputChange('itIssues', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="How often do you face IT problems? (e.g., crashes, slowness)" />
+          <SelectValue placeholder="How frequently do you face IT problems? (e.g., crashes, slowness)" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="Daily">Very frequently (multiple times per day)</SelectItem>
@@ -822,165 +810,4 @@ export function RiskAssessmentForm() {
               <Button
                 size="lg"
                 variant={ctaContent.variant}
-                className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto whitespace-normal text-center min-h-[3rem]"
-                onClick={() => window.open('https://calendly.com/your-link', '_blank')}
-              >
-                <span className="flex items-center gap-2 justify-center">
-                  {ctaContent.buttonText}
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-                </span>
-              </Button>
-            </div>
-            <p className="text-xs sm:text-sm text-center text-muted-foreground mt-4">
-              Limited Time Offer: FREE 30-day IT support trial for {assessment.level} risk businesses
-            </p>
-          </motion.div>
-
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-              <CardTitle className="text-2xl">Executive Summary</CardTitle>
-              <CardDescription>Based on your {formData.industry} industry profile</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8 p-8">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="grid md:grid-cols-2 gap-8"
-              >
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-orange-500" />
-                    Key Industry Risks
-                  </h4>
-                  <ul className="space-y-3">
-                    {assessment.executiveSummary.industryInsights.risks.map((risk, i) => (
-                      <motion.li 
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="flex items-start gap-2 text-orange-700 dark:text-orange-300"
-                      >
-                        <span className="mt-1">⚠️</span>
-                        <span>{risk}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-red-500" />
-                    Your Top Risks
-                  </h4>
-                  <ul className="space-y-3">
-                    {assessment.executiveSummary.topRisks.map((risk, i) => (
-                      <motion.li 
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="flex items-start gap-2 text-red-600 dark:text-red-400"
-                      >
-                        <span className="mt-1">❌</span>
-                        <span>{risk}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  Value of Managed IT Services
-                </h4>
-                <ul className="grid md:grid-cols-2 gap-4">
-                  {assessment.executiveSummary.industryInsights.values.map((value, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + (i * 0.1) }}
-                      className="flex items-start gap-2 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800"
-                    >
-                      <span className="mt-1">✅</span>
-                      <span>{value}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="space-y-6">
-            {assessment.details.map((detail, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + (index * 0.1) }}
-              >
-                <Card>
-                  <CardHeader className="border-b bg-slate-50 dark:bg-slate-900/50">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-xl">{detail.category}</CardTitle>
-                      <div className="flex gap-4 text-sm">
-                        <span className="flex items-center gap-1 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded">
-                          <AlertTriangle className="h-4 w-4" />
-                          Risk: {detail.riskScore}
-                        </span>
-                        <span className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
-                          <TrendingUp className="h-4 w-4" />
-                          Value: {detail.valueScore}
-                        </span>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6 p-6">
-                    <p className="text-slate-600 dark:text-slate-300">
-                      {detail.insights.description}
-                    </p>
-                    
-                    {renderRiskAndValueList(detail.category)}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    );
-  };
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-        <Progress value={progress} className="mt-2" />
-      </CardHeader>
-      <CardContent>
-        {step === 'contact' && renderContactInfo()}
-        {step === 'provider' && renderProviderInfo()}
-        {step === 'profile' && renderBusinessProfile()}
-        {step === 'security' && renderSecurityQuestions()}
-        {step === 'compliance' && renderComplianceQuestions()}
-        {step === 'results' && renderResults()}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {step !== 'contact' && (
-          <Button variant="outline" onClick={previousStep}>
-            Previous
-          </Button>
-        )}
-        {step !== 'results' && (
-          <Button className="ml-auto" onClick={nextStep}>
-            {step === 'compliance' ? 'View Results' : 'Next'}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
-  );
-}
+                className="text-sm sm:text
