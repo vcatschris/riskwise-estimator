@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import {
   Calculator,
   PoundSterling,
+  ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 import {
   AssessmentData,
@@ -42,6 +44,7 @@ const RiskAssessmentForm = () => {
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
     newsletter: true,
   });
+  const [currentStep, setCurrentStep] = useState(1);
   const [showResults, setShowResults] = useState(false);
   const [showEstimate, setShowEstimate] = useState(false);
 
@@ -65,429 +68,411 @@ const RiskAssessmentForm = () => {
     setShowResults(true);
   };
 
-  const renderForm = () => {
-    return (
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Personal Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="name">Your Name</Label>
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name || ""}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email || ""}
-              onChange={handleChange}
-              required
-            />
-          </div>
+  const nextStep = () => {
+    setCurrentStep(prev => prev + 1);
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => prev - 1);
+  };
+
+  const renderStepTitle = () => {
+    switch (currentStep) {
+      case 1:
+        return "Basic Information";
+      case 2:
+        return "IT Provider Details";
+      case 3:
+        return "Business Profile";
+      case 4:
+        return "Security Assessment";
+      case 5:
+        return "Compliance and Support";
+      default:
+        return "";
+    }
+  };
+
+  const renderPersonalInfoStep = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="name">Your Name</Label>
+          <Input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name || ""}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email || ""}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="businessName">Business Name</Label>
+          <Input
+            type="text"
+            id="businessName"
+            name="businessName"
+            value={formData.businessName || ""}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="flex items-center space-x-2 mt-6">
+          <Input
+            type="checkbox"
+            id="newsletter"
+            name="newsletter"
+            checked={formData.newsletter === true}
+            onChange={handleChange}
+          />
+          <Label htmlFor="newsletter">
+            Sign up for our newsletter to receive industry insights
+          </Label>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderProviderStep = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="currentProvider">Do you have a current IT provider?</Label>
+          <Select
+            name="currentProvider"
+            value={formData.currentProvider?.toString()}
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, currentProvider: value === 'true' }))
+            }
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="true">Yes</SelectItem>
+              <SelectItem value="false">No</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {formData.currentProvider === true && (
           <div>
-            <Label htmlFor="businessName">Business Name</Label>
-            <Input
-              type="text"
-              id="businessName"
-              name="businessName"
-              value={formData.businessName || ""}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="flex items-center space-x-2 mt-6">
-            <Input
-              type="checkbox"
-              id="newsletter"
-              name="newsletter"
-              checked={formData.newsletter === true}
-              onChange={handleChange}
-            />
-            <Label htmlFor="newsletter">
-              Sign up for our newsletter to receive industry insights
+            <Label htmlFor="providerDuration">
+              How long have you had your current provider?
             </Label>
-          </div>
-        </div>
-
-        {/* IT Provider Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="currentProvider">Do you have a current IT provider?</Label>
             <Select
-              name="currentProvider"
-              value={formData.currentProvider?.toString()}
+              name="providerDuration"
+              value={formData.providerDuration || ""}
               onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, currentProvider: value === 'true' }))
+                setFormData((prev) => ({ ...prev, providerDuration: value as SupportDuration }))
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select" />
+                <SelectValue placeholder="Select duration" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="true">Yes</SelectItem>
-                <SelectItem value="false">No</SelectItem>
+                <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
+                <SelectItem value="1-3 years">1-3 years</SelectItem>
+                <SelectItem value="3-5 years">3-5 years</SelectItem>
+                <SelectItem value="More than 5 years">More than 5 years</SelectItem>
               </SelectContent>
             </Select>
           </div>
+        )}
+      </div>
 
-          {formData.currentProvider === true && (
-            <div>
-              <Label htmlFor="providerDuration">
-                How long have you had your current provider?
-              </Label>
-              <Select
-                name="providerDuration"
-                value={formData.providerDuration || ""}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, providerDuration: value as SupportDuration }))
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select duration" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Less than 1 year">Less than 1 year</SelectItem>
-                  <SelectItem value="1-3 years">1-3 years</SelectItem>
-                  <SelectItem value="3-5 years">3-5 years</SelectItem>
-                  <SelectItem value="More than 5 years">More than 5 years</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-        </div>
+      <div>
+        <Label htmlFor="cloudProvider">
+          Which cloud provider do you primarily use?
+        </Label>
+        <Select
+          name="cloudProvider"
+          value={formData.cloudProvider || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, cloudProvider: value as CloudProvider }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select provider" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Microsoft">Microsoft</SelectItem>
+            <SelectItem value="Google">Google</SelectItem>
+            <SelectItem value="Other">Other</SelectItem>
+            <SelectItem value="Don't Know">Don't Know</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 
-        <div>
-          <Label htmlFor="cloudProvider">
-            Which cloud provider do you primarily use?
-          </Label>
-          <Select
-            name="cloudProvider"
-            value={formData.cloudProvider || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, cloudProvider: value as CloudProvider }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select provider" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Microsoft">Microsoft</SelectItem>
-              <SelectItem value="Google">Google</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
-              <SelectItem value="Don't Know">Don't Know</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+  const renderBusinessProfileStep = () => (
+    <div className="space-y-6">
+      <div>
+        <Label htmlFor="industry">Industry</Label>
+        <Select
+          name="industry"
+          value={formData.industry || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, industry: value as Industry }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select industry" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Accounting">Accounting</SelectItem>
+            <SelectItem value="Legal">Legal</SelectItem>
+            <SelectItem value="Finance">Finance</SelectItem>
+            <SelectItem value="Retail">Retail</SelectItem>
+            <SelectItem value="Healthcare">Healthcare</SelectItem>
+            <SelectItem value="Other">Other</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        {/* Business Profile */}
-        <div>
-          <Label htmlFor="industry">Industry</Label>
-          <Select
-            name="industry"
-            value={formData.industry || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, industry: value as Industry }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select industry" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Accounting">Accounting</SelectItem>
-              <SelectItem value="Legal">Legal</SelectItem>
-              <SelectItem value="Finance">Finance</SelectItem>
-              <SelectItem value="Retail">Retail</SelectItem>
-              <SelectItem value="Healthcare">Healthcare</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="businessSize">Business Size (Number of Employees)</Label>
+        <Select
+          name="businessSize"
+          value={formData.businessSize || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, businessSize: value as BusinessSize }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1-5">1-5</SelectItem>
+            <SelectItem value="6-20">6-20</SelectItem>
+            <SelectItem value="21-50">21-50</SelectItem>
+            <SelectItem value="51-100">51-100</SelectItem>
+            <SelectItem value="100+">100+</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        <div>
-          <Label htmlFor="businessSize">Business Size (Number of Employees)</Label>
-          <Select
-            name="businessSize"
-            value={formData.businessSize || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, businessSize: value as BusinessSize }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select size" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1-5">1-5</SelectItem>
-              <SelectItem value="6-20">6-20</SelectItem>
-              <SelectItem value="21-50">21-50</SelectItem>
-              <SelectItem value="51-100">51-100</SelectItem>
-              <SelectItem value="100+">100+</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="sensitiveData">
+          Do you handle sensitive client or customer data?
+        </Label>
+        <Select
+          name="sensitiveData"
+          value={formData.sensitiveData || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, sensitiveData: value as YesNoNotSure }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Yes">Yes</SelectItem>
+            <SelectItem value="No">No</SelectItem>
+            <SelectItem value="Not Sure">Not Sure</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 
-        <div>
-          <Label htmlFor="sensitiveData">
-            Do you handle sensitive client or customer data?
-          </Label>
-          <Select
-            name="sensitiveData"
-            value={formData.sensitiveData || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, sensitiveData: value as YesNoNotSure }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="Not Sure">Not Sure</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+  const renderSecurityStep = () => (
+    <div className="space-y-6">
+      <div>
+        <Label htmlFor="mfaEnabled">
+          Is multi-factor authentication (MFA) enabled for most users?
+        </Label>
+        <Select
+          name="mfaEnabled"
+          value={formData.mfaEnabled || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, mfaEnabled: value as YesNoNotSure }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Yes">Yes</SelectItem>
+            <SelectItem value="No">No</SelectItem>
+            <SelectItem value="Not Sure">Not Sure</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        <div>
-          <Label htmlFor="internalIT">Do you have internal IT support?</Label>
-          <Select
-            name="internalIT"
-            value={formData.internalIT || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, internalIT: value as ITSupport }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="We outsource IT">We outsource IT</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="backupFrequency">How often do you back up your data?</Label>
+        <Select
+          name="backupFrequency"
+          value={formData.backupFrequency || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, backupFrequency: value as BackupFrequency }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select frequency" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Daily">Daily</SelectItem>
+            <SelectItem value="Weekly">Weekly</SelectItem>
+            <SelectItem value="Monthly">Monthly</SelectItem>
+            <SelectItem value="Not Sure">Not Sure</SelectItem>
+            <SelectItem value="We don't back up data">We don't back up data</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        <div>
-          <Label htmlFor="cloudServices">
-            Do you use cloud-based services (e.g., Google Workspace, Microsoft 365)?
-          </Label>
-          <Select
-            name="cloudServices"
-            value={formData.cloudServices || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, cloudServices: value as YesNoNotSure }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="Not Sure">Not Sure</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="endpointProtection">
+          Do you have endpoint protection (antivirus) on all devices?
+        </Label>
+        <Select
+          name="endpointProtection"
+          value={formData.endpointProtection || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, endpointProtection: value as YesNoNotSure }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Yes">Yes</SelectItem>
+            <SelectItem value="No">No</SelectItem>
+            <SelectItem value="Not Sure">Not Sure</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        {/* Security Questions */}
-        <div>
-          <Label htmlFor="lastAudit">When was your last IT security audit?</Label>
-          <Select
-            name="lastAudit"
-            value={formData.lastAudit || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, lastAudit: value as TimePeriod }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select time period" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Less than 6 months ago">
-                Less than 6 months ago
-              </SelectItem>
-              <SelectItem value="6-12 months ago">6-12 months ago</SelectItem>
-              <SelectItem value="Over a year ago">Over a year ago</SelectItem>
-              <SelectItem value="Never">Never</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="phishingAttempt">
+          Have you conducted phishing simulation attempts for your employees?
+        </Label>
+        <Select
+          name="phishingAttempt"
+          value={formData.phishingAttempt || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, phishingAttempt: value as YesNoNotSure }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Yes">Yes</SelectItem>
+            <SelectItem value="No">No</SelectItem>
+            <SelectItem value="Not Sure">Not Sure</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 
-        <div>
-          <Label htmlFor="mfaEnabled">
-            Is multi-factor authentication (MFA) enabled for most users?
-          </Label>
-          <Select
-            name="mfaEnabled"
-            value={formData.mfaEnabled || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, mfaEnabled: value as YesNoNotSure }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="Not Sure">Not Sure</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+  const renderComplianceStep = () => (
+    <div className="space-y-6">
+      <div>
+        <Label htmlFor="dataRegulations">
+          Are you subject to specific data protection regulations (e.g., GDPR, HIPAA)?
+        </Label>
+        <Select
+          name="dataRegulations"
+          value={formData.dataRegulations || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, dataRegulations: value as YesNoNotSure }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Yes">Yes</SelectItem>
+            <SelectItem value="No">No</SelectItem>
+            <SelectItem value="Not Sure">Not Sure</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        <div>
-          <Label htmlFor="backupFrequency">How often do you back up your data?</Label>
-          <Select
-            name="backupFrequency"
-            value={formData.backupFrequency || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, backupFrequency: value as BackupFrequency }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select frequency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Daily">Daily</SelectItem>
-              <SelectItem value="Weekly">Weekly</SelectItem>
-              <SelectItem value="Monthly">Monthly</SelectItem>
-              <SelectItem value="Not Sure">Not Sure</SelectItem>
-              <SelectItem value="We don't back up data">We don't back up data</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="itIssues">
+          How frequently do you experience IT-related issues or downtime?
+        </Label>
+        <Select
+          name="itIssues"
+          value={formData.itIssues || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, itIssues: value as DisruptionFrequency }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select frequency" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Daily">Daily</SelectItem>
+            <SelectItem value="Weekly">Weekly</SelectItem>
+            <SelectItem value="Occasionally">Occasionally</SelectItem>
+            <SelectItem value="Rarely">Rarely</SelectItem>
+            <SelectItem value="Never">Never</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        <div>
-          <Label htmlFor="endpointProtection">
-            Do you have endpoint protection (antivirus) on all devices?
-          </Label>
-          <Select
-            name="endpointProtection"
-            value={formData.endpointProtection || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, endpointProtection: value as YesNoNotSure }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="Not Sure">Not Sure</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div>
+        <Label htmlFor="responseNeeded">
+          How quickly do you need IT support to respond to critical issues?
+        </Label>
+        <Select
+          name="responseNeeded"
+          value={formData.responseNeeded || ""}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, responseNeeded: value as ResponseTime }))
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select response time" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Within minutes">Within minutes</SelectItem>
+            <SelectItem value="Within an hour">Within an hour</SelectItem>
+            <SelectItem value="Same day">Same day</SelectItem>
+            <SelectItem value="Within a few days">Within a few days</SelectItem>
+            <SelectItem value="No urgency">No urgency</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 
-        <div>
-          <Label htmlFor="phishingAttempt">
-            Have you conducted phishing simulation attempts for your employees?
-          </Label>
-          <Select
-            name="phishingAttempt"
-            value={formData.phishingAttempt || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, phishingAttempt: value as YesNoNotSure }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="Not Sure">Not Sure</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Compliance and Support */}
-        <div>
-          <Label htmlFor="dataRegulations">
-            Are you subject to specific data protection regulations (e.g., GDPR, HIPAA)?
-          </Label>
-          <Select
-            name="dataRegulations"
-            value={formData.dataRegulations || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, dataRegulations: value as YesNoNotSure }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Yes">Yes</SelectItem>
-              <SelectItem value="No">No</SelectItem>
-              <SelectItem value="Not Sure">Not Sure</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="itIssues">
-            How frequently do you experience IT-related issues or downtime?
-          </Label>
-          <Select
-            name="itIssues"
-            value={formData.itIssues || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, itIssues: value as DisruptionFrequency }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select frequency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Daily">Daily</SelectItem>
-              <SelectItem value="Weekly">Weekly</SelectItem>
-              <SelectItem value="Occasionally">Occasionally</SelectItem>
-              <SelectItem value="Rarely">Rarely</SelectItem>
-              <SelectItem value="Never">Never</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="responseNeeded">
-            How quickly do you need IT support to respond to critical issues?
-          </Label>
-          <Select
-            name="responseNeeded"
-            value={formData.responseNeeded || ""}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, responseNeeded: value as ResponseTime }))
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select response time" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Within minutes">Within minutes</SelectItem>
-              <SelectItem value="Within an hour">Within an hour</SelectItem>
-              <SelectItem value="Same day">Same day</SelectItem>
-              <SelectItem value="Within a few days">Within a few days</SelectItem>
-              <SelectItem value="No urgency">No urgency</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button type="submit" className="w-full">
-          Evaluate My Resilience
-        </Button>
-      </form>
-    );
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return renderPersonalInfoStep();
+      case 2:
+        return renderProviderStep();
+      case 3:
+        return renderBusinessProfileStep();
+      case 4:
+        return renderSecurityStep();
+      case 5:
+        return renderComplianceStep();
+      default:
+        return null;
+    }
   };
 
   const renderResults = () => {
@@ -623,6 +608,53 @@ const RiskAssessmentForm = () => {
           </CardContent>
         </Card>
       </div>
+    );
+  };
+
+  const renderForm = () => {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>{renderStepTitle()}</CardTitle>
+            <CardDescription>
+              Step {currentStep} of 5
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {renderStepContent()}
+            
+            <div className="flex justify-between mt-6">
+              {currentStep > 1 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={prevStep}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Previous
+                </Button>
+              )}
+              {currentStep < 5 ? (
+                <Button
+                  type="button"
+                  onClick={nextStep}
+                  className="flex items-center gap-2 ml-auto"
+                >
+                  Next <ArrowRight className="w-4 h-4" />
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="flex items-center gap-2 ml-auto"
+                >
+                  View Results <ArrowRight className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </form>
     );
   };
 
