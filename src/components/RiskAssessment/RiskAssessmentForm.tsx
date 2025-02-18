@@ -1,9 +1,7 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
 import { calculateRiskScore } from './calculateScore';
-import { calculatePricing, BASE_PRICES } from './calculatePricing';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -556,8 +554,6 @@ export function RiskAssessmentForm() {
 
   const renderResults = () => {
     const assessment = calculateRiskScore(formData as AssessmentData);
-    const estimatedPrice = calculatePricing(formData as AssessmentData);
-    const basePrice = BASE_PRICES[formData.businessSize || '1-5'];
 
     const renderRiskAndValueList = (category: string) => {
       const categoryData = assessment.details.find(detail => detail.category === category) as CategoryDetail;
@@ -712,7 +708,7 @@ export function RiskAssessmentForm() {
                   💡 Industry Benchmark: Monthly IT Investment (£)
                 </CardTitle>
                 <CardDescription>
-                  Based on your answers about businesses of similar size, sector and needs
+                  Based on your answers about your businesses of similar size, sector and needs
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
@@ -721,63 +717,53 @@ export function RiskAssessmentForm() {
                     <h4 className="text-xl font-semibold text-brand-orange">Base Package Investment</h4>
                     <p className="text-3xl font-bold">
                       <span className="text-sm italic text-brand-orange">from </span>
-                      £{basePrice.toLocaleString()}/month
+                      £{costs.basePrice.toLocaleString()}/month
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ Basic IT support and maintenance</p>
-                      <p>✓ Standard security package</p>
-                      <p>✓ Regular data backups</p>
-                      <p>✓ Business hours support</p>
+                      <p>✓ {formData.dataRegulations === 'Yes' ? 'Compliance management' : 'Basic compliance support'}</p>
+                      <p>✓ {formData.sensitiveData === 'Yes' ? 'Enhanced security measures' : 'Standard security package'}</p>
+                      <p>✓ {formData.backupFrequency} data backups</p>
+                      <p>✓ {formData.responseNeeded} support response time</p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Your Estimated Investment</h4>
+                    <h4 className="text-xl font-semibold text-brand-orange">Per User Investment</h4>
                     <p className="text-3xl font-bold">
-                      <span className="text-sm italic text-brand-orange">from </span>
-                      £{estimatedPrice.toLocaleString()}/month
+                      <span className="text-sm italic text-brand-orange">typically </span>
+                      £{costs.perUserPrice.toLocaleString()}/user/month
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ {formData.dataRegulations === 'Yes' ? 'Enhanced compliance management' : 'Basic compliance support'}</p>
-                      <p>✓ {formData.sensitiveData === 'Yes' ? 'Advanced security measures' : 'Standard security package'}</p>
-                      <p>✓ {formData.backupFrequency} data backups</p>
-                      <p>✓ {formData.responseNeeded} support response time</p>
+                      <p>✓ User support and management</p>
+                      <p>✓ {formData.mfaEnabled === 'Yes' ? 'Multi-factor authentication' : 'Basic authentication'}</p>
+                      <p>✓ Software licenses and management</p>
+                      <p>✓ Device monitoring and support</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-8 p-4 bg-muted/50 rounded-lg space-y-4">
-                  <h4 className="font-semibold">Investment Breakdown</h4>
-                  <div className="grid gap-4">
+                  <h4 className="font-semibold">Estimated IT Investment Range for Your Business</h4>
+                  <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Base Monthly Investment</p>
-                      <p className="text-lg font-semibold">£{basePrice.toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Industry-Adjusted Monthly Investment</p>
+                      <p className="text-sm text-muted-foreground">Estimated Monthly Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{estimatedPrice.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        (Includes adjustments for {formData.industry} sector requirements
-                        {formData.sensitiveData === 'Yes' ? ', sensitive data handling' : ''}
-                        {formData.dataRegulations === 'Yes' ? ', compliance needs' : ''}
-                        {formData.responseNeeded === 'Within minutes' || formData.responseNeeded === 'Within an hour' ? ', rapid response' : ''})
+                        £{(costs.basePrice + (costs.perUserPrice * userRange)).toLocaleString()}/month
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Estimated Annual Investment</p>
+                      <p className="text-sm text-muted-foreground">Estimated Annual Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{(estimatedPrice * 12).toLocaleString()}/year
+                        £{((costs.basePrice + (costs.perUserPrice * userRange)) * 12).toLocaleString()}/year
                       </p>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    (Based on your specific requirements and industry standards. Actual investment may vary based on detailed assessment and custom requirements.)
+                    (Based on industry norms for {userRange} users. Actual investment varies based on business needs and specific service requirements.)
                   </p>
                   <div className="space-y-2 pt-4">
-                    <p className="text-sm font-medium">📞 Want a detailed breakdown of costs?</p>
-                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review for a customized quote tailored to your exact needs.</p>
+                    <p className="text-sm font-medium">📞 Want a clearer picture of how your IT setup compares?</p>
+                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review to see if your current investment aligns with industry best practices.</p>
                   </div>
                 </div>
               </CardContent>
@@ -821,4 +807,180 @@ export function RiskAssessmentForm() {
           </div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="my-8 p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20"
+          >
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4">
+              {ctaContent.title}
+            </h2>
+            <p className="text-base sm:text-lg text-center text-muted-foreground mb-6 max-w-3xl mx-auto">
+              {ctaContent.message}
+            </p>
+            <div className="flex justify-center">
+              <Button
+                size="lg"
+                variant={ctaContent.variant}
+                className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto whitespace-normal text-center min-h-[3rem]"
+                onClick={() => window.open('https://calendly.com/your-link', '_blank')}
+              >
+                <span className="flex items-center gap-2 justify-center">
+                  {ctaContent.buttonText}
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
+                </span>
+              </Button>
+            </div>
+            <p className="text-xs sm:text-sm text-center text-muted-foreground mt-4">
+              Limited Time Offer: FREE 30-day IT support trial for {assessment.level} risk businesses
+            </p>
+          </motion.div>
+
+          <Card className="overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+              <CardTitle className="text-2xl">Executive Summary</CardTitle>
+              <CardDescription>Based on your {formData.industry} industry profile</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8 p-8">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="grid md:grid-cols-2 gap-8"
+              >
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-orange-500" />
+                    Key Industry Risks
+                  </h4>
+                  <ul className="space-y-3">
+                    {assessment.executiveSummary.industryInsights.risks.map((risk, i) => (
+                      <motion.li 
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 + (i * 0.1) }}
+                        className="flex items-start gap-2 text-orange-700 dark:text-orange-300"
+                      >
+                        <span className="mt-1">⚠️</span>
+                        <span>{risk}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-red-500" />
+                    Your Top Risks
+                  </h4>
+                  <ul className="space-y-3">
+                    {assessment.executiveSummary.topRisks.map((risk, i) => (
+                      <motion.li 
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 + (i * 0.1) }}
+                        className="flex items-start gap-2 text-red-600 dark:text-red-400"
+                      >
+                        <span className="mt-1">❌</span>
+                        <span>{risk}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+
+              <div className="space-y-4">
+                <h4 className="text-xl font-semibold flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  Value of Managed IT Services
+                </h4>
+                <ul className="grid md:grid-cols-2 gap-4">
+                  {assessment.executiveSummary.industryInsights.values.map((value, i) => (
+                    <motion.li 
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 + (i * 0.1) }}
+                      className="flex items-start gap-2 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800"
+                    >
+                      <span className="mt-1">✅</span>
+                      <span>{value}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-6">
+            {assessment.details.map((detail, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + (index * 0.1) }}
+              >
+                <Card>
+                  <CardHeader className="border-b bg-slate-50 dark:bg-slate-900/50">
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-xl">{detail.category}</CardTitle>
+                      <div className="flex gap-4 text-sm">
+                        <span className="flex items-center gap-1 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded">
+                          <AlertTriangle className="h-4 w-4" />
+                          Risk: {detail.riskScore}
+                        </span>
+                        <span className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
+                          <TrendingUp className="h-4 w-4" />
+                          Value: {detail.valueScore}
+                        </span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6 p-6">
+                    <p className="text-slate-600 dark:text-slate-300">
+                      {detail.insights.description}
+                    </p>
+                    
+                    {renderRiskAndValueList(detail.category)}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+        <Progress value={progress} className="mt-2" />
+      </CardHeader>
+      <CardContent>
+        {step === 'contact' && renderContactInfo()}
+        {step === 'provider' && renderProviderInfo()}
+        {step === 'profile' && renderBusinessProfile()}
+        {step === 'security' && renderSecurityQuestions()}
+        {step === 'compliance' && renderComplianceQuestions()}
+        {step === 'results' && renderResults()}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {step !== 'contact' && (
+          <Button variant="outline" onClick={previousStep}>
+            Previous
+          </Button>
+        )}
+        {step !== 'results' && (
+          <Button className="ml-auto" onClick={nextStep}>
+            {step === 'compliance' ? 'View Results' : 'Next'}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
