@@ -1,3 +1,4 @@
+
 import { AssessmentData, RiskScore, IndustryInsight, Industry, BusinessSize, CategoryInsight } from './types';
 
 const INDUSTRY_WEIGHTS = {
@@ -378,8 +379,8 @@ function getCategoryInsights(category: string, industry: Industry, businessSize:
 }
 
 const calculateMaxScores = () => {
-  const maxRiskPoints = 200; // Based on maximum possible risk points
-  const maxValuePoints = 150; // Based on maximum possible value points
+  const maxRiskPoints = 100; // Changed to 100
+  const maxValuePoints = 100; // Changed to 100
   return { maxRiskPoints, maxValuePoints };
 };
 
@@ -419,6 +420,11 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
 
   // Apply industry modifier to profile risk score
   profileRiskScore *= INDUSTRY_WEIGHTS[data.industry].risk;
+  
+  // Normalize profile scores to a 0-33 range (one third of total)
+  profileRiskScore = (profileRiskScore / 50) * 33;
+  profileValueScore = (profileValueScore / 50) * 33;
+  
   totalRiskPoints += profileRiskScore;
   totalValuePoints += profileValueScore;
 
@@ -485,6 +491,10 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
   } else if (data.backupFrequency === 'Daily') {
     securityValueScore += 2;
   }
+
+  // Normalize security scores to a 0-33 range (one third of total)
+  securityRiskScore = (securityRiskScore / 100) * 33;
+  securityValueScore = (securityValueScore / 100) * 33;
 
   totalRiskPoints += securityRiskScore;
   totalValuePoints += securityValueScore;
@@ -556,6 +566,10 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
     complianceValueScore += 2;
   }
 
+  // Normalize compliance scores to a 0-34 range (final third of total, slightly higher to round to 100)
+  complianceRiskScore = (complianceRiskScore / 100) * 34;
+  complianceValueScore = (complianceValueScore / 100) * 34;
+
   totalRiskPoints += complianceRiskScore;
   totalValuePoints += complianceValueScore;
 
@@ -581,9 +595,13 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
     ]
   });
 
+  // Round scores to ensure they don't exceed 100
+  totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
+  totalValuePoints = Math.min(Math.round(totalValuePoints), 100);
+
   let riskLevel: 'Low' | 'Medium' | 'High';
-  if (totalRiskPoints < 30) riskLevel = 'Low';
-  else if (totalRiskPoints < 60) riskLevel = 'Medium';
+  if (totalRiskPoints < 33) riskLevel = 'Low';
+  else if (totalRiskPoints < 66) riskLevel = 'Medium';
   else riskLevel = 'High';
 
   // Generate executive summary
