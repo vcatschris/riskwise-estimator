@@ -730,7 +730,7 @@ export function RiskAssessmentForm() {
                       </p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-4">
+                  <p className="text-sm text-muted-foreground mt-4 font-bold">
                     📊 This benchmark reflects typical IT investment for businesses of your size, sector, and needs based on your responses. Actual costs may vary.
                   </p>
                   <div className="space-y-2 pt-4">
