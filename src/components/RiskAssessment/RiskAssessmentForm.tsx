@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
+import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail, Industry } from './types';
 import { calculateRiskScore } from './calculateScore';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,18 +25,10 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   AlertTriangle, 
-  AlertCircle, 
-  CheckCircle, 
   CheckCircle2, 
-  TrendingUp, 
-  Building2, 
-  Users, 
-  Lightbulb, 
-  ArrowRight,
-  HelpCircle,
-  FileDown,
   Calculator,
-  PoundSterling
+  PoundSterling,
+  FileDown
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -643,7 +635,8 @@ export function RiskAssessmentForm() {
 
       const perUserPrice = PER_USER_PRICING.find(tier => userCount <= tier.maxUsers)?.price || 30;
 
-      const industryMultiplier = REGULATED_INDUSTRIES.includes(formData.industry || 'Other') ? 1.25 : 1;
+      // Fix the type issue with Industry by type checking
+      const industryMultiplier = REGULATED_INDUSTRIES.includes(formData.industry as "Accounting" | "Legal" | "Finance" | "Healthcare") ? 1.25 : 1;
 
       const totalUserCost = userCount * perUserPrice * industryMultiplier;
 
@@ -841,102 +834,4 @@ export function RiskAssessmentForm() {
 
               <Progress value={progress} className="h-2" />
 
-              <div className="mt-8">
-                <div className="space-y-4">
-                  {renderRiskAndValueList('Risk')}
-                  {renderRiskAndValueList('Value')}
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold text-brand-orange">Risk Score</h4>
-                  <p className={`text-3xl font-bold ${riskColor}`}>
-                    {assessment.total}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold text-brand-orange">Executive Summary</h4>
-                  <p className="text-2xl font-bold">
-                    {assessment.executiveSummary}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold text-brand-orange">Category Details</h4>
-                  <ul className="space-y-2">
-                    {assessment.details.map((detail) => (
-                      <li key={detail.category} className="flex items-start gap-2">
-                        <span className="mt-1">{detail.category}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </motion.div>
-    );
-  };
-
-  return (
-    <div className="container max-w-4xl mx-auto py-8">
-      <AnimatePresence mode="wait">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2">{title}</h2>
-          <p className="text-muted-foreground">{description}</p>
-        </div>
-
-        <div className="mb-8">
-          <Progress value={progress} className="h-2" />
-        </div>
-
-        {step === 'contact' && renderContactInfo()}
-        {step === 'provider' && renderProviderInfo()}
-        {step === 'profile' && renderBusinessProfile()}
-        {step === 'security' && renderSecurityQuestions()}
-        {step === 'compliance' && renderComplianceQuestions()}
-        {step === 'results' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {renderResults()}
-          </motion.div>
-        )}
-
-        <div className="flex justify-end">
-          <Button
-            onClick={handlePDFDownload}
-            variant="secondary"
-            size="lg"
-            className="flex items-center gap-2"
-          >
-            <FileDown className="h-4 w-4" />
-            Save as PDF
-          </Button>
-        </div>
-
-        <div className="flex justify-between mt-8">
-          {step !== 'contact' && (
-            <Button onClick={previousStep} variant="outline">
-              Back
-            </Button>
-          )}
-          {step !== 'results' && (
-            <Button onClick={nextStep} className="ml-auto">
-              Continue
-            </Button>
-          )}
-        </div>
-      </AnimatePresence>
-    </div>
-  );
-}
+              <div className
