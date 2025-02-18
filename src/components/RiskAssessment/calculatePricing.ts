@@ -1,104 +1,105 @@
 
-import { AssessmentData } from './types';
+import { AssessmentData, Industry } from './types';
 
-const BASE_PRICES = {
-  '1-5': 350,
-  '6-20': 650,
-  '21-50': 1100,
-  '51-100': 1800,
-  '100+': 3000
+// Define pricing bands structure
+interface PricingBand {
+  range: {
+    min: number;
+    max: number;
+  };
+  midpoint: number;
+}
+
+interface BusinessSizePricing {
+  standard: PricingBand;
+  highCompliance: PricingBand;
+}
+
+const PRICING_BANDS: Record<string, BusinessSizePricing> = {
+  '1-5': {
+    standard: {
+      range: { min: 600, max: 800 },
+      midpoint: 700
+    },
+    highCompliance: {
+      range: { min: 800, max: 1000 },
+      midpoint: 900
+    }
+  },
+  '6-20': {
+    standard: {
+      range: { min: 1000, max: 1500 },
+      midpoint: 1250
+    },
+    highCompliance: {
+      range: { min: 1500, max: 2000 },
+      midpoint: 1750
+    }
+  },
+  '21-50': {
+    standard: {
+      range: { min: 2000, max: 3000 },
+      midpoint: 2500
+    },
+    highCompliance: {
+      range: { min: 3000, max: 4000 },
+      midpoint: 3500
+    }
+  },
+  '51-100': {
+    standard: {
+      range: { min: 3500, max: 5000 },
+      midpoint: 4250
+    },
+    highCompliance: {
+      range: { min: 5000, max: 7000 },
+      midpoint: 6000
+    }
+  },
+  '100+': {
+    standard: {
+      range: { min: 5000, max: 7000 },
+      midpoint: 6000
+    },
+    highCompliance: {
+      range: { min: 7000, max: 9000 },
+      midpoint: 8000
+    }
+  }
 };
 
-const PER_USER_PRICES = {
-  '1-10': 45,
-  '11-25': 42,
-  '26-50': 38,
-  '51-100': 34,
-  '100+': 30
-};
-
-const USER_COUNT_ESTIMATES = {
-  '1-5': 5,
-  '6-20': 20,
-  '21-50': 50,
-  '51-100': 100,
-  '100+': 150
-};
-
-const INDUSTRY_MULTIPLIERS = {
-  'Healthcare': 1.3,
-  'Finance': 1.2,
-  'Legal': 1.15,
-  'Accounting': 1.15,
-  'Retail': 1.1,
-  'Other': 1.05
-};
-
-const getPerUserPrice = (userCount: number): number => {
-  if (userCount <= 10) return PER_USER_PRICES['1-10'];
-  if (userCount <= 25) return PER_USER_PRICES['11-25'];
-  if (userCount <= 50) return PER_USER_PRICES['26-50'];
-  if (userCount <= 100) return PER_USER_PRICES['51-100'];
-  return PER_USER_PRICES['100+'];
+// Helper function to determine if an industry is high-compliance
+const isHighComplianceIndustry = (industry: Industry): boolean => {
+  const highComplianceIndustries: Industry[] = ['Legal', 'Finance', 'Healthcare', 'Accounting'];
+  return highComplianceIndustries.includes(industry);
 };
 
 export const calculatePricing = (data: AssessmentData) => {
-  // Step 1: Calculate base package with industry multiplier
-  const basePrice = BASE_PRICES[data.businessSize];
-  const industryMultipliedBase = basePrice * INDUSTRY_MULTIPLIERS[data.industry];
+  // Step 1: Determine if the business is in a high-compliance industry
+  const isHighCompliance = isHighComplianceIndustry(data.industry);
   
-  // Step 2: Calculate additional factors
-  let additionalFactorsPercentage = 0;
-
-  if (data.sensitiveData === 'Yes') {
-    additionalFactorsPercentage += 0.10; // +10%
-  }
-
-  if (data.responseNeeded === 'Within minutes' || data.responseNeeded === 'Within an hour') {
-    additionalFactorsPercentage += 0.15; // +15%
-  }
-
-  if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {
-    additionalFactorsPercentage += 0.05; // +5%
-  }
-
-  if (data.dataRegulations === 'Yes') {
-    additionalFactorsPercentage += 0.10; // +10%
-  }
-
-  if (data.backupFrequency === "We don't back up data") {
-    additionalFactorsPercentage += 0.05; // +5%
-  }
-
-  // Cap additional factors at 25% and calculate addition to base price
-  const cappedAdditionalPercentage = Math.min(additionalFactorsPercentage, 0.25);
-  const additionalAmount = basePrice * cappedAdditionalPercentage; // Applied to original base price
+  // Step 2: Get the appropriate pricing band based on business size
+  const pricingBand = PRICING_BANDS[data.businessSize];
   
-  // Step 3: Calculate final base package
-  // Industry multiplier component + Additional factors component (based on original base)
-  const finalBasePackage = industryMultipliedBase + additionalAmount;
+  // Step 3: Select standard or high-compliance pricing
+  const selectedBand = isHighCompliance ? pricingBand.highCompliance : pricingBand.standard;
   
-  // Step 4: Calculate per-user cost
-  const estimatedUsers = USER_COUNT_ESTIMATES[data.businessSize];
-  const perUserPrice = getPerUserPrice(estimatedUsers);
-  const perUserCost = perUserPrice * estimatedUsers;
+  // Step 4: Get the monthly price (midpoint)
+  const monthlyPrice = selectedBand.midpoint;
   
-  // Step 5: Calculate total monthly price
-  const totalPrice = Math.round(finalBasePackage + perUserCost);
-  
-  // Calculate annual price
-  const annualPrice = totalPrice * 12;
+  // Step 5: Calculate annual price
+  const annualPrice = monthlyPrice * 12;
 
   return {
-    totalPrice,
+    totalPrice: monthlyPrice,
     annualPrice,
-    basePackage: Math.round(finalBasePackage),
-    perUserCost: Math.round(perUserCost),
-    perUserPrice,
-    estimatedUsers,
-    industryMultipliedBase: Math.round(industryMultipliedBase),
-    additionalAmount: Math.round(additionalAmount)
+    basePackage: monthlyPrice,
+    priceRange: selectedBand.range,
+    isHighCompliance
   };
 };
 
-export { BASE_PRICES, PER_USER_PRICES, USER_COUNT_ESTIMATES };
+// Export constants for testing or reference
+export const PRICING_REFERENCE = {
+  PRICING_BANDS
+};
