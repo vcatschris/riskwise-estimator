@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -95,6 +96,23 @@ const isBusinessEmail = (email: string): boolean => {
   const domain = email.split('@')[1]?.toLowerCase();
   return domain ? !personalDomains.includes(domain) : false;
 };
+
+// Pricing configuration
+const BASE_PACKAGE_PRICING = {
+  'Small': 350,  // 1-10 employees
+  'Medium': 700, // 11-50 employees
+  'Large': 1200  // 51+ employees
+};
+
+const PER_USER_PRICING = [
+  { maxUsers: 10, price: 50 },   // 1-10 users
+  { maxUsers: 25, price: 45 },   // 11-25 users
+  { maxUsers: 50, price: 40 },   // 26-50 users
+  { maxUsers: 100, price: 35 },  // 51-100 users
+  { maxUsers: Infinity, price: 30 } // 100+ users
+];
+
+const REGULATED_INDUSTRIES = ['Legal', 'Finance', 'Healthcare', 'Accounting'];
 
 export function RiskAssessmentForm() {
   const [step, setStep] = useState<Step>('contact');
@@ -593,47 +611,83 @@ export function RiskAssessmentForm() {
       );
     };
 
-    const calculateMonthlyCost = () => {
-      let basePrice = 0;
-      let perUserPrice = 0;
-      
-      // Base price factors
-      if (formData.dataRegulations === 'Yes') basePrice += 200;
-      if (formData.sensitiveData === 'Yes') basePrice += 150;
-      if (formData.backupFrequency === 'Daily') basePrice += 100;
-      
-      // Response time pricing
-      switch(formData.responseNeeded) {
-        case 'Within minutes': basePrice += 500; break;
-        case 'Within an hour': basePrice += 300; break;
-        case 'Same day': basePrice += 200; break;
-        case 'Within a few days': basePrice += 100; break;
-      }
-      
-      // Per user pricing based on service level
-      switch(formData.businessSize) {
-        case '1-5': perUserPrice = 45; break;
-        case '6-20': perUserPrice = 40; break;
-        case '21-50': perUserPrice = 35; break;
-        case '51-100': perUserPrice = 30; break;
-        case '100+': perUserPrice = 25; break;
-      }
-      
-      // Additional factors
-      if (formData.mfaEnabled === 'Yes') perUserPrice += 5;
-      if (formData.itIssues === 'Daily') perUserPrice += 10;
-      
-      return { basePrice, perUserPrice };
+  const calculateMonthlyCost = () => {
+    // Determine business size category and base price
+    let businessSizeCategory;
+    let userCount;
+    
+    switch(formData.businessSize) {
+      case '1-5':
+        businessSizeCategory = 'Small';
+        userCount = 5;
+        break;
+      case '6-20':
+        businessSizeCategory = 'Medium';
+        userCount = 20;
+        break;
+      case '21-50':
+        businessSizeCategory = 'Medium';
+        userCount = 50;
+        break;
+      case '51-100':
+        businessSizeCategory = 'Large';
+        userCount = 100;
+        break;
+      case '100+':
+        businessSizeCategory = 'Large';
+        userCount = 150; // Assumption for calculation purposes
+        break;
+      default:
+        businessSizeCategory = 'Small';
+        userCount = 5;
+    }
+
+    const basePrice = BASE_PACKAGE_PRICING[businessSizeCategory];
+
+    // Calculate per-user price based on user count
+    const perUserPrice = PER_USER_PRICING.find(tier => userCount <= tier.maxUsers)?.price || 30;
+
+    // Determine industry multiplier
+    const industryMultiplier = REGULATED_INDUSTRIES.includes(formData.industry || 'Other') ? 1.25 : 1;
+
+    // Calculate total user cost with industry multiplier
+    const totalUserCost = userCount * perUserPrice * industryMultiplier;
+
+    // Add additional factors based on form responses
+    let additionalCosts = 0;
+    
+    // Additional security needs
+    if (formData.sensitiveData === 'Yes') additionalCosts += 150;
+    if (formData.mfaEnabled === 'No') additionalCosts += 100;
+    if (formData.backupFrequency === 'Daily') additionalCosts += 100;
+    
+    // Response time pricing
+    switch(formData.responseNeeded) {
+      case 'Within minutes':
+        additionalCosts += 500;
+        break;
+      case 'Within an hour':
+        additionalCosts += 300;
+        break;
+      case 'Same day':
+        additionalCosts += 200;
+        break;
+      case 'Within a few days':
+        additionalCosts += 100;
+        break;
+    }
+
+    // Return both base and per-user costs for display
+    return {
+      basePrice: Math.round(basePrice + additionalCosts),
+      perUserPrice: Math.round(perUserPrice),
+      userCount: userCount,
+      industryMultiplier: industryMultiplier
     };
+  };
 
     const costs = calculateMonthlyCost();
-    const userRange = {
-      '1-5': 5,
-      '6-20': 20,
-      '21-50': 50,
-      '51-100': 100,
-      '100+': 150
-    }[formData.businessSize || '1-5'];
+    const userRange = costs.userCount;
 
     const riskColor = assessment.level === 'Low'
       ? 'text-green-500 bg-green-50 dark:bg-green-950/30'
@@ -788,199 +842,4 @@ export function RiskAssessmentForm() {
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className={`score-section p-8 rounded-2xl shadow-lg ${riskColor}`}
-            >
-              <h3 className="text-3xl font-bold mb-2">Risk Assessment Results</h3>
-              <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
-              <div className="flex justify-center gap-8 mt-6">
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
-                  <p className="text-2xl font-semibold">{assessment.total} / {assessment.maxPossible}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Value Score</p>
-                  <p className="text-2xl font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="my-8 p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20"
-          >
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4">
-              {ctaContent.title}
-            </h2>
-            <p className="text-base sm:text-lg text-center text-muted-foreground mb-6 max-w-3xl mx-auto">
-              {ctaContent.message}
-            </p>
-            <div className="flex justify-center">
-              <Button
-                size="lg"
-                variant={ctaContent.variant}
-                className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto whitespace-normal text-center min-h-[3rem]"
-                onClick={() => window.open('https://calendly.com/your-link', '_blank')}
-              >
-                <span className="flex items-center gap-2 justify-center">
-                  {ctaContent.buttonText}
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-                </span>
-              </Button>
-            </div>
-            <p className="text-xs sm:text-sm text-center text-muted-foreground mt-4">
-              Limited Time Offer: FREE 30-day IT support trial for {assessment.level} risk businesses
-            </p>
-          </motion.div>
-
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-              <CardTitle className="text-2xl">Executive Summary</CardTitle>
-              <CardDescription>Based on your {formData.industry} industry profile</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8 p-8">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="grid md:grid-cols-2 gap-8"
-              >
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-orange-500" />
-                    Key Industry Risks
-                  </h4>
-                  <ul className="space-y-3">
-                    {assessment.executiveSummary.industryInsights.risks.map((risk, i) => (
-                      <motion.li 
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="flex items-start gap-2 text-orange-700 dark:text-orange-300"
-                      >
-                        <span className="mt-1">⚠️</span>
-                        <span>{risk}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-red-500" />
-                    Your Top Risks
-                  </h4>
-                  <ul className="space-y-3">
-                    {assessment.executiveSummary.topRisks.map((risk, i) => (
-                      <motion.li 
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="flex items-start gap-2 text-red-600 dark:text-red-400"
-                      >
-                        <span className="mt-1">❌</span>
-                        <span>{risk}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  Value of Managed IT Services
-                </h4>
-                <ul className="grid md:grid-cols-2 gap-4">
-                  {assessment.executiveSummary.industryInsights.values.map((value, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + (i * 0.1) }}
-                      className="flex items-start gap-2 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800"
-                    >
-                      <span className="mt-1">✅</span>
-                      <span>{value}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="space-y-6">
-            {assessment.details.map((detail, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + (index * 0.1) }}
-              >
-                <Card>
-                  <CardHeader className="border-b bg-slate-50 dark:bg-slate-900/50">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-xl">{detail.category}</CardTitle>
-                      <div className="flex gap-4 text-sm">
-                        <span className="flex items-center gap-1 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded">
-                          <AlertTriangle className="h-4 w-4" />
-                          Risk: {detail.riskScore}
-                        </span>
-                        <span className="flex items-center gap-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
-                          <TrendingUp className="h-4 w-4" />
-                          Value: {detail.valueScore}
-                        </span>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6 p-6">
-                    <p className="text-slate-600 dark:text-slate-300">
-                      {detail.insights.description}
-                    </p>
-                    
-                    {renderRiskAndValueList(detail.category)}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    );
-  };
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-        <Progress value={progress} className="mt-2" />
-      </CardHeader>
-      <CardContent>
-        {step === 'contact' && renderContactInfo()}
-        {step === 'provider' && renderProviderInfo()}
-        {step === 'profile' && renderBusinessProfile()}
-        {step === 'security' && renderSecurityQuestions()}
-        {step === 'compliance' && renderComplianceQuestions()}
-        {step === 'results' && renderResults()}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {step !== 'contact' && (
-          <Button variant="outline" onClick={previousStep}>
-            Previous
-          </Button>
-        )}
-        {step !== 'results' && (
-          <Button className="ml-auto" onClick={nextStep}>
-            {step === 'compliance' ? 'View Results' : 'Next'}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
-  );
-}
+              transition={{ delay
