@@ -1,6 +1,5 @@
 
-import React from "react";
-import RiskAssessmentForm from "@/components/RiskAssessment/RiskAssessmentForm";
+import { RiskAssessmentForm } from "@/components/RiskAssessment/RiskAssessmentForm";
 import { ShieldCheck, Network, Search, Zap, Activity, CheckCheck } from "lucide-react";
 
 const Index = () => {
