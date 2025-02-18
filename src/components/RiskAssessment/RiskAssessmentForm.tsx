@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
-import { calculateRiskScore, calculatePricing } from './calculateScore';
+import { calculateRiskScore } from './calculateScore';
+import { calculatePricing } from './calculatePricing';
 import { Button } from '@/components/ui/button';
 import {
   Card,
