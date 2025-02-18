@@ -46,12 +46,11 @@ const getPerUserPrice = (userCount: number): number => {
 
 export const calculatePricing = (data: AssessmentData) => {
   const basePrice = BASE_PRICES[data.businessSize];
-  const estimatedUsers = USER_COUNT_ESTIMATES[data.businessSize];
   
-  // 1. Calculate industry multiplier component
-  const industryComponent = basePrice * INDUSTRY_MULTIPLIERS[data.industry];
+  // Step 1: Calculate base package with industry multiplier
+  const basePackageWithMultiplier = basePrice * INDUSTRY_MULTIPLIERS[data.industry];
   
-  // 2. Calculate additional factors (capped at 25%)
+  // Step 2: Calculate additional factors separately
   let additionalFactorsPercentage = 0;
 
   if (data.sensitiveData === 'Yes') {
@@ -74,20 +73,19 @@ export const calculatePricing = (data: AssessmentData) => {
     additionalFactorsPercentage += 0.05; // +5%
   }
 
-  // Cap additional factors at 25%
-  additionalFactorsPercentage = Math.min(additionalFactorsPercentage, 0.25);
+  // Cap additional factors at 25% and calculate additional amount
+  const cappedAdditionalPercentage = Math.min(additionalFactorsPercentage, 0.25);
+  const additionalAmount = basePrice * cappedAdditionalPercentage;
   
-  // Calculate additional factors component
-  const additionalFactorsComponent = basePrice * additionalFactorsPercentage;
+  // Step 3: Calculate final base package (industry multiplier + additional factors)
+  const finalBasePackage = basePackageWithMultiplier + additionalAmount;
   
-  // 3. Calculate final base package (industry + additional factors applied separately)
-  const finalBasePackage = industryComponent + additionalFactorsComponent;
-  
-  // 4. Calculate per-user cost using new tiered pricing
+  // Step 4: Calculate per-user cost
+  const estimatedUsers = USER_COUNT_ESTIMATES[data.businessSize];
   const perUserPrice = getPerUserPrice(estimatedUsers);
   const perUserCost = perUserPrice * estimatedUsers;
   
-  // 5. Calculate total price
+  // Step 5: Calculate total price
   const totalPrice = Math.round(finalBasePackage + perUserCost);
 
   return {
@@ -96,8 +94,8 @@ export const calculatePricing = (data: AssessmentData) => {
     perUserCost: Math.round(perUserCost),
     perUserPrice,
     estimatedUsers,
-    industryComponent: Math.round(industryComponent),
-    additionalFactorsComponent: Math.round(additionalFactorsComponent)
+    basePackageWithMultiplier: Math.round(basePackageWithMultiplier),
+    additionalAmount: Math.round(additionalAmount)
   };
 };
 
