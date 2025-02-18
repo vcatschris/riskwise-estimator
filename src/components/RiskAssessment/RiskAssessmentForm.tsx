@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { AssessmentData, BusinessSize, Industry, ITSupport, TimePeriod, BackupFrequency, DisruptionFrequency, ResponseTime, YesNoNotSure, CloudProvider, SupportDuration } from './types';
+import { calculateRiskScore } from './calculateScore';
+import { RiskReport } from './RiskReport';
 import { motion } from 'framer-motion';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -33,11 +37,31 @@ import {
 import { Slider } from "@/components/ui/slider"
 import { CheckCheck, ShieldCheck, Network, Search, Zap, Activity, PoundSterling } from "lucide-react";
 
-import { calculateRiskScore } from './calculateScore';
-import { AssessmentData, RiskScore } from './types';
-import { RiskReport } from './RiskReport';
+const initialFormData: AssessmentData = {
+  name: '',
+  email: '',
+  businessName: '',
+  newsletter: false,
+  
+  currentProvider: false,
+  providerDuration: 'No current provider',
+  cloudProvider: "Don't Know",
+  
+  industry: 'Other',
+  businessSize: '1-5',
+  sensitiveData: 'No',
+  internalIT: 'No',
+  cloudServices: 'No',
+  lastAudit: 'Never',
+  mfaEnabled: 'No',
+  backupFrequency: "We don't back up data",
+  endpointProtection: 'No',
+  dataRegulations: 'No',
+  phishingAttempt: 'No',
+  itIssues: 'Rarely',
+  responseNeeded: 'Within a few days'
+};
 
-// Updated pricing configuration
 const BASE_PACKAGE_PRICING = {
   'Small': 350,  // 1-10 employees
   'Medium': 700, // 11-50 employees
@@ -57,20 +81,7 @@ const REGULATED_INDUSTRIES = ['Legal', 'Finance', 'Healthcare', 'Accounting'] as
 type FormData = AssessmentData;
 
 const RiskAssessmentForm = () => {
-  const [formData, setFormData] = useState<FormData>({
-    businessSize: '1-5',
-    industry: 'Other',
-    sensitiveData: 'No',
-    internalIT: 'No',
-    cloudServices: 'No',
-    lastAudit: 'Never',
-    mfaEnabled: 'No',
-    backupFrequency: "We don't back up data",
-    endpointProtection: 'No',
-    dataRegulations: 'No',
-    itIssues: 'Rarely',
-    responseNeeded: 'Within a few days',
-  });
+  const [formData, setFormData] = useState<FormData>(initialFormData);
   const [riskScore, setRiskScore] = useState<RiskScore | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [showEstimate, setShowEstimate] = useState(false);
@@ -82,16 +93,41 @@ const RiskAssessmentForm = () => {
     industryMultiplier: 1
   });
 
-  useEffect(() => {
-    if (showEstimate) {
-      const calculatedCosts = calculateMonthlyCost();
-      setCosts(calculatedCosts);
-    }
-  }, [formData, showEstimate]);
+  const handleInputChange = (field: keyof AssessmentData, value: any) => {
+    setFormData((prev: AssessmentData) => {
+      const newData = { ...prev };
+      
+      if (field === 'businessSize') {
+        newData[field] = value as BusinessSize;
+      } else if (field === 'industry') {
+        newData[field] = value as Industry;
+      } else if (field === 'internalIT') {
+        newData[field] = value as ITSupport;
+      } else if (field === 'lastAudit') {
+        newData[field] = value as TimePeriod;
+      } else if (field === 'backupFrequency') {
+        newData[field] = value as BackupFrequency;
+      } else if (field === 'itIssues') {
+        newData[field] = value as DisruptionFrequency;
+      } else if (field === 'responseNeeded') {
+        newData[field] = value as ResponseTime;
+      } else if (['sensitiveData', 'mfaEnabled', 'endpointProtection', 'dataRegulations', 'phishingAttempt'].includes(field)) {
+        newData[field] = value as YesNoNotSure;
+      } else if (field === 'cloudProvider') {
+        newData[field] = value as CloudProvider;
+      } else if (field === 'providerDuration') {
+        newData[field] = value as SupportDuration;
+      } else {
+        (newData as any)[field] = value;
+      }
+      
+      return newData;
+    });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    handleInputChange(name, value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -111,7 +147,6 @@ const RiskAssessmentForm = () => {
   };
 
   const calculateMonthlyCost = () => {
-    // Determine business size category and base price
     let businessSizeCategory;
     let userCount;
     
@@ -143,24 +178,18 @@ const RiskAssessmentForm = () => {
 
     const basePrice = BASE_PACKAGE_PRICING[businessSizeCategory as keyof typeof BASE_PACKAGE_PRICING];
 
-    // Calculate per-user price based on user count
     const perUserPrice = PER_USER_PRICING.find(tier => userCount <= tier.maxUsers)?.price || 30;
 
-    // Determine industry multiplier
     const industryMultiplier = REGULATED_INDUSTRIES.includes(formData.industry || 'Other') ? 1.25 : 1;
 
-    // Calculate total user cost with industry multiplier
     const totalUserCost = userCount * perUserPrice * industryMultiplier;
 
-    // Add additional factors based on form responses
     let additionalCosts = 0;
     
-    // Additional security needs
     if (formData.sensitiveData === 'Yes') additionalCosts += 150;
     if (formData.mfaEnabled === 'No') additionalCosts += 100;
     if (formData.backupFrequency === 'Daily') additionalCosts += 100;
     
-    // Response time pricing
     switch(formData.responseNeeded) {
       case 'Within minutes':
         additionalCosts += 500;
@@ -176,7 +205,6 @@ const RiskAssessmentForm = () => {
         break;
     }
 
-    // Return both base and per-user costs for display
     return {
       basePrice: Math.round(basePrice + additionalCosts),
       perUserPrice: Math.round(perUserPrice),
@@ -186,7 +214,7 @@ const RiskAssessmentForm = () => {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div className="container max-w-4xl mx-auto py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -204,7 +232,7 @@ const RiskAssessmentForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="businessSize">Business Size</Label>
-                <Select value={formData.businessSize} onValueChange={(value) => setFormData(prev => ({ ...prev, businessSize: value }))}>
+                <Select value={formData.businessSize} onValueChange={(value) => handleInputChange('businessSize', value)}>
                   <SelectTrigger id="businessSize">
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
@@ -220,7 +248,7 @@ const RiskAssessmentForm = () => {
 
               <div>
                 <Label htmlFor="industry">Industry</Label>
-                <Select value={formData.industry} onValueChange={(value) => setFormData(prev => ({ ...prev, industry: value }))}>
+                <Select value={formData.industry} onValueChange={(value) => handleInputChange('industry', value)}>
                   <SelectTrigger id="industry">
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
@@ -239,7 +267,7 @@ const RiskAssessmentForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="sensitiveData">Handle Sensitive Data?</Label>
-                <Select value={formData.sensitiveData} onValueChange={(value) => setFormData(prev => ({ ...prev, sensitiveData: value }))}>
+                <Select value={formData.sensitiveData} onValueChange={(value) => handleInputChange('sensitiveData', value)}>
                   <SelectTrigger id="sensitiveData">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
@@ -252,7 +280,7 @@ const RiskAssessmentForm = () => {
 
               <div>
                 <Label htmlFor="internalIT">Internal IT Support?</Label>
-                <Select value={formData.internalIT} onValueChange={(value) => setFormData(prev => ({ ...prev, internalIT: value }))}>
+                <Select value={formData.internalIT} onValueChange={(value) => handleInputChange('internalIT', value)}>
                   <SelectTrigger id="internalIT">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
@@ -268,7 +296,7 @@ const RiskAssessmentForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="lastAudit">Last Security Audit?</Label>
-                <Select value={formData.lastAudit} onValueChange={(value) => setFormData(prev => ({ ...prev, lastAudit: value }))}>
+                <Select value={formData.lastAudit} onValueChange={(value) => handleInputChange('lastAudit', value)}>
                   <SelectTrigger id="lastAudit">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
@@ -283,7 +311,7 @@ const RiskAssessmentForm = () => {
 
               <div>
                 <Label htmlFor="mfaEnabled">Multi-Factor Authentication?</Label>
-                <Select value={formData.mfaEnabled} onValueChange={(value) => setFormData(prev => ({ ...prev, mfaEnabled: value }))}>
+                <Select value={formData.mfaEnabled} onValueChange={(value) => handleInputChange('mfaEnabled', value)}>
                   <SelectTrigger id="mfaEnabled">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
@@ -299,7 +327,7 @@ const RiskAssessmentForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="backupFrequency">Data Backup Frequency</Label>
-                <Select value={formData.backupFrequency} onValueChange={(value) => setFormData(prev => ({ ...prev, backupFrequency: value }))}>
+                <Select value={formData.backupFrequency} onValueChange={(value) => handleInputChange('backupFrequency', value)}>
                   <SelectTrigger id="backupFrequency">
                     <SelectValue placeholder="Select frequency" />
                   </SelectTrigger>
@@ -314,7 +342,7 @@ const RiskAssessmentForm = () => {
 
               <div>
                 <Label htmlFor="dataRegulations">Subject to Data Regulations?</Label>
-                <Select value={formData.dataRegulations} onValueChange={(value) => setFormData(prev => ({ ...prev, dataRegulations: value }))}>
+                <Select value={formData.dataRegulations} onValueChange={(value) => handleInputChange('dataRegulations', value)}>
                   <SelectTrigger id="dataRegulations">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
@@ -330,7 +358,7 @@ const RiskAssessmentForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="itIssues">Frequency of IT Issues</Label>
-                <Select value={formData.itIssues} onValueChange={(value) => setFormData(prev => ({ ...prev, itIssues: value }))}>
+                <Select value={formData.itIssues} onValueChange={(value) => handleInputChange('itIssues', value)}>
                   <SelectTrigger id="itIssues">
                     <SelectValue placeholder="Select frequency" />
                   </SelectTrigger>
@@ -345,7 +373,7 @@ const RiskAssessmentForm = () => {
 
               <div>
                 <Label htmlFor="responseNeeded">Response Time Needed</Label>
-                <Select value={formData.responseNeeded} onValueChange={(value) => setFormData(prev => ({ ...prev, responseNeeded: value }))}>
+                <Select value={formData.responseNeeded} onValueChange={(value) => handleInputChange('responseNeeded', value)}>
                   <SelectTrigger id="responseNeeded">
                     <SelectValue placeholder="Select time" />
                   </SelectTrigger>
