@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
-import { calculateRiskScore } from './calculateScore';
+import { calculateRiskScore, calculatePricing } from './calculateScore';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -554,6 +554,7 @@ export function RiskAssessmentForm() {
 
   const renderResults = () => {
     const assessment = calculateRiskScore(formData as AssessmentData);
+    const pricing = calculatePricing(formData as AssessmentData);
 
     const renderRiskAndValueList = (category: string) => {
       const categoryData = assessment.details.find(detail => detail.category === category) as CategoryDetail;
@@ -594,36 +595,7 @@ export function RiskAssessmentForm() {
     };
 
     const calculateMonthlyCost = () => {
-      let basePrice = 0;
-      let perUserPrice = 0;
-      
-      // Base price factors
-      if (formData.dataRegulations === 'Yes') basePrice += 200;
-      if (formData.sensitiveData === 'Yes') basePrice += 150;
-      if (formData.backupFrequency === 'Daily') basePrice += 100;
-      
-      // Response time pricing
-      switch(formData.responseNeeded) {
-        case 'Within minutes': basePrice += 500; break;
-        case 'Within an hour': basePrice += 300; break;
-        case 'Same day': basePrice += 200; break;
-        case 'Within a few days': basePrice += 100; break;
-      }
-      
-      // Per user pricing based on service level
-      switch(formData.businessSize) {
-        case '1-5': perUserPrice = 45; break;
-        case '6-20': perUserPrice = 40; break;
-        case '21-50': perUserPrice = 35; break;
-        case '51-100': perUserPrice = 30; break;
-        case '100+': perUserPrice = 25; break;
-      }
-      
-      // Additional factors
-      if (formData.mfaEnabled === 'Yes') perUserPrice += 5;
-      if (formData.itIssues === 'Daily') perUserPrice += 10;
-      
-      return { basePrice, perUserPrice };
+      return pricing;
     };
 
     const costs = calculateMonthlyCost();
@@ -717,10 +689,10 @@ export function RiskAssessmentForm() {
                     <h4 className="text-xl font-semibold text-brand-orange">Base Package Investment</h4>
                     <p className="text-3xl font-bold">
                       <span className="text-sm italic text-brand-orange">from </span>
-                      £{costs.basePrice.toLocaleString()}/month
+                      £{costs.basePackage.toLocaleString()}/month
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ {formData.dataRegulations === 'Yes' ? 'Compliance management' : 'Basic compliance support'}</p>
+                      <p>✓ {costs.isHighCompliance ? 'Compliance management' : 'Basic compliance support'}</p>
                       <p>✓ {formData.sensitiveData === 'Yes' ? 'Enhanced security measures' : 'Standard security package'}</p>
                       <p>✓ {formData.backupFrequency} data backups</p>
                       <p>✓ {formData.responseNeeded} support response time</p>
@@ -728,13 +700,12 @@ export function RiskAssessmentForm() {
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Per User Investment</h4>
+                    <h4 className="text-xl font-semibold text-brand-orange">Value Proposition</h4>
                     <p className="text-3xl font-bold">
-                      <span className="text-sm italic text-brand-orange">typically </span>
-                      £{costs.perUserPrice.toLocaleString()}/user/month
+                      {costs.isHighCompliance ? 'High Compliance' : 'Standard'} Package
                     </p>
                     <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ User support and management</p>
+                      <p>✓ {userRange} users support and management</p>
                       <p>✓ {formData.mfaEnabled === 'Yes' ? 'Multi-factor authentication' : 'Basic authentication'}</p>
                       <p>✓ Software licenses and management</p>
                       <p>✓ Device monitoring and support</p>
@@ -748,18 +719,18 @@ export function RiskAssessmentForm() {
                     <div>
                       <p className="text-sm text-muted-foreground">Estimated Monthly Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{(costs.basePrice + (costs.perUserPrice * userRange)).toLocaleString()}/month
+                        £{costs.totalPrice.toLocaleString()}/month
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Estimated Annual Investment</p>
                       <p className="text-2xl font-bold text-brand-orange">
-                        £{((costs.basePrice + (costs.perUserPrice * userRange)) * 12).toLocaleString()}/year
+                        £{costs.annualPrice.toLocaleString()}/year
                       </p>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    (Based on industry norms for {userRange} users. Actual investment varies based on business needs and specific service requirements.)
+                    Based on industry norms for {userRange} users in {costs.isHighCompliance ? 'regulated' : 'standard'} industries.
                   </p>
                   <div className="space-y-2 pt-4">
                     <p className="text-sm font-medium">📞 Want a clearer picture of how your IT setup compares?</p>
