@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -8,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -54,7 +52,7 @@ const BASE_PACKAGE_PRICING = {
   'Small': 350,  // 1-10 employees
   'Medium': 700, // 11-50 employees
   'Large': 1200  // 51+ employees
-};
+} as const;
 
 const PER_USER_PRICING = [
   { maxUsers: 10, price: 50 },   // 1-10 users
@@ -62,9 +60,9 @@ const PER_USER_PRICING = [
   { maxUsers: 50, price: 40 },   // 26-50 users
   { maxUsers: 100, price: 35 },  // 51-100 users
   { maxUsers: Infinity, price: 30 } // 100+ users
-];
+] as const;
 
-const REGULATED_INDUSTRIES = ['Legal', 'Finance', 'Healthcare', 'Accounting'];
+const REGULATED_INDUSTRIES = ['Legal', 'Finance', 'Healthcare', 'Accounting'] as const;
 
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
@@ -129,6 +127,7 @@ export function RiskAssessmentForm() {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
+      
     }));
   };
 
@@ -841,4 +840,3 @@ export function RiskAssessmentForm() {
           <div className="text-center space-y-4">
             <motion.div
               initial={{ scale: 0.9 }}
-              animate
