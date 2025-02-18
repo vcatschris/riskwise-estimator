@@ -42,10 +42,10 @@ export function ScoreSection({ assessment }: ScoreSectionProps) {
                 <TooltipContent 
                   className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
                   sideOffset={5}
-                  align="centre"
+                  align="center"
                   side="bottom"
                 >
-                  <div className="text-centre space-y-3">
+                  <div className="text-center space-y-3">
                     <p className="font-medium text-purple-900 dark:text-purple-100">Risk Score (0-100) measures potential vulnerabilities across:</p>
                     <ul className="space-y-2 text-purple-800 dark:text-purple-200">
                       <li>Business Profile (33%)</li>
@@ -72,10 +72,10 @@ export function ScoreSection({ assessment }: ScoreSectionProps) {
                 <TooltipContent 
                   className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
                   sideOffset={5}
-                  align="centre"
+                  align="center"
                   side="bottom"
                 >
-                  <div className="text-centre space-y-3">
+                  <div className="text-center space-y-3">
                     <p className="font-medium text-purple-900 dark:text-purple-100">Value Score (0-100) indicates potential benefits from improvements:</p>
                     <ul className="space-y-2 text-purple-800 dark:text-purple-200">
                       <li>Business Profile Value (33%)</li>
