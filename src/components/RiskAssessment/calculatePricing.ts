@@ -1,7 +1,7 @@
 
 import { AssessmentData } from './types';
 
-const BASE_PRICES = {
+export const BASE_PRICES = {
   '1-5': 350,
   '6-20': 700,
   '21-50': 1200,
