@@ -19,6 +19,9 @@ const Index = () => {
             Take our no-pressure assessment to understand your IT security posture and get personalised recommendations. 
             View your results instantly - no sales calls unless you specifically request them.
           </p>
+          <p className="mt-2 text-sm italic text-gray-400">
+            We won't email you unless you've booked a call or signed up to the newsletter!
+          </p>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 max-w-4xl mx-auto mt-8">
             <div className="flex flex-col items-center space-y-2 p-3 sm:p-4 bg-secondary/50 rounded-lg">
