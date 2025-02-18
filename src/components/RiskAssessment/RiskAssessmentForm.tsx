@@ -768,48 +768,64 @@ export function RiskAssessmentForm() {
               <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
               <div className="flex justify-center gap-8 mt-6">
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>Risk Score (0-100) measures potential vulnerabilities across:</p>
-                          <ul className="list-disc ml-4 mt-1">
+                  <p className="text-2xl font-semibold">{assessment.total} / {assessment.maxPossible}</p>
+                  <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                        <span>What's this?</span>
+                        <Info className="h-3 w-3" />
+                      </TooltipTrigger>
+                      <TooltipContent 
+                        className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
+                        sideOffset={5}
+                        align="center"
+                        side="bottom"
+                      >
+                        <div className="text-center space-y-3">
+                          <p className="font-medium text-purple-900 dark:text-purple-100">Risk Score (0-100) measures potential vulnerabilities across:</p>
+                          <ul className="space-y-2 text-purple-800 dark:text-purple-200">
                             <li>Business Profile (33%)</li>
                             <li>Security Measures (33%)</li>
                             <li>Compliance & Support (34%)</li>
                           </ul>
-                          <p className="mt-1">Higher scores indicate greater risk exposure.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <p className="text-2xl font-semibold">{assessment.total} / {assessment.maxPossible}</p>
+                          <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
+                            Higher scores indicate greater risk exposure.
+                          </p>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <p className="text-sm text-muted-foreground mb-1">Value Score</p>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>Value Score (0-100) indicates potential benefits from improvements:</p>
-                          <ul className="list-disc ml-4 mt-1">
+                  <p className="text-2xl font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
+                  <p className="text-sm text-muted-foreground mb-1">Value Score</p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                        <span>What's this?</span>
+                        <Info className="h-3 w-3" />
+                      </TooltipTrigger>
+                      <TooltipContent 
+                        className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
+                        sideOffset={5}
+                        align="center"
+                        side="bottom"
+                      >
+                        <div className="text-center space-y-3">
+                          <p className="font-medium text-purple-900 dark:text-purple-100">Value Score (0-100) indicates potential benefits from improvements:</p>
+                          <ul className="space-y-2 text-purple-800 dark:text-purple-200">
                             <li>Business Profile Value (33%)</li>
                             <li>Security Enhancement Value (33%)</li>
                             <li>Compliance & Support Value (34%)</li>
                           </ul>
-                          <p className="mt-1">Higher scores suggest greater opportunity for improvement.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <p className="text-2xl font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
+                          <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
+                            Higher scores suggest greater opportunity for improvement.
+                          </p>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </motion.div>
