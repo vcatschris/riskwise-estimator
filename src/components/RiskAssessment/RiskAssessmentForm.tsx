@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
 import { calculateRiskScore } from './calculateScore';
 import { Button } from '@/components/ui/button';
@@ -47,7 +47,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Pricing configuration
 const BASE_PACKAGE_PRICING = {
   'Small': 350,  // 1-10 employees
   'Medium': 700, // 11-50 employees
@@ -610,80 +609,72 @@ export function RiskAssessmentForm() {
       );
     };
 
-  const calculateMonthlyCost = () => {
-    // Determine business size category and base price
-    let businessSizeCategory;
-    let userCount;
-    
-    switch(formData.businessSize) {
-      case '1-5':
-        businessSizeCategory = 'Small';
-        userCount = 5;
-        break;
-      case '6-20':
-        businessSizeCategory = 'Medium';
-        userCount = 20;
-        break;
-      case '21-50':
-        businessSizeCategory = 'Medium';
-        userCount = 50;
-        break;
-      case '51-100':
-        businessSizeCategory = 'Large';
-        userCount = 100;
-        break;
-      case '100+':
-        businessSizeCategory = 'Large';
-        userCount = 150; // Assumption for calculation purposes
-        break;
-      default:
-        businessSizeCategory = 'Small';
-        userCount = 5;
-    }
+    const calculateMonthlyCost = () => {
+      let businessSizeCategory;
+      let userCount;
+      
+      switch(formData.businessSize) {
+        case '1-5':
+          businessSizeCategory = 'Small';
+          userCount = 5;
+          break;
+        case '6-20':
+          businessSizeCategory = 'Medium';
+          userCount = 20;
+          break;
+        case '21-50':
+          businessSizeCategory = 'Medium';
+          userCount = 50;
+          break;
+        case '51-100':
+          businessSizeCategory = 'Large';
+          userCount = 100;
+          break;
+        case '100+':
+          businessSizeCategory = 'Large';
+          userCount = 150; // Assumption for calculation purposes
+          break;
+        default:
+          businessSizeCategory = 'Small';
+          userCount = 5;
+      }
 
-    const basePrice = BASE_PACKAGE_PRICING[businessSizeCategory as keyof typeof BASE_PACKAGE_PRICING];
+      const basePrice = BASE_PACKAGE_PRICING[businessSizeCategory as keyof typeof BASE_PACKAGE_PRICING];
 
-    // Calculate per-user price based on user count
-    const perUserPrice = PER_USER_PRICING.find(tier => userCount <= tier.maxUsers)?.price || 30;
+      const perUserPrice = PER_USER_PRICING.find(tier => userCount <= tier.maxUsers)?.price || 30;
 
-    // Determine industry multiplier
-    const industryMultiplier = REGULATED_INDUSTRIES.includes(formData.industry || 'Other') ? 1.25 : 1;
+      const industryMultiplier = REGULATED_INDUSTRIES.includes(formData.industry || 'Other') ? 1.25 : 1;
 
-    // Calculate total user cost with industry multiplier
-    const totalUserCost = userCount * perUserPrice * industryMultiplier;
+      const totalUserCost = userCount * perUserPrice * industryMultiplier;
 
-    // Add additional factors based on form responses
-    let additionalCosts = 0;
-    
-    // Additional security needs
-    if (formData.sensitiveData === 'Yes') additionalCosts += 150;
-    if (formData.mfaEnabled === 'No') additionalCosts += 100;
-    if (formData.backupFrequency === 'Daily') additionalCosts += 100;
-    
-    // Response time pricing
-    switch(formData.responseNeeded) {
-      case 'Within minutes':
-        additionalCosts += 500;
-        break;
-      case 'Within an hour':
-        additionalCosts += 300;
-        break;
-      case 'Same day':
-        additionalCosts += 200;
-        break;
-      case 'Within a few days':
-        additionalCosts += 100;
-        break;
-    }
+      let additionalCosts = 0;
+      
+      if (formData.sensitiveData === 'Yes') additionalCosts += 150;
+      if (formData.mfaEnabled === 'No') additionalCosts += 100;
+      if (formData.backupFrequency === 'Daily') additionalCosts += 100;
+      
+      switch(formData.responseNeeded) {
+        case 'Within minutes':
+          additionalCosts += 500;
+          break;
+        case 'Within an hour':
+          additionalCosts += 300;
+          break;
+        case 'Same day':
+          additionalCosts += 200;
+          break;
+        case 'Within a few days':
+          additionalCosts += 100;
+          break;
+      }
 
-    // Return both base and per-user costs for display
-    return {
-      basePrice: Math.round(basePrice + additionalCosts),
-      perUserPrice: Math.round(perUserPrice),
-      userCount: userCount,
-      industryMultiplier: industryMultiplier
+      return {
+        basePrice: Math.round(basePrice + additionalCosts),
+        perUserPrice: Math.round(perUserPrice),
+        userCount: userCount,
+        industryMultiplier: industryMultiplier
+      };
     };
-  };
 
     const costs = calculateMonthlyCost();
     const userRange = costs.userCount;
@@ -840,3 +831,112 @@ export function RiskAssessmentForm() {
           <div className="text-center space-y-4">
             <motion.div
               initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="space-y-4"
+            >
+              <div className="text-center">
+                <h2 className="text-3xl font-bold mb-2">{title}</h2>
+                <p className="text-muted-foreground">{description}</p>
+              </div>
+
+              <Progress value={progress} className="h-2" />
+
+              <div className="mt-8">
+                <div className="space-y-4">
+                  {renderRiskAndValueList('Risk')}
+                  {renderRiskAndValueList('Value')}
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold text-brand-orange">Risk Score</h4>
+                  <p className={`text-3xl font-bold ${riskColor}`}>
+                    {assessment.total}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold text-brand-orange">Executive Summary</h4>
+                  <p className="text-2xl font-bold">
+                    {assessment.executiveSummary}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold text-brand-orange">Category Details</h4>
+                  <ul className="space-y-2">
+                    {assessment.details.map((detail) => (
+                      <li key={detail.category} className="flex items-start gap-2">
+                        <span className="mt-1">{detail.category}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  return (
+    <div className="container max-w-4xl mx-auto py-8">
+      <AnimatePresence mode="wait">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2">{title}</h2>
+          <p className="text-muted-foreground">{description}</p>
+        </div>
+
+        <div className="mb-8">
+          <Progress value={progress} className="h-2" />
+        </div>
+
+        {step === 'contact' && renderContactInfo()}
+        {step === 'provider' && renderProviderInfo()}
+        {step === 'profile' && renderBusinessProfile()}
+        {step === 'security' && renderSecurityQuestions()}
+        {step === 'compliance' && renderComplianceQuestions()}
+        {step === 'results' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {renderResults()}
+          </motion.div>
+        )}
+
+        <div className="flex justify-end">
+          <Button
+            onClick={handlePDFDownload}
+            variant="secondary"
+            size="lg"
+            className="flex items-center gap-2"
+          >
+            <FileDown className="h-4 w-4" />
+            Save as PDF
+          </Button>
+        </div>
+
+        <div className="flex justify-between mt-8">
+          {step !== 'contact' && (
+            <Button onClick={previousStep} variant="outline">
+              Back
+            </Button>
+          )}
+          {step !== 'results' && (
+            <Button onClick={nextStep} className="ml-auto">
+              Continue
+            </Button>
+          )}
+        </div>
+      </AnimatePresence>
+    </div>
+  );
+}
