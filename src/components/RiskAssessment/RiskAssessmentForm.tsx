@@ -43,11 +43,9 @@ import {
 import { calculateRiskScore } from "./calculateScore";
 import { calculatePricing } from './calculatePricing';
 
-interface RiskAssessmentFormProps {}
-
-const RiskAssessmentForm: React.FC<RiskAssessmentFormProps> = () => {
+const RiskAssessmentForm: React.FC = () => {
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
-    newsletter: true, // Default value for newsletter
+    newsletter: true,
   });
   const [showResults, setShowResults] = useState(false);
   const [showEstimate, setShowEstimate] = useState(false);
