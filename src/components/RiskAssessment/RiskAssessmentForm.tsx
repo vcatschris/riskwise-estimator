@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion as m } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
 import { calculateRiskScore } from './calculateScore';
 import { calculatePricing } from './calculatePricing';
@@ -38,8 +38,7 @@ import {
   HelpCircle,
   FileDown,
   Calculator,
-  PoundSterling,
-  Info
+  PoundSterling
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -49,6 +48,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
@@ -292,6 +292,242 @@ export function RiskAssessmentForm() {
     }
   };
 
+  const renderContactInfo = () => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-4"
+    >
+      <div className="space-y-2">
+        <Label htmlFor="name">Full Name (main point of contact)</Label>
+        <Input
+          id="name"
+          value={formData.name || ''}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          placeholder="Enter your full name"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="email">Business Email (for your IT assessment report)</Label>
+        <Input
+          id="email"
+          type="email"
+          value={formData.email || ''}
+          onChange={(e) => handleInputChange('email', e.target.value)}
+          placeholder="Enter your work email (e.g., name@company.com)"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="businessName">Company or Organization Name</Label>
+        <Input
+          id="businessName"
+          value={formData.businessName || ''}
+          onChange={(e) => handleInputChange('businessName', e.target.value)}
+          placeholder="Your company's legal or trading name"
+        />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="newsletter"
+          checked={formData.newsletter}
+          onCheckedChange={(checked) => handleInputChange('newsletter', checked)}
+        />
+        <Label htmlFor="newsletter">Receive monthly security tips & IT best practices newsletter</Label>
+      </div>
+    </motion.div>
+  );
+
+  const renderProviderInfo = () => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-4"
+    >
+      <div className="rounded-lg border p-4 shadow-sm">
+        <div className="flex items-center space-x-3">
+          <Checkbox
+            id="currentProvider"
+            checked={formData.currentProvider}
+            onCheckedChange={(checked) => handleInputChange('currentProvider', checked)}
+            className="h-5 w-5"
+          />
+          <Label htmlFor="currentProvider" className="text-lg font-medium">
+            We currently have IT support (internal team or external provider)
+          </Label>
+        </div>
+      </div>
+
+      {formData.currentProvider && (
+        <Select onValueChange={(value) => handleInputChange('providerDuration', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="How long have you had this IT support?" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
+            <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
+            <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
+            <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
+          </SelectContent>
+        </Select>
+      )}
+
+      <Select onValueChange={(value) => handleInputChange('cloudProvider', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Which platform do you use for email & documents?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Microsoft">Microsoft 365 (formerly Office 365)</SelectItem>
+          <SelectItem value="Google">Google Workspace (formerly G Suite)</SelectItem>
+          <SelectItem value="Other">Another provider or on-premise system</SelectItem>
+          <SelectItem value="Don't Know">Not sure which system we use</SelectItem>
+        </SelectContent>
+      </Select>
+    </motion.div>
+  );
+
+  const renderBusinessProfile = () => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-4"
+    >
+      <Select onValueChange={(value) => handleInputChange('industry', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="What type of business are you? (for compliance needs)" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Accounting">Accounting & Tax Services (e.g., CPAs, Bookkeepers)</SelectItem>
+          <SelectItem value="Legal">Legal Services (e.g., Law Firms, Notaries)</SelectItem>
+          <SelectItem value="Finance">Financial Services (e.g., Advisory, Planning)</SelectItem>
+          <SelectItem value="Retail">Retail & E-commerce (e.g., Shops, Online Stores)</SelectItem>
+          <SelectItem value="Healthcare">Healthcare & Medical (e.g., Clinics, Practices)</SelectItem>
+          <SelectItem value="Other">Other Industry</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => handleInputChange('businessSize', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="How many employees need IT support?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="1-5">Small Team (1-5 users)</SelectItem>
+          <SelectItem value="6-20">Growing Business (6-20 users)</SelectItem>
+          <SelectItem value="21-50">Mid-sized (21-50 users)</SelectItem>
+          <SelectItem value="51-100">Large Organization (51-100 users)</SelectItem>
+          <SelectItem value="100+">Enterprise (100+ users)</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => handleInputChange('sensitiveData', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Do you handle sensitive information? (customer data, financial records, etc.)" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Yes">Yes - We handle confidential data (needs protection)</SelectItem>
+          <SelectItem value="No">No - We don't handle sensitive information</SelectItem>
+          <SelectItem value="Not Sure">Not sure what counts as sensitive data</SelectItem>
+        </SelectContent>
+      </Select>
+    </motion.div>
+  );
+
+  const renderSecurityQuestions = () => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-4"
+    >
+      <Select onValueChange={(value) => handleInputChange('lastAudit', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="When was your last IT security check? (e.g., vulnerability scan)" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Less than 6 months ago">Recent (within last 6 months)</SelectItem>
+          <SelectItem value="6-12 months ago">Within the past year</SelectItem>
+          <SelectItem value="Over a year ago">More than a year ago</SelectItem>
+          <SelectItem value="Never">Never had a security assessment</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => handleInputChange('mfaEnabled', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Do you use two-step login? (phone code + password)" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Yes">Yes - We use extra security steps when logging in</SelectItem>
+          <SelectItem value="No">No - Just username and password</SelectItem>
+          <SelectItem value="Not Sure">Not sure what this means</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => handleInputChange('backupFrequency', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="How often do you backup your business data?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Daily">Daily backups</SelectItem>
+          <SelectItem value="Weekly">Weekly backups</SelectItem>
+          <SelectItem value="Monthly">Monthly backups</SelectItem>
+          <SelectItem value="Not Sure">Not sure about our backup schedule</SelectItem>
+          <SelectItem value="We don't back up data">We don't have backups in place</SelectItem>
+        </SelectContent>
+      </Select>
+    </motion.div>
+  );
+
+  const renderComplianceQuestions = () => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-4"
+    >
+      <Select onValueChange={(value) => handleInputChange('dataRegulations', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Do you need to follow data protection laws? (e.g., GDPR, HIPAA)" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Yes">Yes - We must follow specific regulations</SelectItem>
+          <SelectItem value="No">No - No special requirements</SelectItem>
+          <SelectItem value="Not Sure">Not sure about our obligations</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => handleInputChange('itIssues', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="How often do you face IT problems? (e.g., crashes, slowness)" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Daily">Very frequently (multiple times per day)</SelectItem>
+          <SelectItem value="Weekly">Often (several times per week)</SelectItem>
+          <SelectItem value="Occasionally">Sometimes (few times per month)</SelectItem>
+          <SelectItem value="Rarely">Rarely (once every few months)</SelectItem>
+          <SelectItem value="Never">Never have technical issues</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => handleInputChange('responseNeeded', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="How quickly do you need IT problems fixed?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Within minutes">Emergency response (within minutes)</SelectItem>
+          <SelectItem value="Within an hour">Urgent response (within an hour)</SelectItem>
+          <SelectItem value="Same day">Same business day response</SelectItem>
+          <SelectItem value="Within a few days">Within 2-3 business days</SelectItem>
+          <SelectItem value="No urgency">No urgent requirements</SelectItem>
+        </SelectContent>
+      </Select>
+    </motion.div>
+  );
+
   const getCTAContent = (level: string) => {
     switch(level) {
       case 'High':
@@ -392,7 +628,7 @@ export function RiskAssessmentForm() {
         
         const pdf = new jsPDF({
           orientation: 'portrait',
-          unit: 'px',\
+          unit: 'px',
           format: [canvas.width, canvas.height]
         });
         
@@ -413,7 +649,7 @@ export function RiskAssessmentForm() {
     };
 
     return (
-      <m.div
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="space-y-8"
@@ -433,7 +669,7 @@ export function RiskAssessmentForm() {
         </div>
 
         {showEstimate && (
-          <m.div
+          <motion.div
             id="cost-estimate"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -505,7 +741,7 @@ export function RiskAssessmentForm() {
                 </div>
               </CardContent>
             </Card>
-          </m.div>
+          </motion.div>
         )}
 
         <div className="flex justify-end">
@@ -522,7 +758,7 @@ export function RiskAssessmentForm() {
 
         <div id="risk-report">
           <div className="text-center space-y-4">
-            <m.div
+            <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -576,246 +812,4 @@ export function RiskAssessmentForm() {
                         align="center"
                         side="bottom"
                       >
-                        <div className="text-center space-y-3">
-                          <p className="font-medium text-purple-900 dark:text-purple-100">Value Score (0-100) measures potential value and opportunities across:</p>
-                          <ul className="space-y-2 text-purple-800 dark:text-purple-200">
-                            <li>Business Profile (33%)</li>
-                            <li>Security Measures (33%)</li>
-                            <li>Compliance & Support (34%)</li>
-                          </ul>
-                          <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
-                            Higher scores indicate greater value and opportunities.
-                          </p>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            </m.div>
-            <m.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="executive-summary-section p-6 rounded-md shadow-md bg-white dark:bg-gray-800"
-            >
-              <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
-              <p className="text-gray-700 dark:text-gray-300">{assessment.executiveSummary}</p>
-            </m.div>
-          </div>
-
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="category-details-section space-y-6"
-          >
-            <h4 className="text-2xl font-semibold mb-4">Category Details</h4>
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold flex items-center gap-2">
-                  <Building2 className="h-5 w-5" />
-                  Business Profile
-                </CardTitle>
-                <CardDescription>Insights into your business setup</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderRiskAndValueList('Business Profile')}
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Security Measures
-                </CardTitle>
-                <CardDescription>Insights into your security practices</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderRiskAndValueList('Security Measures')}
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5" />
-                  Compliance & Support
-                </CardTitle>
-                <CardDescription>Insights into your compliance and support needs</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {renderRiskAndValueList('Compliance & Support')}
-              </CardContent>
-            </Card>
-          </m.div>
-        </div>
-
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="cta-section mt-12 p-8 rounded-2xl shadow-lg bg-white dark:bg-gray-800"
-        >
-          <div className="text-center space-y-6">
-            <TrendingUp className="mx-auto h-12 w-12 text-brand-orange" />
-            <h3 className="text-2xl font-bold">{ctaContent.title}</h3>
-            <p className="text-gray-700 dark:text-gray-300">{ctaContent.message}</p>
-            <Button size="lg" className="w-full sm:w-auto" variant={ctaContent.variant}>
-              {ctaContent.buttonText}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </m.div>
-      </m.div>
-    );
-  };
-
-  const renderContactInfo = () => (
-    <m.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
-      <div className="space-y-2">
-        <Label htmlFor="name">Full Name (main point of contact)</Label>
-        <Input
-          id="name"
-          value={formData.name || ''}
-          onChange={(e) => handleInputChange('name', e.target.value)}
-          placeholder="Enter your full name"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="email">Business Email (for your IT assessment report)</Label>
-        <Input
-          id="email"
-          type="email"
-          value={formData.email || ''}
-          onChange={(e) => handleInputChange('email', e.target.value)}
-          placeholder="Enter your work email (e.g., name@company.com)"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="businessName">Company or Organization Name</Label>
-        <Input
-          id="businessName"
-          value={formData.businessName || ''}
-          onChange={(e) => handleInputChange('businessName', e.target.value)}
-          placeholder="Your company's legal or trading name"
-        />
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="newsletter"
-          checked={formData.newsletter}
-          onCheckedChange={(checked) => handleInputChange('newsletter', checked)}
-        />
-        <Label htmlFor="newsletter">Receive monthly security tips & IT best practices newsletter</Label>
-      </div>
-    </m.div>
-  );
-
-  const renderProviderInfo = () => (
-    <m.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
-      <div className="rounded-lg border p-4 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <Checkbox
-            id="currentProvider"
-            checked={formData.currentProvider}
-            onCheckedChange={(checked) => handleInputChange('currentProvider', checked)}
-            className="h-5 w-5"
-          />
-          <Label htmlFor="currentProvider" className="text-lg font-medium">
-            We currently have IT support (internal team or external provider)
-          </Label>
-        </div>
-      </div>
-
-      {formData.currentProvider && (
-        <Select onValueChange={(value) => handleInputChange('providerDuration', value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="How long have you had this IT support?" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
-            <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
-            <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
-            <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
-          </SelectContent>
-        </Select>
-      )}
-
-      <Select onValueChange={(value) => handleInputChange('cloudProvider', value)}>
-        <SelectTrigger>
-          <SelectValue placeholder="Which platform do you use for email & documents?" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Microsoft">Microsoft 365 (formerly Office 365)</SelectItem>
-          <SelectItem value="Google">Google Workspace (formerly G Suite)</SelectItem>
-          <SelectItem value="Other">Another provider or on-premise system</SelectItem>
-          <SelectItem value="Don't Know">Not sure which system we use</SelectItem>
-        </SelectContent>
-      </Select>
-    </m.div>
-  );
-
-  const renderBusinessProfile = () => (
-    <m.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
-      <Select onValueChange={(value) => handleInputChange('industry', value)}>
-        <SelectTrigger>
-          <SelectValue placeholder="What type of business are you? (for compliance needs)" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Accounting">Accounting & Tax Services (e.g., CPAs, Bookkeepers)</SelectItem>
-          <SelectItem value="Legal">Legal Services (e.g., Law Firms, Notaries)</SelectItem>
-          <SelectItem value="Finance">Financial Services (e.g., Advisory, Planning)</SelectItem>
-          <SelectItem value="Retail">Retail & E-commerce (e.g., Shops, Online Stores)</SelectItem>
-          <SelectItem value="Healthcare">Healthcare & Medical (e.g., Clinics, Practices)</SelectItem>
-          <SelectItem value="Other">Other Industry</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Select onValueChange={(value) => handleInputChange('businessSize', value)}>
-        <SelectTrigger>
-          <SelectValue placeholder="How many employees need IT support?" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="1-5">Small Team (1-5 users)</SelectItem>
-          <SelectItem value="6-20">Growing Business (6-20 users)</SelectItem>
-          <SelectItem value="21-50">Mid-sized (21-50 users)</SelectItem>
-          <SelectItem value="51-100">Large Organisation (51-100 users)</SelectItem>
-          <SelectItem value="100+">Enterprise (100+ users)</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Select onValueChange={(value) => handleInputChange('sensitiveData', value)}>
-        <SelectTrigger>
-          <SelectValue placeholder="Do you handle sensitive information? (customer data, financial records, etc.)" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Yes">Yes - We handle confidential data (needs protection)</SelectItem>
-          <SelectItem value="No">No - We don't handle sensitive information</SelectItem>
-          <SelectItem value="Not Sure">Not sure what counts as sensitive data</SelectItem>
-        </SelectContent>
-      </Select>
-    </m.div>
-  );
-
-  const renderSecurityQuestions = () => (
-    <m.div
+                        <div className="text-center space
