@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, PoundSterling } from "lucide-react";
+import { Info, PoundSterling, Check } from "lucide-react";
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
@@ -24,6 +24,22 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' 
       : 'text-red-500 bg-red-50 dark:bg-red-950/30';
 
+  const standardFeatures = [
+    'Proactive IT Monitoring & Management',
+    'Help Desk Support',
+    'Cybersecurity Protection',
+    'Data Backup & Recovery',
+    'Software Updates & Patch Management',
+    'Network Management'
+  ];
+
+  const complianceFeatures = [
+    'Industry-Specific Compliance Management',
+    'Enhanced Security Protocols',
+    'Regular Compliance Audits',
+    'Data Protection Officer Services'
+  ];
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
@@ -35,7 +51,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           📊 What should this cost me?
         </Button>
         <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
-          How much do businesses like yours typically invest in IT support?
+          View industry benchmark pricing for your business profile
         </p>
       </div>
 
@@ -45,34 +61,69 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-center space-y-4"
+            className="space-y-6"
           >
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
-              <PoundSterling className="h-6 w-6" />
-              <span>Monthly Investment Benchmark</span>
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 text-sm font-medium mb-4">
+                Industry Benchmark Estimate
+              </div>
+              <div className="flex items-center justify-center gap-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
+                <PoundSterling className="h-6 w-6" />
+                <span>Recommended Investment Range</span>
+              </div>
             </div>
-            <div className="flex justify-center items-center gap-8">
+
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-8 p-6 bg-gray-50 dark:bg-gray-950/30 rounded-lg">
               <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">Monthly Investment</p>
                 <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">
                   £{pricing.totalPrice.toLocaleString()}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">Recommended Monthly</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Range: £{pricing.priceRange.min.toLocaleString()} - £{pricing.priceRange.max.toLocaleString()}
+                </p>
               </div>
+              <div className="hidden sm:block w-px h-20 bg-gray-200 dark:bg-gray-800" />
               <div className="text-center">
-                <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">
+                <p className="text-sm text-muted-foreground mb-2">Annual Investment</p>
+                <p className="text-3xl font-semibold text-purple-600 dark:text-purple-400">
                   £{pricing.annualPrice.toLocaleString()}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">Annual Value</p>
+                <p className="text-sm text-muted-foreground mt-2">Based on monthly rate</p>
               </div>
             </div>
-            <div className="text-sm text-muted-foreground mt-2">
-              Price range: £{pricing.priceRange.min.toLocaleString()} - £{pricing.priceRange.max.toLocaleString()} monthly
-            </div>
-            {pricing.isHighCompliance && (
-              <div className="text-sm text-purple-600 dark:text-purple-400 font-medium mt-2">
-                * Includes additional compliance and security measures for your industry
+
+            <div className="grid sm:grid-cols-2 gap-6 mt-6">
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Standard Features Included</h4>
+                <ul className="space-y-3">
+                  {standardFeatures.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            )}
+              {pricing.isHighCompliance && (
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Industry-Specific Additions</h4>
+                  <ul className="space-y-3">
+                    {complianceFeatures.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <Check className="h-5 w-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="text-sm text-muted-foreground mt-6 bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
+              <strong>Note:</strong> This is an industry benchmark estimate based on businesses of similar size and sector. 
+              Actual pricing may vary based on specific requirements, infrastructure complexity, and custom solutions needed.
+            </div>
           </motion.div>
         </Card>
       )}
