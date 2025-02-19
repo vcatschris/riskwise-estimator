@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -441,286 +440,86 @@ export function RiskAssessmentForm() {
     const assessment = calculateRiskScore(formData as AssessmentData);
     const pricing = calculatePricing(formData as AssessmentData);
 
-    const renderRiskAndValueList = (category: string) => {
-      const categoryData = assessment.details.find(detail => detail.category === category) as CategoryDetail;
-      if (!categoryData) return null;
+    const riskColor = assessment.level === 'Low' ? 'text-green-500 bg-green-50 dark:bg-green-950/30' : 
+                     assessment.level === 'Medium' ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' : 
+                     'text-red-500 bg-red-50 dark:bg-red-950/30';
 
-      return <div className="grid md:grid-cols-2 gap-6 mt-4">
-          <div className="space-y-2">
-            <h5 className="text-red-600 dark:text-red-400 flex items-center gap-2 text-base font-extrabold">
-              <AlertTriangle className="h-4 w-4" />
-              Risk Areas
-            </h5>
-            <ul className="space-y-2">
-              {categoryData.riskAreas.map((risk, index) => <li key={index} className="flex items-start gap-2 text-sm text-red-600 dark:text-red-400">
-                  <span className="mt-1">⚠️</span>
-                  <span>{risk}</span>
-                </li>)}
-            </ul>
-          </div>
-          <div className="space-y-2">
-            <h5 className="text-sm font-medium text-green-600 dark:text-green-400 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" />
-              Value Opportunities
-            </h5>
-            <ul className="space-y-2">
-              {categoryData.valueAreas.map((value, index) => <li key={index} className="flex items-start gap-2 text-sm text-green-600 dark:text-green-400">
-                  <span className="mt-1">✅</span>
-                  <span>{value}</span>
-                </li>)}
-            </ul>
-          </div>
-        </div>;
-    };
-
-    const calculateMonthlyCost = () => {
-      return pricing;
-    };
-
-    const costs = calculateMonthlyCost();
-
-    const userRange = {
-      '1-5': 5,
-      '6-20': 20,
-      '21-50': 50,
-      '51-100': 100,
-      '100+': 150
-    }[formData.businessSize || '1-5'];
-
-    const riskColor = assessment.level === 'Low' ? 'text-green-500 bg-green-50 dark:bg-green-950/30' : assessment.level === 'Medium' ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' : 'text-red-500 bg-red-50 dark:bg-red-950/30';
-    const ctaContent = getCTAContent(assessment.level);
-
-    const handlePDFDownload = async () => {
-      const reportElement = document.getElementById('risk-report');
-      if (!reportElement) return;
-
-      try {
-        toast.loading('Generating PDF...');
-        const canvas = await html2canvas(reportElement);
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-          unit: 'px',
-          format: [canvas.width, canvas.height]
-        });
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save(`IT_Risk_Assessment_${formData.businessName?.replace(/\s+/g, '_')}.pdf`);
-        toast.success('PDF downloaded successfully!');
-      } catch (error) {
-        console.error('PDF generation error:', error);
-        toast.error('Failed to generate PDF');
-      }
-    };
-
-    const scrollToEstimate = () => {
-      const estimateElement = document.getElementById('cost-estimate');
-      if (estimateElement) {
-        estimateElement.scrollIntoView({
-          behavior: 'smooth'
-        });
-      }
-    };
-
-    return <div className="space-y-8">
-        <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
-          <Button onClick={() => setShowEstimate(true)} size="lg" className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center">
-            <BarChart className="w-4 h-4" />
-            <Calculator className="w-4 h-4" /> IT Investment Benchmark
-          </Button>
-          <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
-            How much do businesses like yours typically invest in IT support?
-          </p>
-        </div>
-
-        {showEstimate && <div id="cost-estimate" className="my-12 scroll-mt-8">
-            <Card>
-              <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <PoundSterling className="w-6 h-6 text-brand-orange" />
-                  <TrendingUp className="w-6 h-6" /> Industry Benchmark: Estimated IT Investment
-                </CardTitle>
-                <CardDescription>
-                  Based on your answers about your businesses of similar size, sector and needs
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 space-y-6">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Benchmarked Monthly Investment</h4>
-                    <p className="text-3xl font-bold">
-                      <span className="text-sm italic text-brand-orange">from </span>
-                      ~£{costs.basePackage.toLocaleString()}/month
-                    </p>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ {costs.isHighCompliance ? 'Compliance management' : 'Basic compliance support'}</p>
-                      <p>✓ {formData.sensitiveData === 'Yes' ? 'Enhanced security measures' : 'Standard security package'}</p>
-                      <p>✓ {formData.backupFrequency} data backups</p>
-                      <p>✓ {formData.responseNeeded} support response time</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="text-xl font-semibold text-brand-orange">Value Proposition</h4>
-                    <p className="text-3xl font-bold">
-                      {costs.isHighCompliance ? 'High Compliance' : 'Standard'} Package
-                    </p>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>✓ {userRange} users support and management</p>
-                      <p>✓ {formData.mfaEnabled === 'Yes' ? 'Multi-factor authentication' : 'Basic authentication'}</p>
-                      <p>✓ Software licenses and management</p>
-                      <p>✓ Device monitoring and support</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 p-4 bg-muted/50 rounded-lg space-y-4">
-                  <h4 className="font-semibold">Investment Range Summary</h4>
-                  <div className="space-y-2">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Benchmarked Monthly Investment</p>
-                      <p className="text-2xl font-bold text-brand-orange">
-                        ~£{costs.totalPrice.toLocaleString()}/month
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Benchmarked Annual Investment</p>
-                      <p className="text-2xl font-bold text-brand-orange">
-                        ~£{costs.annualPrice.toLocaleString()}/year
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-4 font-bold">
-                    <BarChart className="inline-block mr-2 h-4 w-4" />
-                    This benchmark reflects typical IT investment for businesses of your size, sector, and needs based on your responses. Actual costs may vary.
-                  </p>
-                  <div className="space-y-2 pt-4">
-                    <p className="text-sm font-medium">
-                      <Phone className="inline-block mr-2 h-4 w-4" /> Want to see if your IT investment aligns with best practices?
-                    </p>
-                    <p className="text-sm text-brand-orange">
-                      <ArrowRight className="inline-block mr-2 h-4 w-4" /> Book a Free IT Review for a personalized assessment of your needs.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>}
-
-        <div className="flex justify-end">
-          <Button onClick={handlePDFDownload} variant="secondary" size="lg" className="flex items-center gap-2">
-            <FileDown className="h-4 w-4" />
-            Save as PDF
-          </Button>
-        </div>
-
-        <div id="risk-report">
-          <div className="text-center space-y-4">
-            <motion.div initial={{
-            scale: 0.9
-          }} animate={{
-            scale: 1
-          }} transition={{
-            delay: 0.2
-          }} className={`score-section p-8 rounded-2xl shadow-lg ${riskColor}`}>
-              <h3 className="text-3xl font-bold mb-2">Risk Assessment Results</h3>
-              <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
-              <div className="flex justify-center gap-8 mt-6">
-                <div className="text-center">
-                  <p className="text-2xl font-semibold">{assessment.total} / {assessment.maxPossible}</p>
-                  <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
-                        <span>What's this?</span>
-                        <InfoIcon className="h-3 w-3" />
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs" sideOffset={5} align="center" side="bottom">
-                        <div className="text-center space-y-3">
-                          <p className="font-medium text-purple-900 dark:text-purple-100">Risk Score (0-100) measures potential vulnerabilities across:</p>
-                          <ul className="space-y-2 text-purple-800 dark:text-purple-200">
-                            <li>Business Profile (33%)</li>
-                            <li>Security Measures (33%)</li>
-                            <li>Compliance & Support (34%)</li>
-                          </ul>
-                          <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
-                            Higher scores indicate greater risk exposure.
-                          </p>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
-                  <p className="text-sm text-muted-foreground mb-1">Value Score</p>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
-                        <span>What's this?</span>
-                        <InfoIcon className="h-3 w-3" />
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs" sideOffset={5} align="center" side="bottom">
-                        <div className="text-center space-y-3">
-                          <p className="font-medium text-purple-900 dark:text-purple-100">Value Score (0-100) indicates potential benefits from improvements:</p>
-                          <ul className="space-y-2 text-purple-800 dark:text-purple-200">
-                            <li>Business Profile Value (33%)</li>
-                            <li>Security Enhancement Value (33%)</li>
-                            <li>Compliance & Support Value (34%)</li>
-                          </ul>
-                          <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
-                            Higher scores suggest greater opportunity for improvement.
-                          </p>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
+    return (
+      <div className="space-y-8">
+        <div className="text-center space-y-4">
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className={`score-section p-8 rounded-2xl shadow-lg ${riskColor}`}
+          >
+            <h3 className="text-3xl font-bold mb-2">Risk Assessment Results</h3>
+            <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
+            <div className="flex justify-center gap-8 mt-6">
+              <div className="text-center">
+                <p className="text-2xl font-semibold">{assessment.total} / {assessment.maxPossible}</p>
+                <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                      <span>What's this?</span>
+                      <InfoIcon className="h-3 w-3" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="text-center space-y-3">
+                        <p className="font-medium text-purple-900 dark:text-purple-100">
+                          Risk Score (0-100) measures potential vulnerabilities
+                        </p>
+                        <ul className="space-y-2 text-purple-800 dark:text-purple-200">
+                          <li>Business Profile (33%)</li>
+                          <li>Security Measures (33%)</li>
+                          <li>Compliance & Support (34%)</li>
+                        </ul>
+                        <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
+                          Higher scores indicate greater risk exposure.
+                        </p>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-            </motion.div>
-          </div>
-
-          <motion.div initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          delay: 0.3
-        }} className="my-8 p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4">
-              {ctaContent.title}
-            </h2>
-            <p className="text-base sm:text-lg text-center text-muted-foreground mb-6 max-w-3xl mx-auto">
-              {ctaContent.message}
-            </p>
-            <div className="flex justify-center">
-              <Button size="lg" variant={ctaContent.variant} className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto whitespace-normal text-center min-h-[3rem]" onClick={() => window.open('https://calendly.com/your-link', '_blank')}>
-                <span className="flex items-center gap-2 justify-center">
-                  {ctaContent.buttonText}
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-                </span>
-              </Button>
+              <div className="text-center">
+                <p className="text-2xl font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
+                <p className="text-sm text-muted-foreground mb-1">Value Score</p>
+              </div>
             </div>
-            <p className="text-xs sm:text-sm text-center text-muted-foreground mt-4">
-              Limited Time Offer: FREE 30-day IT support trial for {assessment.level} risk businesses
-            </p>
           </motion.div>
+        </div>
+      </div>
+    );
+  };
 
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-              <CardTitle className="text-2xl">Executive Summary</CardTitle>
-              <CardDescription>Based on your {formData.industry} industry profile</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8 p-8">
-              <motion.div initial={{
-              opacity: 0,
-              y: 20
-            }} animate={{
-              opacity: 1,
-              y: 0
-            }} transition={{
-              delay: 0.3
-            }} className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <h4 className="
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+        <Progress value={progress} className="mt-2" />
+      </CardHeader>
+      <CardContent>
+        {step === 'provider' && renderProviderInfo()}
+        {step === 'profile' && renderBusinessProfile()}
+        {step === 'security' && renderSecurityQuestions()}
+        {step === 'compliance' && renderComplianceQuestions()}
+        {step === 'results' && renderResults()}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        {step !== 'provider' && (
+          <Button variant="outline" onClick={previousStep}>
+            Previous
+          </Button>
+        )}
+        {step !== 'results' && (
+          <Button className="ml-auto" onClick={nextStep}>
+            {step === 'compliance' ? 'View Results' : 'Next'}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
