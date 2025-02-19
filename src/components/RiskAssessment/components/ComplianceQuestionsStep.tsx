@@ -6,10 +6,10 @@ import { AssessmentData } from '../types';
 
 interface ComplianceQuestionsStepProps {
   formData: Partial<AssessmentData>;
-  handleInputChange: (field: keyof AssessmentData, value: string | boolean) => void;
+  onInputChange: (field: keyof AssessmentData, value: string | boolean) => void;
 }
 
-export function ComplianceQuestionsStep({ formData, handleInputChange }: ComplianceQuestionsStepProps) {
+export function ComplianceQuestionsStep({ formData, onInputChange }: ComplianceQuestionsStepProps) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -17,7 +17,7 @@ export function ComplianceQuestionsStep({ formData, handleInputChange }: Complia
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4"
     >
-      <Select onValueChange={(value) => handleInputChange('dataRegulations', value)}>
+      <Select onValueChange={(value) => onInputChange('dataRegulations', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Do you need to follow data protection laws? (e.g., GDPR, HIPAA)" />
         </SelectTrigger>
@@ -28,7 +28,7 @@ export function ComplianceQuestionsStep({ formData, handleInputChange }: Complia
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('itIssues', value)}>
+      <Select onValueChange={(value) => onInputChange('itIssues', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How often do you face IT problems? (e.g., crashes, slowness)" />
         </SelectTrigger>
@@ -41,7 +41,7 @@ export function ComplianceQuestionsStep({ formData, handleInputChange }: Complia
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('responseNeeded', value)}>
+      <Select onValueChange={(value) => onInputChange('responseNeeded', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How quickly do you need IT problems fixed?" />
         </SelectTrigger>
