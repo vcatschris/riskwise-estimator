@@ -39,48 +39,25 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
   const { toast } = useToast();
   
   const generatePDF = async () => {
-    // Wait for any animations to complete and DOM to be ready
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const reportElement = document.getElementById('risk-report');
-    if (!reportElement) {
-      console.error('Risk report element not found');
-      toast({
-        title: "Error generating PDF",
-        description: "Could not find report content. Please ensure you are on the results page.",
-        variant: "destructive",
-      });
-      return null;
-    }
-
     try {
-      console.log('Starting PDF generation...');
+      const reportElement = document.getElementById('risk-report');
+      if (!reportElement) {
+        throw new Error('Risk report element not found');
+      }
       
-      // Make sure the element is visible
+      // Ensure the element is ready to be captured
       reportElement.style.display = 'block';
       reportElement.style.visibility = 'visible';
       
-      // Ensure all images are loaded
-      const images = Array.from(reportElement.getElementsByTagName('img'));
-      await Promise.all(images.map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise(resolve => {
-          img.onload = resolve;
-          img.onerror = resolve;
-        });
-      }));
-
+      // Wait for a moment to ensure the element is rendered
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const canvas = await html2canvas(reportElement, {
-        logging: true,
-        useCORS: true,
         scale: 2,
+        useCORS: true,
         allowTaint: true,
         backgroundColor: null,
-        windowWidth: reportElement.scrollWidth,
-        windowHeight: reportElement.scrollHeight
       });
-      
-      console.log('Canvas generated successfully');
       
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
@@ -90,15 +67,9 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       });
       
       pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      console.log('PDF generated successfully');
       return pdf;
     } catch (error) {
       console.error('PDF generation error:', error);
-      toast({
-        title: "Error generating PDF",
-        description: "Failed to generate the PDF report. Please try again.",
-        variant: "destructive",
-      });
       return null;
     }
   };
@@ -107,54 +78,48 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
     e.preventDefault();
     setLoading(true);
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const data: ContactSubmission = {
-      name: formData.get('name') as string,
-      company: formData.get('company') as string,
-      email: formData.get('email') as string,
-      phone: formData.get('phone') as string || null,
-      newsletter: newsletter,
-      risk_level: riskLevel,
-      submission_type: mode,
-      assessment_id: assessmentId || null
-    };
-
     try {
-      // First generate the PDF to ensure it works before saving contact info
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+      
+      // First submit the contact info
+      const contactData: ContactSubmission = {
+        name: formData.get('name') as string,
+        company: formData.get('company') as string,
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string || null,
+        newsletter: newsletter,
+        risk_level: riskLevel,
+        submission_type: mode,
+        assessment_id: assessmentId || null
+      };
+
+      const { error: submissionError } = await supabase
+        .from('contact_submissions')
+        .insert([contactData]);
+
+      if (submissionError) {
+        throw submissionError;
+      }
+
+      // If it's a download request, generate and save PDF
       if (mode === 'download') {
         const pdf = await generatePDF();
         if (!pdf) {
           throw new Error('Failed to generate PDF');
         }
-        
-        // Only proceed with contact submission if PDF generation was successful
-        const { error } = await supabase
-          .from('contact_submissions')
-          .insert([data]);
-
-        if (error) throw error;
-
-        // Save the PDF after successful contact submission
-        pdf.save(`IT_Security_Assessment_Report.pdf`);
-        toast({
-          title: "Report downloaded",
-          description: "Your PDF report has been generated and downloaded.",
-        });
-      } else {
-        // For consultation mode, just submit contact info
-        const { error } = await supabase
-          .from('contact_submissions')
-          .insert([data]);
-
-        if (error) throw error;
-
-        toast({
-          title: "Request submitted",
-          description: "We'll be in touch with you shortly to discuss your IT needs.",
-        });
+        pdf.save('IT_Security_Assessment_Report.pdf');
       }
+
+      // Show success message
+      toast({
+        title: mode === 'download' ? "Report downloaded" : "Request submitted",
+        description: mode === 'download' 
+          ? "Your PDF report has been generated and downloaded."
+          : "We'll be in touch with you shortly to discuss your IT needs.",
+      });
       
+      // Close the dialog
       onOpenChange(false);
     } catch (error) {
       console.error('Submission error:', error);
