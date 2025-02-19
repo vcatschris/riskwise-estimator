@@ -8,7 +8,7 @@ const Index = () => {
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         <div className="text-center">
           <img 
-            src="/lovable-uploads/f724b08e-c8db-4821-97cb-9bc3354753fa.png" 
+            src="/lovable-uploads/b0dd1c6d-c51c-4e0b-95e1-d389cbb6d189.png" 
             alt="Support Stack" 
             className="h-16 sm:h-20 mx-auto mb-6 sm:mb-8"
           />
