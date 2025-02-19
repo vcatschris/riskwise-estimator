@@ -39,6 +39,9 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
   const { toast } = useToast();
   
   const generatePDF = async () => {
+    // Wait for any animations to complete and DOM to be ready
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     const reportElement = document.getElementById('risk-report');
     if (!reportElement) {
       console.error('Risk report element not found');
@@ -52,11 +55,31 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 
     try {
       console.log('Starting PDF generation...');
+      
+      // Make sure the element is visible
+      reportElement.style.display = 'block';
+      reportElement.style.visibility = 'visible';
+      
+      // Ensure all images are loaded
+      const images = Array.from(reportElement.getElementsByTagName('img'));
+      await Promise.all(images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      }));
+
       const canvas = await html2canvas(reportElement, {
         logging: true,
         useCORS: true,
-        scale: 2
+        scale: 2,
+        allowTaint: true,
+        backgroundColor: null,
+        windowWidth: reportElement.scrollWidth,
+        windowHeight: reportElement.scrollHeight
       });
+      
       console.log('Canvas generated successfully');
       
       const imgData = canvas.toDataURL('image/png');
@@ -98,22 +121,34 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
     };
 
     try {
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert([data]);
-
-      if (error) throw error;
-
+      // First generate the PDF to ensure it works before saving contact info
       if (mode === 'download') {
         const pdf = await generatePDF();
-        if (pdf) {
-          pdf.save(`IT_Security_Assessment_Report.pdf`);
-          toast({
-            title: "Report downloaded",
-            description: "Your PDF report has been generated and downloaded.",
-          });
+        if (!pdf) {
+          throw new Error('Failed to generate PDF');
         }
+        
+        // Only proceed with contact submission if PDF generation was successful
+        const { error } = await supabase
+          .from('contact_submissions')
+          .insert([data]);
+
+        if (error) throw error;
+
+        // Save the PDF after successful contact submission
+        pdf.save(`IT_Security_Assessment_Report.pdf`);
+        toast({
+          title: "Report downloaded",
+          description: "Your PDF report has been generated and downloaded.",
+        });
       } else {
+        // For consultation mode, just submit contact info
+        const { error } = await supabase
+          .from('contact_submissions')
+          .insert([data]);
+
+        if (error) throw error;
+
         toast({
           title: "Request submitted",
           description: "We'll be in touch with you shortly to discuss your IT needs.",
