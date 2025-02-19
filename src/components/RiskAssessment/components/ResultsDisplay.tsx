@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar } from "lucide-react";
+import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar, FileDown } from "lucide-react";
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
@@ -16,6 +17,7 @@ interface ResultsDisplayProps {
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const [showEstimate, setShowEstimate] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
   const pricing = calculatePricing(formData as AssessmentData);
 
@@ -53,6 +55,23 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
 
   return (
     <div className="space-y-8">
+      {/* Download Report CTA */}
+      <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
+        <Button
+          onClick={() => setShowDownloadDialog(true)}
+          size="lg"
+          variant="secondary"
+          className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
+        >
+          <FileDown className="w-5 h-5" />
+          Download Your Detailed Security Report
+        </Button>
+        <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
+          Get a comprehensive PDF report of your security assessment
+        </p>
+      </div>
+
+      {/* Pricing CTA */}
       <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
         <Button
           onClick={() => setShowEstimate(true)}
@@ -198,6 +217,14 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         isOpen={showContactDialog}
         onOpenChange={setShowContactDialog}
         riskLevel={assessment.level}
+        mode="consultation"
+      />
+
+      <ContactDialog 
+        isOpen={showDownloadDialog}
+        onOpenChange={setShowDownloadDialog}
+        riskLevel={assessment.level}
+        mode="download"
       />
 
       {/* Executive Summary */}

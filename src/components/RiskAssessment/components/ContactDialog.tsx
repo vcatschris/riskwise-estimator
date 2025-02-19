@@ -17,18 +17,31 @@ interface ContactDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   riskLevel: 'Low' | 'Medium' | 'High';
+  mode?: 'consultation' | 'download';
 }
 
-export const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onOpenChange, riskLevel }) => {
+export const ContactDialog: React.FC<ContactDialogProps> = ({ 
+  isOpen, 
+  onOpenChange, 
+  riskLevel,
+  mode = 'consultation'
+}) => {
   const [newsletter, setNewsletter] = useState(false);
   const { toast } = useToast();
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Request submitted",
-      description: "We'll be in touch with you shortly to discuss your IT needs.",
-    });
+    if (mode === 'download') {
+      toast({
+        title: "Report ready for download",
+        description: "Your PDF report will begin downloading shortly.",
+      });
+    } else {
+      toast({
+        title: "Request submitted",
+        description: "We'll be in touch with you shortly to discuss your IT needs.",
+      });
+    }
     onOpenChange(false);
   };
 
@@ -36,9 +49,13 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onOpenChan
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Let's get to know you</DialogTitle>
+          <DialogTitle>
+            {mode === 'download' ? 'Download Your Security Report' : "Let's get to know you"}
+          </DialogTitle>
           <DialogDescription>
-            Tell us a bit about yourself so we can help secure your business better.
+            {mode === 'download' 
+              ? 'Complete your details to receive your detailed IT security assessment report.'
+              : 'Tell us a bit about yourself so we can help secure your business better.'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,7 +88,9 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onOpenChan
               Subscribe to our newsletter for security tips and updates
             </Label>
           </div>
-          <Button type="submit" className="w-full">Request Consultation</Button>
+          <Button type="submit" className="w-full">
+            {mode === 'download' ? 'Download Report' : 'Request Consultation'}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
