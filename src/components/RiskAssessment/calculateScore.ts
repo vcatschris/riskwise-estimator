@@ -1,4 +1,3 @@
-
 import { AssessmentData, RiskScore, IndustryInsight, Industry, BusinessSize, CategoryInsight } from './types';
 
 const INDUSTRY_WEIGHTS = {
@@ -116,7 +115,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
 }>> = {
   'Business Profile': {
     Legal: {
-      description: "Legal firms require robust IT infrastructure to protect client confidentiality and ensure compliance.",
+      description: "Your law firm's IT infrastructure requires careful consideration given the sensitive nature of client data and regulatory obligations. The combination of your firm size, data handling practices, and current IT support structure shapes your risk profile. Legal firms are particularly attractive targets for cybercriminals due to the valuable client information they hold, making your IT resilience crucial for maintaining client trust and regulatory compliance.",
       industrySpecific: [
         "Law firms are prime targets for cybercriminals due to sensitive client data",
         "Regulatory compliance with SRA and GDPR is mandatory",
@@ -129,7 +128,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Finance: {
-      description: "Financial services demand the highest levels of security and system reliability.",
+      description: "As a financial services organization, your IT infrastructure is critical to maintaining operational integrity and client trust. Your current setup, including your data handling practices and IT support model, directly impacts your risk exposure. Financial institutions face sophisticated cyber threats targeting both client assets and sensitive financial data, making robust IT systems essential for your operations and compliance requirements.",
       industrySpecific: [
         "Financial data requires maximum security protection",
         "FCA compliance and audit requirements",
@@ -142,7 +141,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Retail: {
-      description: "Retail businesses need reliable systems to maintain customer service and sales operations.",
+      description: "Your retail business's IT infrastructure plays a vital role in maintaining customer service, managing transactions, and protecting customer data. Given your business size and operational model, your technology needs focus on maintaining consistent service while protecting payment systems and customer information. The retail sector faces unique challenges in balancing accessibility with security, particularly in managing point-of-sale systems and e-commerce platforms.",
       industrySpecific: [
         "POS system reliability is critical",
         "Customer data protection requirements",
@@ -155,7 +154,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Healthcare: {
-      description: "Healthcare providers must maintain patient data security and system availability.",
+      description: "Your healthcare organization's IT infrastructure is crucial for both patient care and data protection. Given the sensitive nature of patient information and the critical nature of healthcare services, your technology setup requires careful consideration of both security and accessibility. Healthcare providers face unique challenges in protecting patient data while ensuring systems remain accessible for critical care delivery.",
       industrySpecific: [
         "Patient confidentiality is paramount",
         "Healthcare compliance requirements",
@@ -168,7 +167,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Accounting: {
-      description: "Accounting firms need secure and reliable IT systems for financial data management.",
+      description: "Your accounting firm's IT infrastructure directly impacts your ability to serve clients and protect sensitive financial data. The combination of your firm's size, data handling practices, and current IT support structure influences your overall risk profile. Accounting firms face particular challenges during tax seasons and when handling multiple clients' financial information, making IT reliability and security paramount.",
       industrySpecific: [
         "Financial data security requirements",
         "Tax season peak performance needs",
@@ -181,7 +180,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Other: {
-      description: "General business IT requirements apply across all industries.",
+      description: "Your organization's IT infrastructure plays a vital role in your daily operations and data security. Based on your business size and operational model, your technology needs require a balanced approach to security and accessibility. While your industry may have specific requirements, maintaining robust IT systems is crucial for operational efficiency and data protection.",
       industrySpecific: [
         "Standard security practices required",
         "Basic compliance requirements",
@@ -196,7 +195,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
   },
   'Security': {
     Legal: {
-      description: "Security measures must protect sensitive client information and communications.",
+      description: "Your current security posture reveals important considerations for your law firm's cyber resilience. Your approach to security audits, multi-factor authentication, and data backup practices shapes your vulnerability to cyber threats. Legal firms require exceptional security measures due to the confidential nature of client information and the increasing sophistication of cyber attacks targeting the legal sector.",
       industrySpecific: [
         "Advanced encryption for client communications",
         "Secure document management systems",
@@ -209,7 +208,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Finance: {
-      description: "Financial institutions require advanced security measures to protect transactions and data.",
+      description: "Your financial institution's security measures are critical for protecting both assets and client trust. Your current implementation of security controls, including authentication methods and data protection strategies, directly impacts your exposure to financial cyber threats. The financial sector faces sophisticated attacks aimed at both monetary theft and data breaches, requiring robust security measures across all systems.",
       industrySpecific: [
         "Transaction security is critical",
         "Protection against financial fraud",
@@ -222,7 +221,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Retail: {
-      description: "Retail security focuses on payment systems and customer data protection.",
+      description: "Your retail operation's security measures are essential for protecting customer data and maintaining payment system integrity. Your current security controls, including point-of-sale protection and customer data safeguards, determine your resilience against retail-specific cyber threats. The retail sector faces unique challenges in protecting customer payment information while maintaining efficient transaction processes.",
       industrySpecific: [
         "PCI DSS compliance requirements",
         "Point-of-sale system security",
@@ -235,7 +234,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Healthcare: {
-      description: "Healthcare security must protect sensitive patient data and medical systems.",
+      description: "Your healthcare organization's security measures are crucial for protecting patient privacy and maintaining regulatory compliance. Your current security implementation, including access controls and data protection measures, directly impacts patient data safety and operational integrity. Healthcare providers face unique challenges in protecting sensitive medical information while ensuring quick access for patient care.",
       industrySpecific: [
         "HIPAA compliance requirements",
         "Medical device security",
@@ -248,7 +247,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Accounting: {
-      description: "Accounting security focuses on financial data protection.",
+      description: "Your accounting firm's security measures are vital for protecting client financial data and maintaining professional standards. Your current security controls, including data protection and access management, shape your defense against financial cyber threats. Accounting firms face particular challenges in securing sensitive financial information while maintaining efficient client service delivery.",
       industrySpecific: [
         "Financial data security",
         "Client confidentiality",
@@ -261,7 +260,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Other: {
-      description: "Basic security measures are essential for all businesses.",
+      description: "Your organization's security measures form the foundation of your cyber defense strategy. Your current implementation of security controls, including authentication methods and data protection, determines your resilience against various cyber threats. While your industry may have specific requirements, maintaining strong security measures is essential for protecting your operations and data.",
       industrySpecific: [
         "Standard security protocols",
         "Basic threat protection",
@@ -276,7 +275,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
   },
   'Compliance & Support': {
     Legal: {
-      description: "Legal compliance and rapid IT support are essential for law firm operations.",
+      description: "Your law firm's approach to compliance and IT support significantly impacts your operational resilience. Your current support structure and compliance practices, including response times and regulatory adherence, affect both client service and risk management. Legal firms must balance immediate IT support needs with strict regulatory requirements, ensuring both operational efficiency and compliance standards are maintained.",
       industrySpecific: [
         "SRA compliance requirements",
         "Legal document retention policies",
@@ -289,7 +288,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Finance: {
-      description: "Financial services require strict compliance monitoring and immediate support response.",
+      description: "Your financial institution's compliance and support framework is crucial for maintaining regulatory standards and operational efficiency. Your current IT support structure and compliance monitoring directly impact your ability to meet regulatory requirements while maintaining service levels. Financial organizations face complex compliance demands alongside the need for rapid IT support response times.",
       industrySpecific: [
         "FCA compliance requirements",
         "Transaction monitoring needs",
@@ -302,7 +301,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Retail: {
-      description: "Retail compliance focuses on payment and customer data regulations.",
+      description: "Your retail operation's compliance and support structure is essential for maintaining customer service and regulatory standards. Your current IT support model and compliance practices affect both customer experience and regulatory adherence. Retail businesses must balance immediate support needs with payment card industry standards and consumer protection requirements.",
       industrySpecific: [
         "PCI compliance requirements",
         "Consumer protection regulations",
@@ -315,7 +314,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Healthcare: {
-      description: "Healthcare compliance is critical for patient data protection.",
+      description: "Your healthcare organization's compliance and support framework is vital for maintaining patient care standards and regulatory requirements. Your current IT support structure and compliance monitoring directly impact patient care delivery and data protection. Healthcare providers must balance immediate support needs with strict patient privacy regulations and healthcare standards.",
       industrySpecific: [
         "HIPAA compliance requirements",
         "Medical record regulations",
@@ -328,7 +327,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Accounting: {
-      description: "Accounting compliance focuses on financial data regulations.",
+      description: "Your accounting firm's compliance and support structure directly impacts client service quality and regulatory adherence. Your current IT support model and compliance practices affect both operational efficiency and professional standards. Accounting firms must balance immediate support needs with financial regulations and data protection requirements, particularly during peak tax seasons.",
       industrySpecific: [
         "Financial compliance requirements",
         "Tax regulation standards",
@@ -341,7 +340,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       }
     },
     Other: {
-      description: "Standard compliance and support requirements apply.",
+      description: "Your organization's compliance and support structure forms the foundation of your operational reliability and regulatory adherence. Your current IT support model and compliance practices determine your ability to maintain efficient operations while meeting industry standards. While specific requirements may vary, maintaining effective IT support and compliance monitoring is crucial for business continuity.",
       industrySpecific: [
         "Basic compliance needs",
         "Standard support requirements",
