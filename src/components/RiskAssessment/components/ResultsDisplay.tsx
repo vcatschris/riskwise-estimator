@@ -199,7 +199,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             <h5 className="font-medium mb-2">Industry Insights</h5>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <h6 className="text-sm font-medium text-muted-foreground mb-2">Key Risks</h6>
+                <h6 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  Key Risks
+                </h6>
                 <ul className="list-disc pl-4 space-y-1">
                   {assessment.executiveSummary.industryInsights.risks.map((risk, index) => (
                     <li key={index} className="text-sm">{risk}</li>
@@ -207,7 +210,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 </ul>
               </div>
               <div>
-                <h6 className="text-sm font-medium text-muted-foreground mb-2">Value Propositions</h6>
+                <h6 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Value Propositions
+                </h6>
                 <ul className="list-disc pl-4 space-y-1">
                   {assessment.executiveSummary.industryInsights.values.map((value, index) => (
                     <li key={index} className="text-sm">{value}</li>
@@ -217,7 +223,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             </div>
           </div>
           <div>
-            <h5 className="font-medium mb-2">Top Risks to Address</h5>
+            <h5 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
+              <AlertTriangle className="h-5 w-5" />
+              Top Risks to Address
+            </h5>
             <ul className="list-disc pl-4 space-y-1">
               {assessment.executiveSummary.topRisks.map((risk, index) => (
                 <li key={index} className="text-sm">{risk}</li>
