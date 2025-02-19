@@ -4,59 +4,20 @@ import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from '
 import { calculateRiskScore } from './calculateScore';
 import { calculatePricing } from './calculatePricing';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  AlertTriangle, 
-  AlertCircle, 
-  CheckCircle, 
-  CheckCircle2, 
-  TrendingUp, 
-  Building2, 
-  Users, 
-  Lightbulb, 
-  ArrowRight,
-  HelpCircle,
-  FileDown,
-  Calculator,
-  PoundSterling,
-  Info,
-  BarChart,
-  Database,
-  Clock,
-  Phone
-} from 'lucide-react';
+import { AlertTriangle, AlertCircle, CheckCircle, CheckCircle2, TrendingUp, Building2, Users, Lightbulb, ArrowRight, HelpCircle, FileDown, Calculator, PoundSterling, Info, BarChart, Database, Clock, Phone } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info as InfoIcon } from "lucide-react";
-
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
-
 const getTitleAndDescription = (step: Step) => {
   switch (step) {
     case 'contact':
@@ -96,31 +57,29 @@ const getTitleAndDescription = (step: Step) => {
       };
   }
 };
-
 const isBusinessEmail = (email: string): boolean => {
   const personalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com'];
   const domain = email.split('@')[1]?.toLowerCase();
   return domain ? !personalDomains.includes(domain) : false;
 };
-
 export function RiskAssessmentForm() {
   const [step, setStep] = useState<Step>('contact');
   const [progress, setProgress] = useState(0);
   const [showEstimate, setShowEstimate] = useState(false);
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
     newsletter: false,
-    currentProvider: false,
+    currentProvider: false
   });
-
-  const { title, description } = getTitleAndDescription(step);
-
+  const {
+    title,
+    description
+  } = getTitleAndDescription(step);
   const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [field]: value,
+      [field]: value
     }));
   };
-
   const validateStep = (): boolean => {
     switch (step) {
       case 'contact':
@@ -141,7 +100,6 @@ export function RiskAssessmentForm() {
           return false;
         }
         return true;
-
       case 'provider':
         if (formData.currentProvider === undefined) {
           toast.error("Please indicate if you have an IT provider");
@@ -156,7 +114,6 @@ export function RiskAssessmentForm() {
           return false;
         }
         return true;
-
       case 'profile':
         if (!formData.industry?.trim()) {
           toast.error("Please select your industry");
@@ -171,7 +128,6 @@ export function RiskAssessmentForm() {
           return false;
         }
         return true;
-
       case 'security':
         if (!formData.lastAudit?.trim()) {
           toast.error("Please select when your last security audit was");
@@ -186,7 +142,6 @@ export function RiskAssessmentForm() {
           return false;
         }
         return true;
-
       case 'compliance':
         if (!formData.dataRegulations?.trim()) {
           toast.error("Please select if you handle data regulations");
@@ -201,65 +156,58 @@ export function RiskAssessmentForm() {
           return false;
         }
         return true;
-
       case 'results':
         return true;
     }
     return true;
   };
-
   const saveAssessmentResults = async (assessment: any) => {
     try {
-      const { data, error } = await supabase
-        .from('ss_tool_risk')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          business_name: formData.businessName,
-          newsletter: formData.newsletter,
-          current_provider: formData.currentProvider,
-          provider_duration: formData.providerDuration,
-          cloud_provider: formData.cloudProvider,
-          industry: formData.industry,
-          business_size: formData.businessSize,
-          sensitive_data: formData.sensitiveData,
-          last_audit: formData.lastAudit,
-          mfa_enabled: formData.mfaEnabled,
-          backup_frequency: formData.backupFrequency,
-          data_regulations: formData.dataRegulations,
-          it_issues: formData.itIssues,
-          response_needed: formData.responseNeeded,
-          risk_score: assessment.total,
-          max_possible_score: assessment.maxPossible,
-          value_score: assessment.valueScore,
-          max_value_possible: assessment.maxValuePossible,
-          risk_level: assessment.level,
-          executive_summary: assessment.executiveSummary,
-          category_details: assessment.details
-        })
-        .select();
-
+      const {
+        data,
+        error
+      } = await supabase.from('ss_tool_risk').insert({
+        name: formData.name,
+        email: formData.email,
+        business_name: formData.businessName,
+        newsletter: formData.newsletter,
+        current_provider: formData.currentProvider,
+        provider_duration: formData.providerDuration,
+        cloud_provider: formData.cloudProvider,
+        industry: formData.industry,
+        business_size: formData.businessSize,
+        sensitive_data: formData.sensitiveData,
+        last_audit: formData.lastAudit,
+        mfa_enabled: formData.mfaEnabled,
+        backup_frequency: formData.backupFrequency,
+        data_regulations: formData.dataRegulations,
+        it_issues: formData.itIssues,
+        response_needed: formData.responseNeeded,
+        risk_score: assessment.total,
+        max_possible_score: assessment.maxPossible,
+        value_score: assessment.valueScore,
+        max_value_possible: assessment.maxValuePossible,
+        risk_level: assessment.level,
+        executive_summary: assessment.executiveSummary,
+        category_details: assessment.details
+      }).select();
       if (error) {
         console.error('Error saving assessment:', error);
         toast.error('Failed to save assessment results');
         return;
       }
-
       toast.success('Assessment results saved successfully');
     } catch (error) {
       console.error('Error saving assessment:', error);
       toast.error('Failed to save assessment results');
     }
   };
-
   const nextStep = async () => {
     if (!validateStep()) return;
-
     if (step === 'compliance') {
       const assessment = calculateRiskScore(formData as AssessmentData);
       await saveAssessmentResults(assessment);
     }
-
     if (step === 'contact') {
       setStep('provider');
       setProgress(20);
@@ -277,7 +225,6 @@ export function RiskAssessmentForm() {
       setProgress(100);
     }
   };
-
   const previousStep = () => {
     if (step === 'provider') {
       setStep('contact');
@@ -296,79 +243,56 @@ export function RiskAssessmentForm() {
       setProgress(80);
     }
   };
-
-  const renderContactInfo = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
+  const renderContactInfo = () => <motion.div initial={{
+    opacity: 0,
+    x: 20
+  }} animate={{
+    opacity: 1,
+    x: 0
+  }} exit={{
+    opacity: 0,
+    x: -20
+  }} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Full Name (main point of contact)</Label>
-        <Input
-          id="name"
-          value={formData.name || ''}
-          onChange={(e) => handleInputChange('name', e.target.value)}
-          placeholder="Enter your full name"
-        />
+        <Input id="name" value={formData.name || ''} onChange={e => handleInputChange('name', e.target.value)} placeholder="Enter your full name" />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="email">Business Email (for your IT assessment report)</Label>
-        <Input
-          id="email"
-          type="email"
-          value={formData.email || ''}
-          onChange={(e) => handleInputChange('email', e.target.value)}
-          placeholder="Enter your work email (e.g., name@company.com)"
-        />
+        <Input id="email" type="email" value={formData.email || ''} onChange={e => handleInputChange('email', e.target.value)} placeholder="Enter your work email (e.g., name@company.com)" />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="businessName">Company or Organization Name</Label>
-        <Input
-          id="businessName"
-          value={formData.businessName || ''}
-          onChange={(e) => handleInputChange('businessName', e.target.value)}
-          placeholder="Your company's legal or trading name"
-        />
+        <Input id="businessName" value={formData.businessName || ''} onChange={e => handleInputChange('businessName', e.target.value)} placeholder="Your company's legal or trading name" />
       </div>
 
       <div className="flex items-center space-x-2">
-        <Checkbox
-          id="newsletter"
-          checked={formData.newsletter}
-          onCheckedChange={(checked) => handleInputChange('newsletter', checked)}
-        />
+        <Checkbox id="newsletter" checked={formData.newsletter} onCheckedChange={checked => handleInputChange('newsletter', checked)} />
         <Label htmlFor="newsletter">Receive monthly security tips & IT best practices newsletter</Label>
       </div>
-    </motion.div>
-  );
-
-  const renderProviderInfo = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
+    </motion.div>;
+  const renderProviderInfo = () => <motion.div initial={{
+    opacity: 0,
+    x: 20
+  }} animate={{
+    opacity: 1,
+    x: 0
+  }} exit={{
+    opacity: 0,
+    x: -20
+  }} className="space-y-4">
       <div className="rounded-lg border p-4 shadow-sm">
         <div className="flex items-center space-x-3">
-          <Checkbox
-            id="currentProvider"
-            checked={formData.currentProvider}
-            onCheckedChange={(checked) => handleInputChange('currentProvider', checked)}
-            className="h-5 w-5"
-          />
+          <Checkbox id="currentProvider" checked={formData.currentProvider} onCheckedChange={checked => handleInputChange('currentProvider', checked)} className="h-5 w-5" />
           <Label htmlFor="currentProvider" className="text-lg font-medium">
             We currently have IT support (internal team or external provider)
           </Label>
         </div>
       </div>
 
-      {formData.currentProvider && (
-        <Select onValueChange={(value) => handleInputChange('providerDuration', value)}>
+      {formData.currentProvider && <Select onValueChange={value => handleInputChange('providerDuration', value)}>
           <SelectTrigger>
             <SelectValue placeholder="How long have you had this IT support?" />
           </SelectTrigger>
@@ -378,10 +302,9 @@ export function RiskAssessmentForm() {
             <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
             <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
           </SelectContent>
-        </Select>
-      )}
+        </Select>}
 
-      <Select onValueChange={(value) => handleInputChange('cloudProvider', value)}>
+      <Select onValueChange={value => handleInputChange('cloudProvider', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Which platform do you use for email & documents?" />
         </SelectTrigger>
@@ -392,17 +315,18 @@ export function RiskAssessmentForm() {
           <SelectItem value="Don't Know">Not sure which system we use</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>
-  );
-
-  const renderBusinessProfile = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
-      <Select onValueChange={(value) => handleInputChange('industry', value)}>
+    </motion.div>;
+  const renderBusinessProfile = () => <motion.div initial={{
+    opacity: 0,
+    x: 20
+  }} animate={{
+    opacity: 1,
+    x: 0
+  }} exit={{
+    opacity: 0,
+    x: -20
+  }} className="space-y-4">
+      <Select onValueChange={value => handleInputChange('industry', value)}>
         <SelectTrigger>
           <SelectValue placeholder="What type of business are you? (for compliance needs)" />
         </SelectTrigger>
@@ -416,7 +340,7 @@ export function RiskAssessmentForm() {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('businessSize', value)}>
+      <Select onValueChange={value => handleInputChange('businessSize', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How many employees need IT support?" />
         </SelectTrigger>
@@ -429,7 +353,7 @@ export function RiskAssessmentForm() {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('sensitiveData', value)}>
+      <Select onValueChange={value => handleInputChange('sensitiveData', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Do you handle sensitive information? (customer data, financial records, etc.)" />
         </SelectTrigger>
@@ -439,17 +363,18 @@ export function RiskAssessmentForm() {
           <SelectItem value="Not Sure">Not sure what counts as sensitive data</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>
-  );
-
-  const renderSecurityQuestions = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
-      <Select onValueChange={(value) => handleInputChange('lastAudit', value)}>
+    </motion.div>;
+  const renderSecurityQuestions = () => <motion.div initial={{
+    opacity: 0,
+    x: 20
+  }} animate={{
+    opacity: 1,
+    x: 0
+  }} exit={{
+    opacity: 0,
+    x: -20
+  }} className="space-y-4">
+      <Select onValueChange={value => handleInputChange('lastAudit', value)}>
         <SelectTrigger>
           <SelectValue placeholder="When was your last IT security check? (e.g., vulnerability scan)" />
         </SelectTrigger>
@@ -461,7 +386,7 @@ export function RiskAssessmentForm() {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('mfaEnabled', value)}>
+      <Select onValueChange={value => handleInputChange('mfaEnabled', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Do you use two-step login? (phone code + password)" />
         </SelectTrigger>
@@ -472,7 +397,7 @@ export function RiskAssessmentForm() {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('backupFrequency', value)}>
+      <Select onValueChange={value => handleInputChange('backupFrequency', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How often do you backup your business data?" />
         </SelectTrigger>
@@ -484,17 +409,18 @@ export function RiskAssessmentForm() {
           <SelectItem value="We don't back up data">We don't have backups in place</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>
-  );
-
-  const renderComplianceQuestions = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
-    >
-      <Select onValueChange={(value) => handleInputChange('dataRegulations', value)}>
+    </motion.div>;
+  const renderComplianceQuestions = () => <motion.div initial={{
+    opacity: 0,
+    x: 20
+  }} animate={{
+    opacity: 1,
+    x: 0
+  }} exit={{
+    opacity: 0,
+    x: -20
+  }} className="space-y-4">
+      <Select onValueChange={value => handleInputChange('dataRegulations', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Do you need to follow data protection laws? (e.g., GDPR, HIPAA)" />
         </SelectTrigger>
@@ -505,7 +431,7 @@ export function RiskAssessmentForm() {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('itIssues', value)}>
+      <Select onValueChange={value => handleInputChange('itIssues', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How often do you face IT problems? (e.g., crashes, slowness)" />
         </SelectTrigger>
@@ -518,7 +444,7 @@ export function RiskAssessmentForm() {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('responseNeeded', value)}>
+      <Select onValueChange={value => handleInputChange('responseNeeded', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How quickly do you need IT problems fixed?" />
         </SelectTrigger>
@@ -530,11 +456,9 @@ export function RiskAssessmentForm() {
           <SelectItem value="No urgency">No urgent requirements</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>
-  );
-
+    </motion.div>;
   const getCTAContent = (level: string) => {
-    switch(level) {
+    switch (level) {
       case 'High':
         return {
           title: "🚨 Critical IT Risk Detected – Immediate Action Recommended! 🚨",
@@ -549,7 +473,8 @@ export function RiskAssessmentForm() {
           buttonText: "Schedule Your Free IT Strategy Session",
           variant: "default" as const
         };
-      default: // Low
+      default:
+        // Low
         return {
           title: "🔒 Good Foundation - Let's Optimize Further",
           message: "While your IT setup is solid, there's room for optimization. Let our experts show you how to enhance your security and efficiency for long-term success.",
@@ -558,29 +483,23 @@ export function RiskAssessmentForm() {
         };
     }
   };
-
   const renderResults = () => {
     const assessment = calculateRiskScore(formData as AssessmentData);
     const pricing = calculatePricing(formData as AssessmentData);
-
     const renderRiskAndValueList = (category: string) => {
       const categoryData = assessment.details.find(detail => detail.category === category) as CategoryDetail;
       if (!categoryData) return null;
-
-      return (
-        <div className="grid md:grid-cols-2 gap-6 mt-4">
+      return <div className="grid md:grid-cols-2 gap-6 mt-4">
           <div className="space-y-2">
-            <h5 className="text-sm font-medium text-red-600 dark:text-red-400 flex items-center gap-2">
+            <h5 className="text-red-600 dark:text-red-400 flex items-center gap-2 text-base font-extrabold">
               <AlertTriangle className="h-4 w-4" />
               Risk Areas
             </h5>
             <ul className="space-y-2">
-              {categoryData.riskAreas.map((risk, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-red-600 dark:text-red-400">
+              {categoryData.riskAreas.map((risk, index) => <li key={index} className="flex items-start gap-2 text-sm text-red-600 dark:text-red-400">
                   <span className="mt-1">⚠️</span>
                   <span>{risk}</span>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
           <div className="space-y-2">
@@ -589,22 +508,17 @@ export function RiskAssessmentForm() {
               Value Opportunities
             </h5>
             <ul className="space-y-2">
-              {categoryData.valueAreas.map((value, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-green-600 dark:text-green-400">
+              {categoryData.valueAreas.map((value, index) => <li key={index} className="flex items-start gap-2 text-sm text-green-600 dark:text-green-400">
                   <span className="mt-1">✅</span>
                   <span>{value}</span>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
-        </div>
-      );
+        </div>;
     };
-
     const calculateMonthlyCost = () => {
       return pricing;
     };
-
     const costs = calculateMonthlyCost();
     const userRange = {
       '1-5': 5,
@@ -613,30 +527,20 @@ export function RiskAssessmentForm() {
       '51-100': 100,
       '100+': 150
     }[formData.businessSize || '1-5'];
-
-    const riskColor = assessment.level === 'Low'
-      ? 'text-green-500 bg-green-50 dark:bg-green-950/30'
-      : assessment.level === 'Medium'
-      ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30'
-      : 'text-red-500 bg-red-50 dark:bg-red-950/30';
-
+    const riskColor = assessment.level === 'Low' ? 'text-green-500 bg-green-50 dark:bg-green-950/30' : assessment.level === 'Medium' ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' : 'text-red-500 bg-red-50 dark:bg-red-950/30';
     const ctaContent = getCTAContent(assessment.level);
-
     const handlePDFDownload = async () => {
       const reportElement = document.getElementById('risk-report');
       if (!reportElement) return;
-
       try {
         toast.loading('Generating PDF...');
         const canvas = await html2canvas(reportElement);
         const imgData = canvas.toDataURL('image/png');
-        
         const pdf = new jsPDF({
           orientation: 'portrait',
           unit: 'px',
           format: [canvas.width, canvas.height]
         });
-        
         pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
         pdf.save(`IT_Risk_Assessment_${formData.businessName?.replace(/\s+/g, '_')}.pdf`);
         toast.success('PDF downloaded successfully!');
@@ -645,22 +549,17 @@ export function RiskAssessmentForm() {
         toast.error('Failed to generate PDF');
       }
     };
-
     const scrollToEstimate = () => {
       const estimateElement = document.getElementById('cost-estimate');
       if (estimateElement) {
-        estimateElement.scrollIntoView({ behavior: 'smooth' });
+        estimateElement.scrollIntoView({
+          behavior: 'smooth'
+        });
       }
     };
-
-    return (
-      <div className="space-y-8">
+    return <div className="space-y-8">
         <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
-          <Button
-            onClick={() => setShowEstimate(true)}
-            size="lg"
-            className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
-          >
+          <Button onClick={() => setShowEstimate(true)} size="lg" className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center">
             <BarChart className="w-4 h-4" />
             <Calculator className="w-4 h-4" /> IT Investment Benchmark
           </Button>
@@ -669,8 +568,7 @@ export function RiskAssessmentForm() {
           </p>
         </div>
 
-        {showEstimate && (
-          <div id="cost-estimate" className="my-12 scroll-mt-8">
+        {showEstimate && <div id="cost-estimate" className="my-12 scroll-mt-8">
             <Card>
               <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
                 <CardTitle className="text-2xl flex items-center gap-2">
@@ -742,16 +640,10 @@ export function RiskAssessmentForm() {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        )}
+          </div>}
 
         <div className="flex justify-end">
-          <Button
-            onClick={handlePDFDownload}
-            variant="secondary"
-            size="lg"
-            className="flex items-center gap-2"
-          >
+          <Button onClick={handlePDFDownload} variant="secondary" size="lg" className="flex items-center gap-2">
             <FileDown className="h-4 w-4" />
             Save as PDF
           </Button>
@@ -759,12 +651,13 @@ export function RiskAssessmentForm() {
 
         <div id="risk-report">
           <div className="text-center space-y-4">
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className={`score-section p-8 rounded-2xl shadow-lg ${riskColor}`}
-            >
+            <motion.div initial={{
+            scale: 0.9
+          }} animate={{
+            scale: 1
+          }} transition={{
+            delay: 0.2
+          }} className={`score-section p-8 rounded-2xl shadow-lg ${riskColor}`}>
               <h3 className="text-3xl font-bold mb-2">Risk Assessment Results</h3>
               <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
               <div className="flex justify-center gap-8 mt-6">
@@ -777,12 +670,7 @@ export function RiskAssessmentForm() {
                         <span>What's this?</span>
                         <InfoIcon className="h-3 w-3" />
                       </TooltipTrigger>
-                      <TooltipContent 
-                        className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
-                        sideOffset={5}
-                        align="center"
-                        side="bottom"
-                      >
+                      <TooltipContent className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs" sideOffset={5} align="center" side="bottom">
                         <div className="text-center space-y-3">
                           <p className="font-medium text-purple-900 dark:text-purple-100">Risk Score (0-100) measures potential vulnerabilities across:</p>
                           <ul className="space-y-2 text-purple-800 dark:text-purple-200">
@@ -807,12 +695,7 @@ export function RiskAssessmentForm() {
                         <span>What's this?</span>
                         <InfoIcon className="h-3 w-3" />
                       </TooltipTrigger>
-                      <TooltipContent 
-                        className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
-                        sideOffset={5}
-                        align="center"
-                        side="bottom"
-                      >
+                      <TooltipContent className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs" sideOffset={5} align="center" side="bottom">
                         <div className="text-center space-y-3">
                           <p className="font-medium text-purple-900 dark:text-purple-100">Value Score (0-100) indicates potential benefits from improvements:</p>
                           <ul className="space-y-2 text-purple-800 dark:text-purple-200">
@@ -832,12 +715,15 @@ export function RiskAssessmentForm() {
             </motion.div>
           </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="my-8 p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          delay: 0.3
+        }} className="my-8 p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-brand-orange/20">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4">
               {ctaContent.title}
             </h2>
@@ -845,12 +731,7 @@ export function RiskAssessmentForm() {
               {ctaContent.message}
             </p>
             <div className="flex justify-center">
-              <Button
-                size="lg"
-                variant={ctaContent.variant}
-                className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto whitespace-normal text-center min-h-[3rem]"
-                onClick={() => window.open('https://calendly.com/your-link', '_blank')}
-              >
+              <Button size="lg" variant={ctaContent.variant} className="text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto whitespace-normal text-center min-h-[3rem]" onClick={() => window.open('https://calendly.com/your-link', '_blank')}>
                 <span className="flex items-center gap-2 justify-center">
                   {ctaContent.buttonText}
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
@@ -868,30 +749,33 @@ export function RiskAssessmentForm() {
               <CardDescription>Based on your {formData.industry} industry profile</CardDescription>
             </CardHeader>
             <CardContent className="space-y-8 p-8">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="grid md:grid-cols-2 gap-8"
-              >
+              <motion.div initial={{
+              opacity: 0,
+              y: 20
+            }} animate={{
+              opacity: 1,
+              y: 0
+            }} transition={{
+              delay: 0.3
+            }} className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <h4 className="text-xl font-semibold flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-orange-500" />
                     Key Industry Risks
                   </h4>
                   <ul className="space-y-3">
-                    {assessment.executiveSummary.industryInsights.risks.map((risk, i) => (
-                      <motion.li 
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="flex items-start gap-2 text-orange-700 dark:text-orange-300"
-                      >
+                    {assessment.executiveSummary.industryInsights.risks.map((risk, i) => <motion.li key={i} initial={{
+                    opacity: 0,
+                    x: -20
+                  }} animate={{
+                    opacity: 1,
+                    x: 0
+                  }} transition={{
+                    delay: 0.4 + i * 0.1
+                  }} className="flex items-start gap-2 text-orange-700 dark:text-orange-300">
                         <span className="mt-1">⚠️</span>
                         <span>{risk}</span>
-                      </motion.li>
-                    ))}
+                      </motion.li>)}
                   </ul>
                 </div>
                 
@@ -901,18 +785,18 @@ export function RiskAssessmentForm() {
                     Your Top Risks
                   </h4>
                   <ul className="space-y-3">
-                    {assessment.executiveSummary.topRisks.map((risk, i) => (
-                      <motion.li 
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + (i * 0.1) }}
-                        className="flex items-start gap-2 text-red-600 dark:text-red-400"
-                      >
+                    {assessment.executiveSummary.topRisks.map((risk, i) => <motion.li key={i} initial={{
+                    opacity: 0,
+                    x: -20
+                  }} animate={{
+                    opacity: 1,
+                    x: 0
+                  }} transition={{
+                    delay: 0.4 + i * 0.1
+                  }} className="flex items-start gap-2 text-red-600 dark:text-red-400">
                         <span className="mt-1">❌</span>
                         <span>{risk}</span>
-                      </motion.li>
-                    ))}
+                      </motion.li>)}
                   </ul>
                 </div>
               </motion.div>
@@ -923,31 +807,33 @@ export function RiskAssessmentForm() {
                   Value of Managed IT Services
                 </h4>
                 <ul className="grid md:grid-cols-2 gap-4">
-                  {assessment.executiveSummary.industryInsights.values.map((value, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + (i * 0.1) }}
-                      className="flex items-start gap-2 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800"
-                    >
+                  {assessment.executiveSummary.industryInsights.values.map((value, i) => <motion.li key={i} initial={{
+                  opacity: 0,
+                  y: 20
+                }} animate={{
+                  opacity: 1,
+                  y: 0
+                }} transition={{
+                  delay: 0.6 + i * 0.1
+                }} className="flex items-start gap-2 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
                       <span className="mt-1">✅</span>
                       <span>{value}</span>
-                    </motion.li>
-                  ))}
+                    </motion.li>)}
                 </ul>
               </div>
             </CardContent>
           </Card>
 
           <div className="space-y-6">
-            {assessment.details.map((detail, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + (index * 0.1) }}
-              >
+            {assessment.details.map((detail, index) => <motion.div key={index} initial={{
+            opacity: 0,
+            y: 20
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            delay: 0.2 + index * 0.1
+          }}>
                 <Card>
                   <CardHeader className="border-b bg-slate-50 dark:bg-slate-900/50">
                     <div className="flex justify-between items-center">
@@ -972,16 +858,12 @@ export function RiskAssessmentForm() {
                     {renderRiskAndValueList(detail.category)}
                   </CardContent>
                 </Card>
-              </motion.div>
-            ))}
+              </motion.div>)}
           </div>
         </div>
-      </div>
-    );
+      </div>;
   };
-
-  return (
-    <Card className="w-full">
+  return <Card className="w-full">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -996,17 +878,12 @@ export function RiskAssessmentForm() {
         {step === 'results' && renderResults()}
       </CardContent>
       <CardFooter className="flex justify-between">
-        {step !== 'contact' && (
-          <Button variant="outline" onClick={previousStep}>
+        {step !== 'contact' && <Button variant="outline" onClick={previousStep}>
             Previous
-          </Button>
-        )}
-        {step !== 'results' && (
-          <Button className="ml-auto" onClick={nextStep}>
+          </Button>}
+        {step !== 'results' && <Button className="ml-auto" onClick={nextStep}>
             {step === 'compliance' ? 'View Results' : 'Next'}
-          </Button>
-        )}
+          </Button>}
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 }
