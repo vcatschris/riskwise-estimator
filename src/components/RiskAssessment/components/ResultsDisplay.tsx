@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, PoundSterling } from "lucide-react";
@@ -7,12 +7,14 @@ import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
 }
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
+  const [showEstimate, setShowEstimate] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
   const pricing = calculatePricing(formData as AssessmentData);
 
@@ -24,42 +26,56 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
 
   return (
     <div className="space-y-8">
-      {/* Pricing Estimate */}
-      <Card className="p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-center space-y-4"
+      <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
+        <Button
+          onClick={() => setShowEstimate(true)}
+          size="lg"
+          className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
         >
-          <div className="flex items-center justify-center gap-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
-            <PoundSterling className="h-6 w-6" />
-            <span>Monthly Investment Benchmark</span>
-          </div>
-          <div className="flex justify-center items-center gap-8">
-            <div className="text-center">
-              <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">
-                £{pricing.totalPrice.toLocaleString()}
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">Recommended Monthly</p>
+          📊 What should this cost me?
+        </Button>
+        <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
+          How much do businesses like yours typically invest in IT support?
+        </p>
+      </div>
+
+      {showEstimate && (
+        <Card className="p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-center space-y-4"
+          >
+            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
+              <PoundSterling className="h-6 w-6" />
+              <span>Monthly Investment Benchmark</span>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">
-                £{pricing.annualPrice.toLocaleString()}
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">Annual Value</p>
+            <div className="flex justify-center items-center gap-8">
+              <div className="text-center">
+                <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">
+                  £{pricing.totalPrice.toLocaleString()}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">Recommended Monthly</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">
+                  £{pricing.annualPrice.toLocaleString()}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">Annual Value</p>
+              </div>
             </div>
-          </div>
-          <div className="text-sm text-muted-foreground mt-2">
-            Price range: £{pricing.priceRange.min.toLocaleString()} - £{pricing.priceRange.max.toLocaleString()} monthly
-          </div>
-          {pricing.isHighCompliance && (
-            <div className="text-sm text-purple-600 dark:text-purple-400 font-medium mt-2">
-              * Includes additional compliance and security measures for your industry
+            <div className="text-sm text-muted-foreground mt-2">
+              Price range: £{pricing.priceRange.min.toLocaleString()} - £{pricing.priceRange.max.toLocaleString()} monthly
             </div>
-          )}
-        </motion.div>
-      </Card>
+            {pricing.isHighCompliance && (
+              <div className="text-sm text-purple-600 dark:text-purple-400 font-medium mt-2">
+                * Includes additional compliance and security measures for your industry
+              </div>
+            )}
+          </motion.div>
+        </Card>
+      )}
 
       {/* Risk Assessment Results */}
       <div className="text-center space-y-4">
