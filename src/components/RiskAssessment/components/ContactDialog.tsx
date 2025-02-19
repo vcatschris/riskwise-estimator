@@ -41,18 +41,25 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
   const generatePDF = async () => {
     const reportElement = document.getElementById('risk-report');
     if (!reportElement) {
+      console.error('Risk report element not found');
       toast({
         title: "Error generating PDF",
-        description: "Could not find report content.",
+        description: "Could not find report content. Please ensure you are on the results page.",
         variant: "destructive",
       });
-      return;
+      return null;
     }
 
     try {
-      const canvas = await html2canvas(reportElement);
-      const imgData = canvas.toDataURL('image/png');
+      console.log('Starting PDF generation...');
+      const canvas = await html2canvas(reportElement, {
+        logging: true,
+        useCORS: true,
+        scale: 2
+      });
+      console.log('Canvas generated successfully');
       
+      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'px',
@@ -60,14 +67,16 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       });
       
       pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      pdf.save(`IT_Security_Assessment_Report.pdf`);
+      console.log('PDF generated successfully');
+      return pdf;
     } catch (error) {
       console.error('PDF generation error:', error);
       toast({
         title: "Error generating PDF",
-        description: "Failed to generate the PDF report.",
+        description: "Failed to generate the PDF report. Please try again.",
         variant: "destructive",
       });
+      return null;
     }
   };
 
@@ -96,11 +105,14 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       if (error) throw error;
 
       if (mode === 'download') {
-        await generatePDF();
-        toast({
-          title: "Report downloaded",
-          description: "Your PDF report has been generated and downloaded.",
-        });
+        const pdf = await generatePDF();
+        if (pdf) {
+          pdf.save(`IT_Security_Assessment_Report.pdf`);
+          toast({
+            title: "Report downloaded",
+            description: "Your PDF report has been generated and downloaded.",
+          });
+        }
       } else {
         toast({
           title: "Request submitted",
