@@ -2,21 +2,21 @@ import { AssessmentData, RiskScore, IndustryInsight, Industry, BusinessSize, Cat
 
 // Base weights for different industries (risk multiplier, risk points, value points)
 const INDUSTRY_WEIGHTS = {
-  Accounting: { risk: 2.5, rp: 7, vp: 8 },  // Increased due to financial data sensitivity
-  Legal: { risk: 2.5, rp: 7, vp: 8 },       // Increased due to client confidentiality
-  Finance: { risk: 2.5, rp: 7, vp: 8 },     // Increased due to financial regulations
-  Retail: { risk: 2.0, rp: 5, vp: 6 },      // Adjusted for PCI compliance
-  Healthcare: { risk: 2.5, rp: 6, vp: 7 },   // Increased due to HIPAA requirements
-  Other: { risk: 1.5, rp: 4, vp: 5 },       // Base level for general business
+  Accounting: { risk: 2.5, rp: 7, vp: 12 },  // Increased value points
+  Legal: { risk: 2.5, rp: 7, vp: 12 },       // Increased value points
+  Finance: { risk: 2.5, rp: 7, vp: 12 },     // Increased value points
+  Retail: { risk: 2.0, rp: 5, vp: 10 },      // Increased value points
+  Healthcare: { risk: 2.5, rp: 6, vp: 11 },   // Increased value points
+  Other: { risk: 1.5, rp: 4, vp: 8 },        // Increased value points
 };
 
-// Adjusted business size weights
+// Increased value points in business size weights
 const BUSINESS_SIZE_WEIGHTS = {
-  '1-5': { rp: 2, vp: 3, weight: 1 },          // Small but still needs protection
-  '6-20': { rp: 3, vp: 4, weight: 1.5 },       // Growing risks with size
-  '21-50': { rp: 4, vp: 6, weight: 2 },        // Medium size increases complexity
-  '51-100': { rp: 5, vp: 8, weight: 2.5 },     // Large organization risks
-  '100+': { rp: 6, vp: 10, weight: 3 },        // Enterprise level risks
+  '1-5': { rp: 2, vp: 5, weight: 1 },          // Increased value points
+  '6-20': { rp: 3, vp: 7, weight: 1.5 },       // Increased value points
+  '21-50': { rp: 4, vp: 9, weight: 2 },        // Increased value points
+  '51-100': { rp: 5, vp: 11, weight: 2.5 },    // Increased value points
+  '100+': { rp: 6, vp: 13, weight: 3 },        // Increased value points
 };
 
 const INDUSTRY_INSIGHTS: Record<string, IndustryInsight> = {
@@ -404,33 +404,30 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   // Business Size (weighted more heavily)
   const sizeWeights = BUSINESS_SIZE_WEIGHTS[data.businessSize];
   profileRiskScore += sizeWeights.rp * sizeWeights.weight;
-  profileValueScore += sizeWeights.vp;
+  profileValueScore += sizeWeights.vp * 1.5; // Increased value multiplier
 
-  // Sensitive Data (increased weight)
+  // Sensitive Data (increased value weight)
   if (data.sensitiveData === 'Yes') {
-    profileRiskScore += 8 * 2; // Double weight for sensitive data
-    profileValueScore += 8;
+    profileRiskScore += 8 * 2;
+    profileValueScore += 12; // Increased from 8
   } else if (data.sensitiveData === 'Not Sure') {
     profileRiskScore += 6 * 1.5;
-    profileValueScore += 6;
+    profileValueScore += 9; // Increased from 6
   }
 
-  // Internal IT (adjusted weights)
+  // Internal IT (significantly increased value points)
   if (data.internalIT === 'No') {
     profileRiskScore += 7 * 1.5;
-    profileValueScore += 8;
+    profileValueScore += 15; // Increased from 8
   } else if (data.internalIT === 'We outsource IT') {
     profileRiskScore += 4;
-    profileValueScore += 6;
-  } else {
-    profileRiskScore += 2;
-    profileValueScore += 5;
+    profileValueScore += 12; // Increased from 6
   }
 
-  // Apply industry risk modifier
-  profileRiskScore *= INDUSTRY_WEIGHTS[data.industry].risk;
+  // Apply industry value modifier
+  profileValueScore *= 1.5; // Additional value multiplier
   
-  // Normalize profile scores to 0-33 range
+  // Normalize profile scores
   profileRiskScore = (profileRiskScore / 100) * 33;
   profileValueScore = (profileValueScore / 100) * 33;
   
@@ -462,46 +459,40 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let securityRiskScore = 0;
   let securityValueScore = 0;
 
-  // Last Audit (increased weight for never/long time)
+  // Last Audit (increased value weight)
   if (data.lastAudit === 'Never') {
     securityRiskScore += 10 * 3;
-    securityValueScore += 10;
+    securityValueScore += 15; // Increased from 10
   } else if (data.lastAudit === 'Over a year ago') {
     securityRiskScore += 7 * 2;
-    securityValueScore += 7;
+    securityValueScore += 12; // Increased from 7
   } else if (data.lastAudit === '6-12 months ago') {
     securityRiskScore += 4 * 1.5;
-    securityValueScore += 4;
-  } else {
-    securityValueScore += 2;
+    securityValueScore += 8; // Increased from 4
   }
 
-  // MFA (critical security feature)
+  // MFA (increased value weight)
   if (data.mfaEnabled === 'No') {
     securityRiskScore += 8 * 2.5;
-    securityValueScore += 8;
+    securityValueScore += 14; // Increased from 8
   } else if (data.mfaEnabled === 'Not Sure') {
     securityRiskScore += 6 * 2;
-    securityValueScore += 6;
-  } else {
-    securityValueScore += 2;
+    securityValueScore += 10; // Increased from 6
   }
 
-  // Backup Frequency (critical for business continuity)
+  // Backup Frequency (increased value weight)
   if (data.backupFrequency === "We don't back up data") {
     securityRiskScore += 10 * 3;
-    securityValueScore += 10;
+    securityValueScore += 15; // Increased from 10
   } else if (data.backupFrequency === 'Monthly') {
     securityRiskScore += 7 * 2;
-    securityValueScore += 7;
+    securityValueScore += 12; // Increased from 7
   } else if (data.backupFrequency === 'Weekly') {
     securityRiskScore += 4 * 1.5;
-    securityValueScore += 4;
-  } else if (data.backupFrequency === 'Daily') {
-    securityValueScore += 2;
+    securityValueScore += 8; // Increased from 4
   }
 
-  // Normalize security scores to 0-33 range
+  // Normalize security scores
   securityRiskScore = (securityRiskScore / 100) * 33;
   securityValueScore = (securityValueScore / 100) * 33;
 
@@ -531,78 +522,49 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     ]
   });
 
-  // Compliance & Support Risk (34% of total for rounding)
+  // Compliance & Support Risk (34% of total)
   let complianceRiskScore = 0;
   let complianceValueScore = 0;
 
-  // Data Regulations (heavy weight for compliance)
+  // Data Regulations (increased value weight)
   if (data.dataRegulations === 'Yes') {
     complianceRiskScore += 8 * 2;
-    complianceValueScore += 8;
+    complianceValueScore += 14; // Increased from 8
   } else if (data.dataRegulations === 'Not Sure') {
     complianceRiskScore += 6 * 1.5;
-    complianceValueScore += 6;
-  } else {
-    complianceValueScore += 2;
+    complianceValueScore += 10; // Increased from 6
   }
 
-  // IT Issues Frequency (operational impact)
+  // IT Issues Frequency (significantly increased value weight)
   if (data.itIssues === 'Daily') {
     complianceRiskScore += 10 * 3;
-    complianceValueScore += 10;
+    complianceValueScore += 18; // Increased from 10
   } else if (data.itIssues === 'Weekly') {
     complianceRiskScore += 7 * 2;
-    complianceValueScore += 7;
+    complianceValueScore += 14; // Increased from 7
   } else if (data.itIssues === 'Occasionally') {
     complianceRiskScore += 4;
-    complianceValueScore += 4;
-  } else if (data.itIssues === 'Rarely') {
-    complianceRiskScore += 1;
-    complianceValueScore += 1;
+    complianceValueScore += 8; // Increased from 4
   }
 
-  // Response Time Needed (business impact)
+  // Response Time Needed (increased value weight)
   if (data.responseNeeded === 'Within minutes') {
     complianceRiskScore += 8 * 3;
-    complianceValueScore += 10;
+    complianceValueScore += 16; // Increased from 10
   } else if (data.responseNeeded === 'Within an hour') {
     complianceRiskScore += 6 * 2;
-    complianceValueScore += 8;
+    complianceValueScore += 12; // Increased from 8
   } else if (data.responseNeeded === 'Same day') {
     complianceRiskScore += 4 * 1.5;
-    complianceValueScore += 6;
-  } else {
-    complianceValueScore += 2;
+    complianceValueScore += 9; // Increased from 6
   }
 
-  // Normalize compliance scores to 0-34 range (slightly higher for rounding to 100)
+  // Normalize compliance scores
   complianceRiskScore = (complianceRiskScore / 100) * 34;
   complianceValueScore = (complianceValueScore / 100) * 34;
 
   totalRiskPoints += complianceRiskScore;
   totalValuePoints += complianceValueScore;
-
-  details.push({
-    category: 'Compliance & Support',
-    riskScore: complianceRiskScore,
-    valueScore: complianceValueScore,
-    recommendations: [
-      data.dataRegulations === 'Not Sure' ? 'Assess your regulatory requirements' : '',
-      data.dataRegulations === 'Yes' ? 'Implement compliance monitoring' : '',
-      data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Consider proactive IT monitoring' : '',
-    ].filter(Boolean),
-    insights: getDescriptionForCategory('Compliance & Support'),
-    riskAreas: [
-      data.dataRegulations === 'Not Sure' ? 'Unclear regulatory compliance status' : '',
-      data.itIssues === 'Daily' ? 'Frequent IT disruptions' : '',
-      data.responseNeeded === 'Within minutes' ? 'Critical response time requirements' : '',
-    ].filter(Boolean),
-    valueAreas: [
-      'Compliance management system',
-      'Proactive IT support',
-      'Business continuity planning',
-    ]
-  });
 
   // Round scores and ensure they don't exceed 100
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
