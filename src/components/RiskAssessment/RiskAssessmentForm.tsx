@@ -180,7 +180,7 @@ export function RiskAssessmentForm() {
       </CardHeader>
       <CardContent>
         {step === 'provider' && <ProviderStep formData={formData} onInputChange={handleInputChange} />}
-        {step === 'profile' && <BusinessProfileStep formData={formData} handleInputChange={handleInputChange} />}
+        {step === 'profile' && <BusinessProfileStep formData={formData} onInputChange={handleInputChange} />}
         {step === 'results' && <ResultsDisplay formData={formData} />}
       </CardContent>
       <CardFooter className="flex justify-between">
