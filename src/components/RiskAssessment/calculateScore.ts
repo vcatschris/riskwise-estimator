@@ -434,6 +434,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints += profileRiskScore;
   totalValuePoints += profileValueScore;
 
+  // Add Business Profile details
   details.push({
     category: 'Business Profile',
     riskScore: profileRiskScore,
@@ -499,6 +500,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints += securityRiskScore;
   totalValuePoints += securityValueScore;
 
+  // Add Security details
   details.push({
     category: 'Security',
     riskScore: securityRiskScore,
@@ -529,34 +531,34 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   // Data Regulations (increased value weight)
   if (data.dataRegulations === 'Yes') {
     complianceRiskScore += 8 * 2;
-    complianceValueScore += 14;
+    complianceValueScore += 14; // Increased from 8
   } else if (data.dataRegulations === 'Not Sure') {
     complianceRiskScore += 6 * 1.5;
-    complianceValueScore += 10;
+    complianceValueScore += 10; // Increased from 6
   }
 
   // IT Issues Frequency (significantly increased value weight)
   if (data.itIssues === 'Daily') {
     complianceRiskScore += 10 * 3;
-    complianceValueScore += 18;
+    complianceValueScore += 18; // Increased from 10
   } else if (data.itIssues === 'Weekly') {
     complianceRiskScore += 7 * 2;
-    complianceValueScore += 14;
+    complianceValueScore += 14; // Increased from 7
   } else if (data.itIssues === 'Occasionally') {
     complianceRiskScore += 4;
-    complianceValueScore += 8;
+    complianceValueScore += 8; // Increased from 4
   }
 
   // Response Time Needed (increased value weight)
   if (data.responseNeeded === 'Within minutes') {
     complianceRiskScore += 8 * 3;
-    complianceValueScore += 16;
+    complianceValueScore += 16; // Increased from 10
   } else if (data.responseNeeded === 'Within an hour') {
     complianceRiskScore += 6 * 2;
-    complianceValueScore += 12;
+    complianceValueScore += 12; // Increased from 8
   } else if (data.responseNeeded === 'Same day') {
     complianceRiskScore += 4 * 1.5;
-    complianceValueScore += 9;
+    complianceValueScore += 9; // Increased from 6
   }
 
   // Normalize compliance scores
@@ -566,8 +568,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints += complianceRiskScore;
   totalValuePoints += complianceValueScore;
 
-  // Add Compliance & Support details - Adding console.log for debugging
-  console.log('Adding Compliance & Support section');
+  // Add Compliance & Support details
   details.push({
     category: 'Compliance & Support',
     riskScore: complianceRiskScore,
@@ -590,16 +591,14 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     ]
   });
 
-  console.log('Final details array:', details); // Debug log
-
   // Round scores and ensure they don't exceed 100
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
   totalValuePoints = Math.min(Math.round(totalValuePoints), 100);
 
-  // Determine risk level
+  // Adjusted risk level thresholds to generate more medium and high risks
   let riskLevel: 'Low' | 'Medium' | 'High';
-  if (totalRiskPoints < 40) riskLevel = 'Low';
-  else if (totalRiskPoints < 70) riskLevel = 'Medium';
+  if (totalRiskPoints < 35) riskLevel = 'Low';           // Lowered from 40
+  else if (totalRiskPoints < 60) riskLevel = 'Medium';   // Lowered from 70
   else riskLevel = 'High';
 
   // Generate executive summary
