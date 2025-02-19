@@ -54,7 +54,9 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Helvetica Neue", "helvetica", "arial", "sans-serif"],
+        sans: ["nimbus-sans", "sans-serif"],
+        condensed: ["nimbus-sans-condensed", "sans-serif"],
+        extended: ["nimbus-sans-extended", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
