@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -725,4 +724,4 @@ export function RiskAssessmentForm() {
               delay: 0.3
             }} className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <h4 className="
+                  <h4 className="text-xl
