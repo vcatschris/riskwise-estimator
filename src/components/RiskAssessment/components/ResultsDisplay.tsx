@@ -295,21 +295,23 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         </motion.div>
       </div>
 
-      <ContactDialog 
-        isOpen={showContactDialog}
-        onOpenChange={setShowContactDialog}
-        riskLevel={assessment.level}
-        mode="consultation"
-      />
-
-      <ContactDialog 
-        isOpen={showDownloadDialog}
-        onOpenChange={setShowDownloadDialog}
-        riskLevel={assessment.level}
-        mode="download"
-      />
-
       <div id="risk-report" className="space-y-8">
+        <Card className="p-6">
+          <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <img 
+              src="/lovable-uploads/65ea08b9-e4ef-469c-8686-72c7a98fc3ed.png" 
+              alt="Support Stack" 
+              className="h-16"
+            />
+            <p className="text-lg text-muted-foreground">
+              IT Security Assessment Report
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Prepared by Support Stack
+            </p>
+          </div>
+        </Card>
+
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
           <div className="space-y-4">
@@ -432,6 +434,20 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </Card>
         ))}
       </div>
+
+      <ContactDialog 
+        isOpen={showContactDialog}
+        onOpenChange={setShowContactDialog}
+        riskLevel={assessment.level}
+        mode="consultation"
+      />
+
+      <ContactDialog 
+        isOpen={showDownloadDialog}
+        onOpenChange={setShowDownloadDialog}
+        riskLevel={assessment.level}
+        mode="download"
+      />
     </div>
   );
 };
