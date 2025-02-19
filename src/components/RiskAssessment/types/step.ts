@@ -10,8 +10,8 @@ export const getTitleAndDescription = (step: Step): StepInfo => {
   switch (step) {
     case 'provider':
       return {
-        title: "Current IT Support",
-        description: "Understanding your current setup helps us identify potential gaps and opportunities for improvement"
+        title: "Let's Start with Your Current IT Support",
+        description: "Understanding your current setup helps us identify potential gaps and opportunities for improvement when we build your report"
       };
     case 'profile':
       return {
