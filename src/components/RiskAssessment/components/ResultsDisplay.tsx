@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -8,6 +7,7 @@ import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ContactDialog } from './ContactDialog';
 
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
@@ -15,6 +15,7 @@ interface ResultsDisplayProps {
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const [showEstimate, setShowEstimate] = useState(false);
+  const [showContactDialog, setShowContactDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
   const pricing = calculatePricing(formData as AssessmentData);
 
@@ -24,21 +25,31 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' 
       : 'text-red-500 bg-red-50 dark:bg-red-950/30';
 
-  const standardFeatures = [
-    'Proactive IT Monitoring & Management',
-    'Help Desk Support',
-    'Cybersecurity Protection',
-    'Data Backup & Recovery',
-    'Software Updates & Patch Management',
-    'Network Management'
-  ];
+  const getCtaText = () => {
+    switch (assessment.level) {
+      case 'High':
+        return "Urgent: Get Your Protection Plan Now";
+      case 'Medium':
+        return "Strengthen Your IT Security Today";
+      case 'Low':
+        return "Keep Your Business Protected";
+      default:
+        return "Discuss Your IT Security";
+    }
+  };
 
-  const complianceFeatures = [
-    'Industry-Specific Compliance Management',
-    'Enhanced Security Protocols',
-    'Regular Compliance Audits',
-    'Data Protection Officer Services'
-  ];
+  const getCtaDescription = () => {
+    switch (assessment.level) {
+      case 'High':
+        return "Your business needs immediate attention - let's secure your systems";
+      case 'Medium':
+        return "Take proactive steps to enhance your security measures";
+      case 'Low':
+        return "Maintain and improve your strong security position";
+      default:
+        return "Learn more about protecting your business";
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -189,7 +200,32 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             </div>
           </div>
         </motion.div>
+
+        {/* Risk-based CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="max-w-2xl mx-auto pt-6"
+        >
+          <Button 
+            size="lg"
+            onClick={() => setShowContactDialog(true)}
+            className="w-full sm:w-auto text-lg py-6 px-8"
+          >
+            {getCtaText()}
+          </Button>
+          <p className="text-muted-foreground text-sm mt-2">
+            {getCtaDescription()}
+          </p>
+        </motion.div>
       </div>
+
+      <ContactDialog 
+        isOpen={showContactDialog}
+        onOpenChange={setShowContactDialog}
+        riskLevel={assessment.level}
+      />
 
       {/* Executive Summary */}
       <Card className="p-6">
