@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar, FileDown } from "lucide-react";
+import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar, FileDown, ListChecks } from "lucide-react";
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
@@ -148,7 +148,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
 
               <div className="space-y-4">
                 <h4 className="font-semibold text-lg flex items-center gap-2">
-                  <CheckCheck className="h-5 w-5 text-purple-500" />
+                  <ListChecks className="h-5 w-5 text-purple-500" />
                   Included Services
                 </h4>
                 <ul className="space-y-2">
