@@ -38,7 +38,12 @@ import {
   HelpCircle,
   FileDown,
   Calculator,
-  PoundSterling
+  PoundSterling,
+  Info,
+  BarChart,
+  Database,
+  Clock,
+  Phone
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -48,7 +53,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { Info as InfoIcon } from "lucide-react";
 
 type Step = 'contact' | 'provider' | 'profile' | 'security' | 'compliance' | 'results';
 
@@ -649,19 +654,15 @@ export function RiskAssessmentForm() {
     };
 
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
-      >
+      <div className="space-y-8">
         <div className="flex flex-col items-center gap-4 mb-12 px-4 sm:px-0">
           <Button
             onClick={() => setShowEstimate(true)}
             size="lg"
             className="w-full sm:max-w-md flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
           >
-            <Calculator className="w-4 h-4" />
-            📊 IT Investment Benchmark (£)
+            <BarChart className="w-4 h-4" />
+            <Calculator className="w-4 h-4" /> IT Investment Benchmark
           </Button>
           <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
             How much do businesses like yours typically invest in IT support?
@@ -669,17 +670,12 @@ export function RiskAssessmentForm() {
         </div>
 
         {showEstimate && (
-          <motion.div
-            id="cost-estimate"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="my-12 scroll-mt-8"
-          >
+          <div id="cost-estimate" className="my-12 scroll-mt-8">
             <Card>
               <CardHeader className="space-y-1 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30">
                 <CardTitle className="text-2xl flex items-center gap-2">
                   <PoundSterling className="w-6 h-6 text-brand-orange" />
-                  💡 Industry Benchmark: Estimated IT Investment (£)
+                  <TrendingUp className="w-6 h-6" /> Industry Benchmark: Estimated IT Investment
                 </CardTitle>
                 <CardDescription>
                   Based on your answers about your businesses of similar size, sector and needs
@@ -732,16 +728,21 @@ export function RiskAssessmentForm() {
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-4 font-bold">
-                    📊 This benchmark reflects typical IT investment for businesses of your size, sector, and needs based on your responses. Actual costs may vary.
+                    <BarChart className="inline-block mr-2 h-4 w-4" />
+                    This benchmark reflects typical IT investment for businesses of your size, sector, and needs based on your responses. Actual costs may vary.
                   </p>
                   <div className="space-y-2 pt-4">
-                    <p className="text-sm font-medium">📞 Want to see if your IT investment aligns with best practices?</p>
-                    <p className="text-sm text-brand-orange">🔹 Book a Free IT Review for a personalized assessment of your needs.</p>
+                    <p className="text-sm font-medium">
+                      <Phone className="inline-block mr-2 h-4 w-4" /> Want to see if your IT investment aligns with best practices?
+                    </p>
+                    <p className="text-sm text-brand-orange">
+                      <ArrowRight className="inline-block mr-2 h-4 w-4" /> Book a Free IT Review for a personalized assessment of your needs.
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         )}
 
         <div className="flex justify-end">
@@ -774,7 +775,7 @@ export function RiskAssessmentForm() {
                     <Tooltip>
                       <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
                         <span>What's this?</span>
-                        <Info className="h-3 w-3" />
+                        <InfoIcon className="h-3 w-3" />
                       </TooltipTrigger>
                       <TooltipContent 
                         className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
@@ -804,7 +805,7 @@ export function RiskAssessmentForm() {
                     <Tooltip>
                       <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
                         <span>What's this?</span>
-                        <Info className="h-3 w-3" />
+                        <InfoIcon className="h-3 w-3" />
                       </TooltipTrigger>
                       <TooltipContent 
                         className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs"
@@ -975,7 +976,7 @@ export function RiskAssessmentForm() {
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   };
 
