@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -19,6 +20,32 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
   const pricing = calculatePricing(formData as AssessmentData);
+
+  const getCtaText = () => {
+    switch (assessment.level) {
+      case 'High':
+        return 'Get Urgent Security Support';
+      case 'Medium':
+        return 'Discuss Security Improvements';
+      case 'Low':
+        return 'Review Security Options';
+      default:
+        return 'Contact Support';
+    }
+  };
+
+  const getCtaDescription = () => {
+    switch (assessment.level) {
+      case 'High':
+        return 'Critical security issues require immediate attention';
+      case 'Medium':
+        return 'Address security gaps to protect your business';
+      case 'Low':
+        return 'Maintain and enhance your security posture';
+      default:
+        return 'Learn more about our security solutions';
+    }
+  };
 
   useEffect(() => {
     const handleDialogClose = () => {
