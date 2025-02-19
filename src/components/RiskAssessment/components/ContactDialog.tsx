@@ -24,6 +24,17 @@ interface ContactDialogProps {
   assessmentId?: string;
 }
 
+interface ContactSubmission {
+  name: string;
+  company: string;
+  email: string;
+  phone: string | null;
+  newsletter: boolean;
+  risk_level: string;
+  submission_type: 'consultation' | 'download';
+  assessment_id: string | null;
+}
+
 export const ContactDialog: React.FC<ContactDialogProps> = ({ 
   isOpen, 
   onOpenChange, 
@@ -74,21 +85,21 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const data = {
+    const data: ContactSubmission = {
       name: formData.get('name') as string,
       company: formData.get('company') as string,
       email: formData.get('email') as string,
-      phone: formData.get('phone') as string,
+      phone: formData.get('phone') as string || null,
       newsletter: newsletter,
       risk_level: riskLevel,
       submission_type: mode,
-      assessment_id: assessmentId
+      assessment_id: assessmentId || null
     };
 
     try {
       const { error } = await supabase
         .from('contact_submissions')
-        .insert([data]);
+        .insert([data] as any); // temporary type assertion until Supabase types are updated
 
       if (error) throw error;
 

@@ -286,6 +286,53 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          assessment_id: string | null
+          company: string
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          newsletter: boolean | null
+          phone: string | null
+          risk_level: string
+          submission_type: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          company: string
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          newsletter?: boolean | null
+          phone?: string | null
+          risk_level: string
+          submission_type: string
+        }
+        Update: {
+          assessment_id?: string | null
+          company?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          newsletter?: boolean | null
+          phone?: string | null
+          risk_level?: string
+          submission_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_submissions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "ss_tool_risk"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       disc_assessments: {
         Row: {
           answers: Json | null
