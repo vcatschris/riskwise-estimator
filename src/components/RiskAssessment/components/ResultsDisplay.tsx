@@ -6,6 +6,7 @@ import { Info } from "lucide-react";
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
+import { Card } from '@/components/ui/card';
 
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
@@ -52,9 +53,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                         <li>Security Measures (33%)</li>
                         <li>Compliance & Support (34%)</li>
                       </ul>
-                      <p className="text-sm text-purple-700 dark:text-purple-300 font-medium">
-                        Higher scores indicate greater risk exposure.
-                      </p>
                     </div>
                   </TooltipContent>
                 </Tooltip>
@@ -67,6 +65,89 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </motion.div>
       </div>
+
+      {/* Executive Summary */}
+      <Card className="p-6">
+        <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
+        <div className="space-y-4">
+          <div>
+            <h5 className="font-medium mb-2">Industry Insights</h5>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <h6 className="text-sm font-medium text-muted-foreground mb-2">Key Risks</h6>
+                <ul className="list-disc pl-4 space-y-1">
+                  {assessment.executiveSummary.industryInsights.risks.map((risk, index) => (
+                    <li key={index} className="text-sm">{risk}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h6 className="text-sm font-medium text-muted-foreground mb-2">Value Propositions</h6>
+                <ul className="list-disc pl-4 space-y-1">
+                  {assessment.executiveSummary.industryInsights.values.map((value, index) => (
+                    <li key={index} className="text-sm">{value}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h5 className="font-medium mb-2">Top Risks to Address</h5>
+            <ul className="list-disc pl-4 space-y-1">
+              {assessment.executiveSummary.topRisks.map((risk, index) => (
+                <li key={index} className="text-sm">{risk}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Card>
+
+      {/* Category Details */}
+      {assessment.details.map((category, index) => (
+        <Card key={index} className="p-6">
+          <h4 className="text-xl font-semibold mb-4">{category.category}</h4>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">{category.insights.description}</p>
+            
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <h5 className="font-medium mb-2">Risk Areas</h5>
+                <ul className="list-disc pl-4 space-y-1">
+                  {category.riskAreas.map((risk, idx) => (
+                    <li key={idx} className="text-sm">{risk}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h5 className="font-medium mb-2">Value Areas</h5>
+                <ul className="list-disc pl-4 space-y-1">
+                  {category.valueAreas.map((value, idx) => (
+                    <li key={idx} className="text-sm">{value}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <h5 className="font-medium mb-2">Industry-Specific Considerations</h5>
+              <ul className="list-disc pl-4 space-y-1">
+                {category.insights.industrySpecific.map((insight, idx) => (
+                  <li key={idx} className="text-sm">{insight}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h5 className="font-medium mb-2">Recommendations</h5>
+              <ul className="list-disc pl-4 space-y-1">
+                {category.recommendations.map((rec, idx) => (
+                  <li key={idx} className="text-sm">{rec}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Card>
+      ))}
     </div>
   );
 };
