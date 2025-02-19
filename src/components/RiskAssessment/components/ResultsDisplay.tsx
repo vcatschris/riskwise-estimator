@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -237,7 +236,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 <span className="text-2xl font-semibold">{assessment.total}</span>
                 <span className="text-sm ml-1">/ {assessment.maxPossible}</span>
               </div>
-              <p className="text-sm text-muted-foreground mb-1 mt-2">Risk Score</p>
+              <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Risk Score</p>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
@@ -264,7 +263,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 <span className="text-2xl font-semibold">{assessment.valueScore}</span>
                 <span className="text-sm ml-1">/ {assessment.maxValuePossible}</span>
               </div>
-              <p className="text-sm text-muted-foreground mb-1 mt-2">Value Score</p>
+              <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Value Score</p>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
