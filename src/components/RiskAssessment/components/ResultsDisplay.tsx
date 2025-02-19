@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -309,6 +310,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       </div>
 
       <div id="risk-report" className="space-y-8">
+        {/* Report Header */}
         <Card className="p-6">
           <div className="flex flex-col items-center justify-center text-center space-y-4">
             <img 
@@ -325,7 +327,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
-        {/* Risk Assessment Results for PDF */}
+        {/* Risk Assessment Summary */}
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Risk Assessment Summary</h4>
           <div className="space-y-4">
@@ -350,7 +352,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
-        {/* Executive Summary and Details */}
+        {/* Executive Summary */}
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
           <div className="space-y-4">
@@ -398,6 +400,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
+        {/* Detailed Category Reports */}
         {assessment.details.map((category, index) => (
           <Card key={index} className="p-6">
             <h4 className="text-xl font-semibold mb-4">{category.category}</h4>
