@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AssessmentData, CloudProvider, SupportDuration, CategoryDetail } from './types';
@@ -302,26 +303,29 @@ export function RiskAssessmentForm() {
     }
   };
 
-  const renderProviderInfo = () => <motion.div initial={{
-    opacity: 0,
-    x: 20
-  }} animate={{
-    opacity: 1,
-    x: 0
-  }} exit={{
-    opacity: 0,
-    x: -20
-  }} className="space-y-4">
+  const renderProviderInfo = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }} 
+      animate={{ opacity: 1, x: 0 }} 
+      exit={{ opacity: 0, x: -20 }} 
+      className="space-y-4"
+    >
       <div className="rounded-lg border p-4 shadow-sm">
         <div className="flex items-center space-x-3">
-          <Checkbox id="currentProvider" checked={formData.currentProvider} onCheckedChange={checked => handleInputChange('currentProvider', checked)} className="h-5 w-5" />
+          <Checkbox 
+            id="currentProvider" 
+            checked={formData.currentProvider} 
+            onCheckedChange={checked => handleInputChange('currentProvider', checked)} 
+            className="h-5 w-5" 
+          />
           <Label htmlFor="currentProvider" className="text-lg font-medium">
             We currently have IT support (internal team or external provider)
           </Label>
         </div>
       </div>
 
-      {formData.currentProvider && <Select onValueChange={value => handleInputChange('providerDuration', value)}>
+      {formData.currentProvider && (
+        <Select onValueChange={value => handleInputChange('providerDuration', value)}>
           <SelectTrigger>
             <SelectValue placeholder="How long have you had this IT support?" />
           </SelectTrigger>
@@ -331,7 +335,8 @@ export function RiskAssessmentForm() {
             <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
             <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
           </SelectContent>
-        </Select>}
+        </Select>
+      )}
 
       <Select onValueChange={value => handleInputChange('cloudProvider', value)}>
         <SelectTrigger>
@@ -344,17 +349,16 @@ export function RiskAssessmentForm() {
           <SelectItem value="Don't Know">Not sure which system we use</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>;
-  const renderBusinessProfile = () => <motion.div initial={{
-    opacity: 0,
-    x: 20
-  }} animate={{
-    opacity: 1,
-    x: 0
-  }} exit={{
-    opacity: 0,
-    x: -20
-  }} className="space-y-4">
+    </motion.div>
+  );
+
+  const renderBusinessProfile = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }} 
+      animate={{ opacity: 1, x: 0 }} 
+      exit={{ opacity: 0, x: -20 }} 
+      className="space-y-4"
+    >
       <Select onValueChange={value => handleInputChange('industry', value)}>
         <SelectTrigger>
           <SelectValue placeholder="What type of business are you? (for compliance needs)" />
@@ -392,17 +396,16 @@ export function RiskAssessmentForm() {
           <SelectItem value="Not Sure">Not sure what counts as sensitive data</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>;
-  const renderSecurityQuestions = () => <motion.div initial={{
-    opacity: 0,
-    x: 20
-  }} animate={{
-    opacity: 1,
-    x: 0
-  }} exit={{
-    opacity: 0,
-    x: -20
-  }} className="space-y-4">
+    </motion.div>
+  );
+
+  const renderSecurityQuestions = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }} 
+      animate={{ opacity: 1, x: 0 }} 
+      exit={{ opacity: 0, x: -20 }} 
+      className="space-y-4"
+    >
       <Select onValueChange={value => handleInputChange('lastAudit', value)}>
         <SelectTrigger>
           <SelectValue placeholder="When was your last IT security check? (e.g., vulnerability scan)" />
@@ -438,17 +441,16 @@ export function RiskAssessmentForm() {
           <SelectItem value="We don't back up data">We don't have backups in place</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>;
-  const renderComplianceQuestions = () => <motion.div initial={{
-    opacity: 0,
-    x: 20
-  }} animate={{
-    opacity: 1,
-    x: 0
-  }} exit={{
-    opacity: 0,
-    x: -20
-  }} className="space-y-4">
+    </motion.div>
+  );
+
+  const renderComplianceQuestions = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }} 
+      animate={{ opacity: 1, x: 0 }} 
+      exit={{ opacity: 0, x: -20 }} 
+      className="space-y-4"
+    >
       <Select onValueChange={value => handleInputChange('dataRegulations', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Do you need to follow data protection laws? (e.g., GDPR, HIPAA)" />
@@ -485,7 +487,9 @@ export function RiskAssessmentForm() {
           <SelectItem value="No urgency">No urgent requirements</SelectItem>
         </SelectContent>
       </Select>
-    </motion.div>;
+    </motion.div>
+  );
+
   const getCTAContent = (level: string) => {
     switch (level) {
       case 'High':
@@ -738,6 +742,4 @@ export function RiskAssessmentForm() {
                       <TooltipContent className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 border-purple-200 dark:border-purple-800 p-4 max-w-xs" sideOffset={5} align="center" side="bottom">
                         <div className="text-center space-y-3">
                           <p className="font-medium text-purple-900 dark:text-purple-100">Value Score (0-100) indicates potential benefits from improvements:</p>
-                          <ul className="space-y-2 text-purple-800 dark:text-purple-200">
-                            <li>Business Profile Value (33%)</li>
-                            <li>Security Enhancement Value
+                          <ul className="space-y
