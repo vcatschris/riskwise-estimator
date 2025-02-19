@@ -6,10 +6,10 @@ import { AssessmentData } from '../types';
 
 interface BusinessProfileStepProps {
   formData: Partial<AssessmentData>;
-  handleInputChange: (field: keyof AssessmentData, value: string | boolean) => void;
+  onInputChange: (field: keyof AssessmentData, value: string | boolean) => void;
 }
 
-export function BusinessProfileStep({ formData, handleInputChange }: BusinessProfileStepProps) {
+export function BusinessProfileStep({ formData, onInputChange }: BusinessProfileStepProps) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -17,7 +17,7 @@ export function BusinessProfileStep({ formData, handleInputChange }: BusinessPro
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4"
     >
-      <Select onValueChange={(value) => handleInputChange('industry', value)}>
+      <Select onValueChange={(value) => onInputChange('industry', value)}>
         <SelectTrigger>
           <SelectValue placeholder="What type of business are you? (for compliance needs)" />
         </SelectTrigger>
@@ -31,7 +31,7 @@ export function BusinessProfileStep({ formData, handleInputChange }: BusinessPro
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('businessSize', value)}>
+      <Select onValueChange={(value) => onInputChange('businessSize', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How many employees need IT support?" />
         </SelectTrigger>
@@ -44,7 +44,7 @@ export function BusinessProfileStep({ formData, handleInputChange }: BusinessPro
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('sensitiveData', value)}>
+      <Select onValueChange={(value) => onInputChange('sensitiveData', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Do you handle sensitive information? (customer data, financial records, etc.)" />
         </SelectTrigger>

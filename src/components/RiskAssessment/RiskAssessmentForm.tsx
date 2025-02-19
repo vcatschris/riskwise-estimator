@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Step, getTitleAndDescription } from './types/step';
 import { ProviderStep } from './components/ProviderStep';
+import { BusinessProfileStep } from './components/BusinessProfileStep';
 import { ResultsDisplay } from './components/ResultsDisplay';
 
 export function RiskAssessmentForm() {
@@ -179,6 +180,7 @@ export function RiskAssessmentForm() {
       </CardHeader>
       <CardContent>
         {step === 'provider' && <ProviderStep formData={formData} onInputChange={handleInputChange} />}
+        {step === 'profile' && <BusinessProfileStep formData={formData} handleInputChange={handleInputChange} />}
         {step === 'results' && <ResultsDisplay formData={formData} />}
       </CardContent>
       <CardFooter className="flex justify-between">
