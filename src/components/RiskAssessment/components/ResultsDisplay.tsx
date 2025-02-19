@@ -28,11 +28,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const getCtaText = () => {
     switch (assessment.level) {
       case 'High':
-        return "Urgent: Get Your Protection Plan Now";
+        return "Urgent: Let's Talk About Your IT Protection Plan";
       case 'Medium':
-        return "Strengthen Your IT Security Today";
+        return "Want to Strengthen Your IT Security Today?";
       case 'Low':
-        return "Keep Your Business Protected";
+        return "Can We Keep Your Business Protected?";
       default:
         return "Discuss Your IT Security";
     }
@@ -102,33 +102,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">Based on monthly rate</p>
               </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-6 mt-6">
-              <div>
-                <h4 className="text-lg font-semibold mb-4">Standard Features Included</h4>
-                <ul className="space-y-3">
-                  {standardFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {pricing.isHighCompliance && (
-                <div>
-                  <h4 className="text-lg font-semibold mb-4">Industry-Specific Additions</h4>
-                  <ul className="space-y-3">
-                    {complianceFeatures.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
 
             <div className="text-sm text-muted-foreground mt-6 bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 
 interface ContactDialogProps {
@@ -19,6 +20,7 @@ interface ContactDialogProps {
 }
 
 export const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onOpenChange, riskLevel }) => {
+  const [newsletter, setNewsletter] = useState(false);
   const { toast } = useToast();
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,6 +57,19 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({ isOpen, onOpenChan
           <div className="space-y-2">
             <Label htmlFor="phone">Phone (optional)</Label>
             <Input id="phone" type="tel" placeholder="Your phone number" />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="newsletter" 
+              checked={newsletter}
+              onCheckedChange={(checked) => setNewsletter(checked as boolean)}
+            />
+            <Label 
+              htmlFor="newsletter" 
+              className="text-sm leading-none select-none cursor-pointer"
+            >
+              Subscribe to our newsletter for security tips and updates
+            </Label>
           </div>
           <Button type="submit" className="w-full">Request Consultation</Button>
         </form>
