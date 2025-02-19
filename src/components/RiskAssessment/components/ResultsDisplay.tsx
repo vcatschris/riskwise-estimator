@@ -238,37 +238,54 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
               <div>
                 <h5 className="font-medium mb-2">Risk Areas</h5>
                 <ul className="list-disc pl-4 space-y-1">
-                  {category.riskAreas.map((risk, idx) => (
-                    <li key={idx} className="text-sm">{risk}</li>
-                  ))}
+                  {category.riskAreas.length > 0 ? (
+                    category.riskAreas.map((risk, idx) => (
+                      <li key={idx} className="text-sm">{risk}</li>
+                    ))
+                  ) : (
+                    <li className="text-sm">Standard risk considerations apply</li>
+                  )}
                 </ul>
               </div>
               <div>
                 <h5 className="font-medium mb-2">Value Areas</h5>
                 <ul className="list-disc pl-4 space-y-1">
-                  {category.valueAreas.map((value, idx) => (
-                    <li key={idx} className="text-sm">{value}</li>
-                  ))}
+                  {category.valueAreas.length > 0 ? (
+                    category.valueAreas.map((value, idx) => (
+                      <li key={idx} className="text-sm">{value}</li>
+                    ))
+                  ) : (
+                    <li className="text-sm">Standard value improvements available</li>
+                  )}
                 </ul>
               </div>
             </div>
 
-            <div>
-              <h5 className="font-medium mb-2">Industry-Specific Considerations</h5>
-              <ul className="list-disc pl-4 space-y-1">
-                {category.insights.industrySpecific.map((insight, idx) => (
-                  <li key={idx} className="text-sm">{insight}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h5 className="font-medium mb-2">Recommendations</h5>
-              <ul className="list-disc pl-4 space-y-1">
-                {category.recommendations.map((rec, idx) => (
-                  <li key={idx} className="text-sm">{rec}</li>
-                ))}
-              </ul>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <h5 className="font-medium mb-2">Industry-Specific Considerations</h5>
+                <ul className="list-disc pl-4 space-y-1">
+                  {category.insights.industrySpecific.length > 0 ? (
+                    category.insights.industrySpecific.map((insight, idx) => (
+                      <li key={idx} className="text-sm">{insight}</li>
+                    ))
+                  ) : (
+                    <li className="text-sm">Standard industry considerations apply</li>
+                  )}
+                </ul>
+              </div>
+              <div>
+                <h5 className="font-medium mb-2">Recommendations</h5>
+                <ul className="list-disc pl-4 space-y-1">
+                  {category.recommendations.length > 0 ? (
+                    category.recommendations.map((rec, idx) => (
+                      <li key={idx} className="text-sm">{rec}</li>
+                    ))
+                  ) : (
+                    <li className="text-sm">Standard improvement recommendations apply</li>
+                  )}
+                </ul>
+              </div>
             </div>
           </div>
         </Card>
