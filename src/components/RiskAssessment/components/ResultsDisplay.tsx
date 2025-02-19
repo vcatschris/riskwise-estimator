@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb } from "lucide-react";
+import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar } from "lucide-react";
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
@@ -196,7 +196,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
         <div className="space-y-4">
           <div>
-            <h5 className="font-medium mb-2">Industry Insights</h5>
+            <h5 className="font-medium text-brand-orange flex items-center gap-2 mb-2">
+              <ChartBar className="h-5 w-5" />
+              Industry Insights
+            </h5>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <h6 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
