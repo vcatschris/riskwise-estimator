@@ -324,7 +324,7 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
       ],
       sizeSpecific: {
         small: ["Basic healthcare compliance", "Essential support"],
-        medium: ["Growing compliance needs", "Multiple provider support"],
+        medium: ["Growing compliance needs", "Multiple provider access"],
         large: ["Enterprise healthcare compliance", "Complex support structure"]
       }
     },
@@ -529,34 +529,34 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   // Data Regulations (increased value weight)
   if (data.dataRegulations === 'Yes') {
     complianceRiskScore += 8 * 2;
-    complianceValueScore += 14; // Increased from 8
+    complianceValueScore += 14;
   } else if (data.dataRegulations === 'Not Sure') {
     complianceRiskScore += 6 * 1.5;
-    complianceValueScore += 10; // Increased from 6
+    complianceValueScore += 10;
   }
 
   // IT Issues Frequency (significantly increased value weight)
   if (data.itIssues === 'Daily') {
     complianceRiskScore += 10 * 3;
-    complianceValueScore += 18; // Increased from 10
+    complianceValueScore += 18;
   } else if (data.itIssues === 'Weekly') {
     complianceRiskScore += 7 * 2;
-    complianceValueScore += 14; // Increased from 7
+    complianceValueScore += 14;
   } else if (data.itIssues === 'Occasionally') {
     complianceRiskScore += 4;
-    complianceValueScore += 8; // Increased from 4
+    complianceValueScore += 8;
   }
 
   // Response Time Needed (increased value weight)
   if (data.responseNeeded === 'Within minutes') {
     complianceRiskScore += 8 * 3;
-    complianceValueScore += 16; // Increased from 10
+    complianceValueScore += 16;
   } else if (data.responseNeeded === 'Within an hour') {
     complianceRiskScore += 6 * 2;
-    complianceValueScore += 12; // Increased from 8
+    complianceValueScore += 12;
   } else if (data.responseNeeded === 'Same day') {
     complianceRiskScore += 4 * 1.5;
-    complianceValueScore += 9; // Increased from 6
+    complianceValueScore += 9;
   }
 
   // Normalize compliance scores
@@ -565,6 +565,32 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
 
   totalRiskPoints += complianceRiskScore;
   totalValuePoints += complianceValueScore;
+
+  // Add Compliance & Support details - Adding console.log for debugging
+  console.log('Adding Compliance & Support section');
+  details.push({
+    category: 'Compliance & Support',
+    riskScore: complianceRiskScore,
+    valueScore: complianceValueScore,
+    recommendations: [
+      data.dataRegulations === 'Yes' ? 'Maintain regular compliance audits and documentation' : '',
+      data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Implement proactive IT support measures' : '',
+      data.responseNeeded === 'Within minutes' || data.responseNeeded === 'Within an hour' ? 'Setup rapid response IT support system' : '',
+    ].filter(Boolean),
+    insights: getDescriptionForCategory('Compliance & Support'),
+    riskAreas: [
+      data.dataRegulations === 'Yes' ? 'Complex regulatory compliance requirements' : '',
+      data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Frequent IT disruptions affecting operations' : '',
+      data.responseNeeded === 'Within minutes' ? 'Critical response time requirements' : '',
+    ].filter(Boolean),
+    valueAreas: [
+      'Streamlined compliance management',
+      'Efficient IT support processes',
+      'Improved business continuity',
+    ]
+  });
+
+  console.log('Final details array:', details); // Debug log
 
   // Round scores and ensure they don't exceed 100
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
@@ -596,7 +622,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {
       risks.push("Frequent IT disruptions impacting business");
     }
-    return risks.slice(0, 3); // Return top 3 risks
+    return risks.slice(0, 3);
   };
 
   const getValueProposition = () => {
