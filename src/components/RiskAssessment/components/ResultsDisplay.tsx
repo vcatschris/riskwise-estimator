@@ -115,6 +115,26 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             <div className="text-center">
               <p className="text-2xl font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
               <p className="text-sm text-muted-foreground mb-1">Value Score</p>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                    <span>What's this?</span>
+                    <Info className="h-3 w-3" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div className="text-center space-y-3">
+                      <p className="font-medium text-purple-900 dark:text-purple-100">
+                        Value Score (0-100) indicates potential benefits from improvements
+                      </p>
+                      <ul className="space-y-2 text-purple-800 dark:text-purple-200">
+                        <li>Business Profile Value (33%)</li>
+                        <li>Security Enhancement Value (33%)</li>
+                        <li>Compliance & Support Value (34%)</li>
+                      </ul>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
         </motion.div>
