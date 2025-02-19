@@ -383,10 +383,19 @@ const calculateMaxScores = () => {
   return { maxRiskPoints, maxValuePoints };
 };
 
-export function calculateRiskScore(data: AssessmentData): RiskScore {
+export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let totalRiskPoints = 0;
   let totalValuePoints = 0;
   const details = [];
+
+  const getDescriptionForCategory = (category: string) => {
+    const insights = CATEGORY_INSIGHTS[category][data.industry || 'Other'];
+    return {
+      description: insights.description,
+      industrySpecific: insights.industrySpecific,
+      sizeSpecific: insights.sizeSpecific
+    };
+  };
 
   // Business Profile Risk
   let profileRiskScore = 0;
@@ -435,7 +444,7 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.sensitiveData === 'Yes' ? 'Implement enhanced data protection measures' : '',
       data.internalIT === 'No' ? 'Consider managed IT support for better security' : '',
     ].filter(Boolean),
-    insights: getCategoryInsights('Business Profile', data.industry, data.businessSize),
+    insights: getDescriptionForCategory('Business Profile'),
     riskAreas: [
       data.sensitiveData === 'Yes' ? 'Handling sensitive data requires additional protection' : '',
       data.internalIT === 'No' ? 'Lack of internal IT support increases vulnerability' : '',
@@ -508,7 +517,7 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.backupFrequency === "We don't back up data" ? 'Implement regular backup strategy' : '',
       data.endpointProtection === 'No' ? 'Deploy endpoint protection solutions' : '',
     ].filter(Boolean),
-    insights: getCategoryInsights('Security', data.industry, data.businessSize),
+    insights: getDescriptionForCategory('Security'),
     riskAreas: [
       data.lastAudit === 'Never' ? 'No recent security audit' : '',
       data.mfaEnabled === 'No' ? 'Missing multi-factor authentication' : '',
@@ -581,7 +590,7 @@ export function calculateRiskScore(data: AssessmentData): RiskScore {
       data.dataRegulations === 'Yes' ? 'Implement compliance monitoring' : '',
       data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Consider proactive IT monitoring' : '',
     ].filter(Boolean),
-    insights: getCategoryInsights('Compliance & Support', data.industry, data.businessSize),
+    insights: getDescriptionForCategory('Compliance & Support'),
     riskAreas: [
       data.dataRegulations === 'Not Sure' ? 'Unclear regulatory compliance status' : '',
       data.itIssues === 'Daily' ? 'Frequent IT disruptions' : '',
