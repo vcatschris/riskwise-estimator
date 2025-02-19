@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, PoundSterling, Check } from "lucide-react";
+import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb } from "lucide-react";
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
@@ -236,7 +236,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <h5 className="font-medium mb-2">Risk Areas</h5>
+                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  Risk Areas
+                </h5>
                 <ul className="list-disc pl-4 space-y-1">
                   {category.riskAreas.length > 0 ? (
                     category.riskAreas.map((risk, idx) => (
@@ -248,7 +251,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 </ul>
               </div>
               <div>
-                <h5 className="font-medium mb-2">Value Areas</h5>
+                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Value Areas
+                </h5>
                 <ul className="list-disc pl-4 space-y-1">
                   {category.valueAreas.length > 0 ? (
                     category.valueAreas.map((value, idx) => (
@@ -263,7 +269,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <h5 className="font-medium mb-2">Industry-Specific Considerations</h5>
+                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Industry-Specific Considerations
+                </h5>
                 <ul className="list-disc pl-4 space-y-1">
                   {category.insights.industrySpecific.length > 0 ? (
                     category.insights.industrySpecific.map((insight, idx) => (
@@ -275,7 +284,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 </ul>
               </div>
               <div>
-                <h5 className="font-medium mb-2">Recommendations</h5>
+                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5" />
+                  Recommendations
+                </h5>
                 <ul className="list-disc pl-4 space-y-1">
                   {category.recommendations.length > 0 ? (
                     category.recommendations.map((rec, idx) => (
