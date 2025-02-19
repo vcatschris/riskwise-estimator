@@ -40,30 +40,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' 
       : 'text-red-500 bg-red-50 dark:bg-red-950/30';
 
-  const getCtaText = () => {
-    switch (assessment.level) {
-      case 'High':
-        return "Urgent: Let's Talk About Your IT Protection Plan";
-      case 'Medium':
-        return "Want to Strengthen Your IT Security Today?";
-      case 'Low':
-        return "Can We Keep Your Business Protected?";
-      default:
-        return "Discuss Your IT Security";
-    }
-  };
-
-  const getCtaDescription = () => {
-    switch (assessment.level) {
-      case 'High':
-        return "Your business needs immediate attention - let's secure your systems";
-      case 'Medium':
-        return "Take proactive steps to enhance your security measures";
-      case 'Low':
-        return "Maintain and improve your strong security position";
-      default:
-        return "Learn more about protecting your business";
-    }
+  const getBadgeColor = (score: number, maxScore: number) => {
+    const percentage = (score / maxScore) * 100;
+    if (percentage < 40) return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800';
+    if (percentage < 70) return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800';
+    return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800';
   };
 
   return (
@@ -225,8 +206,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
           <div className="flex justify-center gap-8 mt-6">
             <div className="text-center">
-              <p className="text-2xl font-semibold">{assessment.total} / {assessment.maxPossible}</p>
-              <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
+              <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getBadgeColor(assessment.total, assessment.maxPossible)}`}>
+                <span className="text-2xl font-semibold">{assessment.total}</span>
+                <span className="text-sm ml-1">/ {assessment.maxPossible}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-1 mt-2">Risk Score</p>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
@@ -249,8 +233,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
               </TooltipProvider>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
-              <p className="text-sm text-muted-foreground mb-1">Value Score</p>
+              <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getBadgeColor(assessment.valueScore, assessment.maxValuePossible)}`}>
+                <span className="text-2xl font-semibold">{assessment.valueScore}</span>
+                <span className="text-sm ml-1">/ {assessment.maxValuePossible}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-1 mt-2">Value Score</p>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
@@ -312,6 +299,32 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
+        {/* Risk Assessment Results for PDF */}
+        <Card className="p-6">
+          <h4 className="text-xl font-semibold mb-4">Risk Assessment Summary</h4>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-4 rounded-lg bg-gray-50 dark:bg-gray-900">
+              <div>
+                <p className="font-medium text-lg">Overall Risk Level</p>
+                <p className={`text-2xl font-bold ${riskColor}`}>{assessment.level} Risk</p>
+              </div>
+              <div className="text-right">
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Risk Score</p>
+                    <p className="font-semibold">{assessment.total} / {assessment.maxPossible}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Value Score</p>
+                    <p className="font-semibold">{assessment.valueScore} / {assessment.maxValuePossible}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Executive Summary and Details */}
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
           <div className="space-y-4">
