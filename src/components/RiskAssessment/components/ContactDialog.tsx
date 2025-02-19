@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -45,75 +44,50 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       
       if (!reportElement) {
         console.error('Risk report element not found');
-        return null;
+        throw new Error('Risk report element not found');
       }
-      
-      // Store original styles
-      const originalDisplay = reportElement.style.display;
-      const originalVisibility = reportElement.style.visibility;
-      const originalPosition = reportElement.style.position;
-      const originalZIndex = reportElement.style.zIndex;
-      const originalPointerEvents = reportElement.style.pointerEvents;
-      
-      // Temporarily modify styles for capture
-      reportElement.style.display = 'block';
-      reportElement.style.visibility = 'visible';
+
+      const contentWidth = reportElement.scrollWidth;
+      const contentHeight = reportElement.scrollHeight;
+
+      // Configure element for capture
+      reportElement.style.width = `${contentWidth}px`;
+      reportElement.style.height = `${contentHeight}px`;
       reportElement.style.position = 'relative';
-      reportElement.style.zIndex = '9999';
-      reportElement.style.pointerEvents = 'none';
+      reportElement.style.overflow = 'visible';
       
-      // Wait for styles to apply and any animations to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      console.log('Capturing element with dimensions:', {
-        width: reportElement.offsetWidth,
-        height: reportElement.offsetHeight,
-        scrollWidth: reportElement.scrollWidth,
-        scrollHeight: reportElement.scrollHeight
-      });
+      // Give the browser time to apply the styles
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       const canvas = await html2canvas(reportElement, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        windowWidth: reportElement.scrollWidth,
-        windowHeight: reportElement.scrollHeight,
-        logging: true,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('risk-report');
-          if (clonedElement) {
-            clonedElement.style.width = `${reportElement.scrollWidth}px`;
-            clonedElement.style.height = `${reportElement.scrollHeight}px`;
-          }
-        }
+        width: contentWidth,
+        height: contentHeight,
+        logging: true
       });
       
-      console.log('Canvas generated with dimensions:', {
-        width: canvas.width,
-        height: canvas.height
-      });
+      console.log('Canvas generated successfully');
       
-      // Restore original styles
-      reportElement.style.display = originalDisplay;
-      reportElement.style.visibility = originalVisibility;
-      reportElement.style.position = originalPosition;
-      reportElement.style.zIndex = originalZIndex;
-      reportElement.style.pointerEvents = originalPointerEvents;
+      // Create PDF with proper dimensions
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
       
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
-        orientation: 'portrait',
+        orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
         unit: 'px',
-        format: [canvas.width, canvas.height]
+        format: [imgWidth, imgHeight]
       });
       
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      console.log('PDF generated successfully');
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+      console.log('PDF created successfully');
+      
       return pdf;
     } catch (error) {
       console.error('PDF generation error:', error);
-      return null;
+      throw error;
     }
   };
 
@@ -122,7 +96,6 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
     setLoading(true);
 
     try {
-      console.log('Starting form submission...');
       const form = e.currentTarget;
       const formData = new FormData(form);
       
@@ -137,16 +110,6 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         assessment_id: assessmentId || null
       };
 
-      // Generate PDF first if it's a download request
-      let pdf = null;
-      if (mode === 'download') {
-        console.log('Generating PDF before database submission...');
-        pdf = await generatePDF();
-        if (!pdf) {
-          throw new Error('Failed to generate PDF');
-        }
-      }
-
       console.log('Submitting contact data to database...');
       const { error: submissionError } = await supabase
         .from('contact_submissions')
@@ -157,12 +120,11 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw submissionError;
       }
 
-      if (mode === 'download' && pdf) {
-        console.log('Saving PDF...');
+      if (mode === 'download') {
+        const pdf = await generatePDF();
         pdf.save('IT_Security_Assessment_Report.pdf');
       }
 
-      console.log('Submission completed successfully');
       toast({
         title: mode === 'download' ? "Report downloaded" : "Request submitted",
         description: mode === 'download' 

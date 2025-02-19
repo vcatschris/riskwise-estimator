@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar, FileDown, ListChecks } from "lucide-react";
@@ -19,6 +19,20 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
   const pricing = calculatePricing(formData as AssessmentData);
+
+  useEffect(() => {
+    const handleDialogClose = () => {
+      const reportElement = document.getElementById('risk-report');
+      if (reportElement) {
+        reportElement.style.visibility = 'visible';
+        reportElement.style.display = 'block';
+      }
+    };
+
+    if (!showDownloadDialog) {
+      handleDialogClose();
+    }
+  }, [showDownloadDialog]);
 
   const riskColor = assessment.level === 'Low' 
     ? 'text-green-500 bg-green-50 dark:bg-green-950/30' 
@@ -295,129 +309,129 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         mode="download"
       />
 
-      {/* Executive Summary */}
-      <Card className="p-6">
-        <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
-        <div className="space-y-4">
-          <div>
-            <h5 className="font-medium text-brand-orange flex items-center gap-2 mb-2">
-              <ChartBar className="h-5 w-5" />
-              Industry Insights
-            </h5>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <h6 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Key Risks
-                </h6>
-                <ul className="list-disc pl-4 space-y-1">
-                  {assessment.executiveSummary.industryInsights.risks.map((risk, index) => (
-                    <li key={index} className="text-sm">{risk}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h6 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Value Propositions
-                </h6>
-                <ul className="list-disc pl-4 space-y-1">
-                  {assessment.executiveSummary.industryInsights.values.map((value, index) => (
-                    <li key={index} className="text-sm">{value}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h5 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
-              <AlertTriangle className="h-5 w-5" />
-              Top Risks to Address
-            </h5>
-            <ul className="list-disc pl-4 space-y-1">
-              {assessment.executiveSummary.topRisks.map((risk, index) => (
-                <li key={index} className="text-sm">{risk}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Card>
-
-      {/* Category Details */}
-      {assessment.details.map((category, index) => (
-        <Card key={index} className="p-6">
-          <h4 className="text-xl font-semibold mb-4">{category.category}</h4>
+      <div id="risk-report" className="space-y-8">
+        <Card className="p-6">
+          <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">{category.insights.description}</p>
-            
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Risk Areas
-                </h5>
-                <ul className="list-disc pl-4 space-y-1">
-                  {category.riskAreas.length > 0 ? (
-                    category.riskAreas.map((risk, idx) => (
-                      <li key={idx} className="text-sm">{risk}</li>
-                    ))
-                  ) : (
-                    <li className="text-sm">Standard risk considerations apply</li>
-                  )}
-                </ul>
-              </div>
-              <div>
-                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Value Areas
-                </h5>
-                <ul className="list-disc pl-4 space-y-1">
-                  {category.valueAreas.length > 0 ? (
-                    category.valueAreas.map((value, idx) => (
-                      <li key={idx} className="text-sm">{value}</li>
-                    ))
-                  ) : (
-                    <li className="text-sm">Standard value improvements available</li>
-                  )}
-                </ul>
+            <div>
+              <h5 className="font-medium text-brand-orange flex items-center gap-2 mb-2">
+                <ChartBar className="h-5 w-5" />
+                Industry Insights
+              </h5>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <h6 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
+                    <AlertTriangle className="h-5 w-5" />
+                    Key Risks
+                  </h6>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {assessment.executiveSummary.industryInsights.risks.map((risk, index) => (
+                      <li key={index} className="text-sm">{risk}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h6 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Value Propositions
+                  </h6>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {assessment.executiveSummary.industryInsights.values.map((value, index) => (
+                      <li key={index} className="text-sm">{value}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
-                  <Building2 className="h-5 w-5" />
-                  Industry-Specific Considerations
-                </h5>
-                <ul className="list-disc pl-4 space-y-1">
-                  {category.insights.industrySpecific.length > 0 ? (
-                    category.insights.industrySpecific.map((insight, idx) => (
-                      <li key={idx} className="text-sm">{insight}</li>
-                    ))
-                  ) : (
-                    <li className="text-sm">Standard industry considerations apply</li>
-                  )}
-                </ul>
-              </div>
-              <div>
-                <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
-                  <Lightbulb className="h-5 w-5" />
-                  Recommendations
-                </h5>
-                <ul className="list-disc pl-4 space-y-1">
-                  {category.recommendations.length > 0 ? (
-                    category.recommendations.map((rec, idx) => (
-                      <li key={idx} className="text-sm">{rec}</li>
-                    ))
-                  ) : (
-                    <li className="text-sm">Standard improvement recommendations apply</li>
-                  )}
-                </ul>
-              </div>
+            <div>
+              <h5 className="text-sm font-medium text-brand-orange flex items-center gap-2 mb-2">
+                <AlertTriangle className="h-5 w-5" />
+                Top Risks to Address
+              </h5>
+              <ul className="list-disc pl-4 space-y-1">
+                {assessment.executiveSummary.topRisks.map((risk, index) => (
+                  <li key={index} className="text-sm">{risk}</li>
+                ))}
+              </ul>
             </div>
           </div>
         </Card>
-      ))}
+
+        {assessment.details.map((category, index) => (
+          <Card key={index} className="p-6">
+            <h4 className="text-xl font-semibold mb-4">{category.category}</h4>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">{category.insights.description}</p>
+              
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5" />
+                    Risk Areas
+                  </h5>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {category.riskAreas.length > 0 ? (
+                      category.riskAreas.map((risk, idx) => (
+                        <li key={idx} className="text-sm">{risk}</li>
+                      ))
+                    ) : (
+                      <li className="text-sm">Standard risk considerations apply</li>
+                    )}
+                  </ul>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Value Areas
+                  </h5>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {category.valueAreas.length > 0 ? (
+                      category.valueAreas.map((value, idx) => (
+                        <li key={idx} className="text-sm">{value}</li>
+                      ))
+                    ) : (
+                      <li className="text-sm">Standard value improvements available</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                    <Building2 className="h-5 w-5" />
+                    Industry-Specific Considerations
+                  </h5>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {category.insights.industrySpecific.length > 0 ? (
+                      category.insights.industrySpecific.map((insight, idx) => (
+                        <li key={idx} className="text-sm">{insight}</li>
+                      ))
+                    ) : (
+                      <li className="text-sm">Standard industry considerations apply</li>
+                    )}
+                  </ul>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5" />
+                    Recommendations
+                  </h5>
+                  <ul className="list-disc pl-4 space-y-1">
+                    {category.recommendations.length > 0 ? (
+                      category.recommendations.map((rec, idx) => (
+                        <li key={idx} className="text-sm">{rec}</li>
+                      ))
+                    ) : (
+                      <li className="text-sm">Standard improvement recommendations apply</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
