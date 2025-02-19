@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AssessmentData } from './types';
 import { calculateRiskScore } from './calculateScore';
@@ -9,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Step, getTitleAndDescription } from './types/step';
 import { ProviderStep } from './components/ProviderStep';
 import { BusinessProfileStep } from './components/BusinessProfileStep';
+import { SecurityQuestionsStep } from './components/SecurityQuestionsStep';
 import { ResultsDisplay } from './components/ResultsDisplay';
 
 export function RiskAssessmentForm() {
@@ -181,6 +183,7 @@ export function RiskAssessmentForm() {
       <CardContent>
         {step === 'provider' && <ProviderStep formData={formData} onInputChange={handleInputChange} />}
         {step === 'profile' && <BusinessProfileStep formData={formData} onInputChange={handleInputChange} />}
+        {step === 'security' && <SecurityQuestionsStep formData={formData} onInputChange={handleInputChange} />}
         {step === 'results' && <ResultsDisplay formData={formData} />}
       </CardContent>
       <CardFooter className="flex justify-between">

@@ -6,10 +6,10 @@ import { AssessmentData } from '../types';
 
 interface SecurityQuestionsStepProps {
   formData: Partial<AssessmentData>;
-  handleInputChange: (field: keyof AssessmentData, value: string | boolean) => void;
+  onInputChange: (field: keyof AssessmentData, value: string | boolean) => void;
 }
 
-export function SecurityQuestionsStep({ formData, handleInputChange }: SecurityQuestionsStepProps) {
+export function SecurityQuestionsStep({ formData, onInputChange }: SecurityQuestionsStepProps) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -17,7 +17,7 @@ export function SecurityQuestionsStep({ formData, handleInputChange }: SecurityQ
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4"
     >
-      <Select onValueChange={(value) => handleInputChange('lastAudit', value)}>
+      <Select onValueChange={(value) => onInputChange('lastAudit', value)}>
         <SelectTrigger>
           <SelectValue placeholder="When was your last IT security check? (e.g., vulnerability scan)" />
         </SelectTrigger>
@@ -29,7 +29,7 @@ export function SecurityQuestionsStep({ formData, handleInputChange }: SecurityQ
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('mfaEnabled', value)}>
+      <Select onValueChange={(value) => onInputChange('mfaEnabled', value)}>
         <SelectTrigger>
           <SelectValue placeholder="Do you use two-step login? (mobile code + password)" />
         </SelectTrigger>
@@ -40,7 +40,7 @@ export function SecurityQuestionsStep({ formData, handleInputChange }: SecurityQ
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => handleInputChange('backupFrequency', value)}>
+      <Select onValueChange={(value) => onInputChange('backupFrequency', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How often do you back up your business data?" />
         </SelectTrigger>
