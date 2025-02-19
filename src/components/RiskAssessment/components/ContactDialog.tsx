@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import type { Database } from "@/integrations/supabase/types";
 
 interface ContactDialogProps {
   isOpen: boolean;
@@ -24,16 +25,7 @@ interface ContactDialogProps {
   assessmentId?: string;
 }
 
-interface ContactSubmission {
-  name: string;
-  company: string;
-  email: string;
-  phone: string | null;
-  newsletter: boolean;
-  risk_level: string;
-  submission_type: 'consultation' | 'download';
-  assessment_id: string | null;
-}
+type ContactSubmission = Database['public']['Tables']['contact_submissions']['Insert'];
 
 export const ContactDialog: React.FC<ContactDialogProps> = ({ 
   isOpen, 
@@ -99,7 +91,7 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
     try {
       const { error } = await supabase
         .from('contact_submissions')
-        .insert([data] as any); // temporary type assertion until Supabase types are updated
+        .insert([data]);
 
       if (error) throw error;
 
