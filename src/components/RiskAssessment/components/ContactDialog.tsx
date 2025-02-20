@@ -121,100 +121,42 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw submissionError;
       }
 
-      // Get the complete assessment data if we have an ID
-      if (assessmentId) {
-        const { data: assessment, error: assessmentError } = await supabase
-          .from('ss_risk_survey')
-          .select('*')
-          .eq('id', assessmentId)
-          .single();
+      // Send data to Edge Function
+      try {
+        console.log("Triggering webhook via Edge Function...");
+        const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabase.auth.session()?.access_token}`,
+          },
+          body: JSON.stringify({
+            assessmentId,
+            contactData,
+          }),
+        });
 
-        if (!assessmentError && assessment) {
-          // Calculate pricing based on business size
-          const basePrice = assessment.business_size === '1-5' ? 700 :
-            assessment.business_size === '6-20' ? 1250 :
-            assessment.business_size === '21-50' ? 2500 :
-            assessment.business_size === '51-100' ? 4250 : 6000;
-
-          const isHighCompliance = ['Legal', 'Finance', 'Healthcare', 'Accounting'].includes(assessment.industry);
-          const finalPrice = isHighCompliance ? basePrice * 1.3 : basePrice;
-          const annualPrice = finalPrice * 12;
-
-          const packageInclusions = [
-            "24/7 Monitoring & Support",
-            "Security Incident Response",
-            "Regular Security Updates",
-            "Data Backup & Recovery",
-          ];
-
-          if (isHighCompliance) {
-            packageInclusions.push(
-              "Compliance Reporting & Auditing",
-              "Enhanced Security Controls"
-            );
-          }
-
-          // Type cast the executive_summary to our known type
-          const executiveSummary = assessment.executive_summary as unknown as ExecutiveSummary;
-
-          // Trigger Zapier webhook with the complete data
-          const webhookUrl = 'https://hooks.zapier.com/hooks/catch/3379103/2wpsy44/';
-          try {
-            console.log("Triggering Zapier webhook:", webhookUrl);
-            const response = await fetch(webhookUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              mode: 'no-cors', // Add this to handle CORS
-              body: JSON.stringify({
-                name: contactData.name,
-                email: contactData.email,
-                company: contactData.company,
-                phone: contactData.phone,
-                newsletter: contactData.newsletter,
-                submission_type: contactData.submission_type,
-                business_size: assessment.business_size,
-                industry: assessment.industry,
-                risk_level: assessment.risk_level,
-                risk_score: assessment.risk_score,
-                value_score: assessment.value_score,
-                pricing: {
-                  monthly: Math.round(finalPrice),
-                  annual: Math.round(annualPrice),
-                },
-                top_risks: executiveSummary.topRisks,
-                is_high_compliance: isHighCompliance,
-                package_inclusions: packageInclusions,
-                summary: `${assessment.business_name} (${assessment.industry}) - ${assessment.risk_level} Risk Level`,
-                submission_date: new Date().toISOString()
-              }),
-            });
-
-            // Since we're using no-cors, we won't get a proper response status
-            // Instead, we'll show a more informative message
-            toast({
-              title: "Request Sent",
-              description: "The request was sent to Zapier. Please check your Zap's history to confirm it was triggered.",
-            });
-            console.log('Zapier webhook triggered successfully');
-          } catch (error) {
-            console.error('Error triggering Zapier webhook:', error);
-          }
+        if (!response.ok) {
+          throw new Error(`Edge Function failed: ${response.statusText}`);
         }
+
+        console.log('Webhook triggered successfully');
+        toast({
+          title: "Request Sent",
+          description: "Your information has been submitted successfully.",
+        });
+      } catch (error) {
+        console.error('Error triggering webhook:', error);
+        toast({
+          title: "Warning",
+          description: "Form submitted but notification failed. Our team will still receive your request.",
+        });
       }
 
       if (mode === 'download') {
         const pdf = await generatePDF();
         pdf.save('IT_Security_Assessment_Report.pdf');
       }
-
-      toast({
-        title: mode === 'download' ? "Report downloaded" : "Request submitted",
-        description: mode === 'download' 
-          ? "Your PDF report has been generated and downloaded."
-          : "We'll be in touch with you shortly to discuss your IT needs.",
-      });
       
       onOpenChange(false);
     } catch (error) {
