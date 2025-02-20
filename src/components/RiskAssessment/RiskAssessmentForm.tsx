@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 import { Step, getTitleAndDescription } from './types/step';
 import { ProviderStep } from './components/ProviderStep';
 import { BusinessProfileStep } from './components/BusinessProfileStep';
@@ -97,6 +97,8 @@ export function RiskAssessmentForm() {
 
   const saveAssessmentResults = async (assessment: any) => {
     try {
+      console.log('Saving assessment results:', assessment);
+      
       const {
         data,
         error
@@ -125,24 +127,34 @@ export function RiskAssessmentForm() {
         executive_summary: assessment.executiveSummary,
         category_details: assessment.details
       }).select();
+
       if (error) {
         console.error('Error saving assessment:', error);
         toast.error('Failed to save assessment results');
-        return;
+        return null;
       }
+
+      console.log('Assessment saved successfully:', data);
       toast.success('Assessment results saved successfully');
+      return data[0];
+      
     } catch (error) {
       console.error('Error saving assessment:', error);
       toast.error('Failed to save assessment results');
+      return null;
     }
   };
 
   const nextStep = async () => {
     if (!validateStep()) return;
+    
     if (step === 'compliance') {
       const assessment = calculateRiskScore(formData as AssessmentData);
-      await saveAssessmentResults(assessment);
+      console.log('Calculated assessment:', assessment);
+      const savedAssessment = await saveAssessmentResults(assessment);
+      console.log('Saved assessment ID:', savedAssessment?.id);
     }
+
     if (step === 'provider') {
       setStep('profile');
       setProgress(40);
