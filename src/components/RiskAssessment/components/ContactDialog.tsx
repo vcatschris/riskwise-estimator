@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import type { Database } from "@/integrations/supabase/types";
+import type { ExecutiveSummary } from '../types';
 
 interface ContactDialogProps {
   isOpen: boolean;
@@ -154,6 +155,9 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
             );
           }
 
+          // Type cast the executive_summary to our known type
+          const executiveSummary = assessment.executive_summary as unknown as ExecutiveSummary;
+
           // Trigger Zapier webhook with the complete data
           const webhookUrl = process.env.VITE_ZAPIER_WEBHOOK_URL;
           if (webhookUrl) {
@@ -191,7 +195,7 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
                     `- Monthly Investment: £${finalPrice}\n` +
                     `- Annual Investment: £${annualPrice}\n` +
                     `\nPackage Includes:\n${packageInclusions.map(item => `- ${item}`).join('\n')}\n` +
-                    `\nKey Risk Areas:\n${assessment.executive_summary.topRisks.map((risk: string) => `- ${risk}`).join('\n')}\n` +
+                    `\nKey Risk Areas:\n${executiveSummary.topRisks.map((risk: string) => `- ${risk}`).join('\n')}\n` +
                     `\nOpportunity Summary:\n` +
                     `This ${assessment.risk_level.toLowerCase()} risk assessment indicates ${
                       assessment.risk_level === 'High' ? 'urgent security needs' :
