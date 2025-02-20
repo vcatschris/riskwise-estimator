@@ -124,11 +124,12 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       // Send data to Edge Function
       try {
         console.log("Triggering webhook via Edge Function...");
+        const { data: { session } } = await supabase.auth.getSession();
         const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${supabase.auth.session()?.access_token}`,
+            'Authorization': `Bearer ${session?.access_token}`,
           },
           body: JSON.stringify({
             assessmentId,
