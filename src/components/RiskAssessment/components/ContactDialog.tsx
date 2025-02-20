@@ -121,23 +121,94 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw submissionError;
       }
 
-      // Call the webhook with assessment data
+      // Get the complete assessment data if we have an ID
       if (assessmentId) {
-        const { data: webhookResponse, error: webhookError } = await supabase.functions.invoke('assessment-webhook', {
-          body: {
-            assessmentId,
-            contactData: {
-              ...contactData,
-              submission_type: mode
+        const { data: assessment, error: assessmentError } = await supabase
+          .from('ss_risk_survey')
+          .select('*')
+          .eq('id', assessmentId)
+          .single();
+
+        if (!assessmentError && assessment) {
+          // Calculate pricing based on business size
+          const basePrice = assessment.business_size === '1-5' ? 700 :
+            assessment.business_size === '6-20' ? 1250 :
+            assessment.business_size === '21-50' ? 2500 :
+            assessment.business_size === '51-100' ? 4250 : 6000;
+
+          const isHighCompliance = ['Legal', 'Finance', 'Healthcare', 'Accounting'].includes(assessment.industry);
+          const finalPrice = isHighCompliance ? basePrice * 1.3 : basePrice;
+          const annualPrice = finalPrice * 12;
+
+          const packageInclusions = [
+            "24/7 Monitoring & Support",
+            "Security Incident Response",
+            "Regular Security Updates",
+            "Data Backup & Recovery",
+          ];
+
+          if (isHighCompliance) {
+            packageInclusions.push(
+              "Compliance Reporting & Auditing",
+              "Enhanced Security Controls"
+            );
+          }
+
+          // Trigger Zapier webhook with the complete data
+          const webhookUrl = process.env.VITE_ZAPIER_WEBHOOK_URL;
+          if (webhookUrl) {
+            try {
+              const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  timestamp: new Date().toISOString(),
+                  contact_info: contactData,
+                  assessment_data: assessment,
+                  pricing: {
+                    monthly: finalPrice,
+                    annual: annualPrice,
+                    is_high_compliance: isHighCompliance,
+                    currency: 'GBP'
+                  },
+                  package_inclusions: packageInclusions,
+                  narrative: `New IT Security Assessment Submission\n` +
+                    `Business: ${assessment.business_name}\n` +
+                    `Contact: ${contactData.name} (${contactData.email})\n` +
+                    `${contactData.phone ? `Phone: ${contactData.phone}\n` : ''}` +
+                    `\nRisk Assessment Results:\n` +
+                    `- Risk Level: ${assessment.risk_level}\n` +
+                    `- Risk Score: ${assessment.risk_score}/${assessment.max_possible_score}\n` +
+                    `- Value Score: ${assessment.value_score}/${assessment.max_value_possible}\n` +
+                    `\nBusiness Profile:\n` +
+                    `- Industry: ${assessment.industry}\n` +
+                    `- Size: ${assessment.business_size} employees\n` +
+                    `- Current Provider: ${assessment.current_provider ? 'Yes' : 'No'}\n` +
+                    `${assessment.current_provider ? `- Provider Duration: ${assessment.provider_duration}\n` : ''}` +
+                    `\nPricing Estimate:\n` +
+                    `- Monthly Investment: £${finalPrice}\n` +
+                    `- Annual Investment: £${annualPrice}\n` +
+                    `\nPackage Includes:\n${packageInclusions.map(item => `- ${item}`).join('\n')}\n` +
+                    `\nKey Risk Areas:\n${assessment.executive_summary.topRisks.map((risk: string) => `- ${risk}`).join('\n')}\n` +
+                    `\nOpportunity Summary:\n` +
+                    `This ${assessment.risk_level.toLowerCase()} risk assessment indicates ${
+                      assessment.risk_level === 'High' ? 'urgent security needs' :
+                      assessment.risk_level === 'Medium' ? 'significant improvement opportunities' :
+                      'potential for security enhancement'
+                    } in ${assessment.business_name}'s IT infrastructure.\n` +
+                    `${isHighCompliance ? 'The business operates in a high-compliance industry, requiring enhanced security measures.\n' : ''}` +
+                    `\nContact Preferences:\n` +
+                    `- Newsletter Subscription: ${contactData.newsletter ? 'Yes' : 'No'}\n` +
+                    `- Submission Type: ${contactData.submission_type}`
+                }),
+              });
+              console.log('Zapier webhook response:', response);
+            } catch (error) {
+              console.error('Error triggering Zapier webhook:', error);
             }
           }
-        });
-
-        if (webhookError) {
-          console.error('Webhook error:', webhookError);
-          // Don't throw here, as we still want to proceed with PDF download if requested
-        } else {
-          console.log('Webhook response:', webhookResponse);
         }
       }
 
