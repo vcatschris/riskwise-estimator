@@ -1,22 +1,22 @@
 import { AssessmentData, RiskScore, IndustryInsight, Industry, BusinessSize, CategoryInsight } from './types';
 
-// Base weights for different industries (risk multiplier, risk points, value points)
+// Base weights for different industries (significantly increased weights)
 const INDUSTRY_WEIGHTS = {
-  Accounting: { risk: 2.5, rp: 7, vp: 12 },  // Increased value points
-  Legal: { risk: 2.5, rp: 7, vp: 12 },       // Increased value points
-  Finance: { risk: 2.5, rp: 7, vp: 12 },     // Increased value points
-  Retail: { risk: 2.0, rp: 5, vp: 10 },      // Increased value points
-  Healthcare: { risk: 2.5, rp: 6, vp: 11 },   // Increased value points
-  Other: { risk: 1.5, rp: 4, vp: 8 },        // Increased value points
+  Accounting: { risk: 3.5, rp: 9, vp: 14 },  // Increased all weights
+  Legal: { risk: 3.5, rp: 9, vp: 14 },       
+  Finance: { risk: 3.5, rp: 9, vp: 14 },     
+  Healthcare: { risk: 3.5, rp: 8, vp: 13 },   
+  Retail: { risk: 3.0, rp: 7, vp: 12 },      
+  Other: { risk: 2.5, rp: 6, vp: 10 },       
 };
 
-// Increased value points in business size weights
+// Significantly increased business size weights
 const BUSINESS_SIZE_WEIGHTS = {
-  '1-5': { rp: 2, vp: 5, weight: 1 },          // Increased value points
-  '6-20': { rp: 3, vp: 7, weight: 1.5 },       // Increased value points
-  '21-50': { rp: 4, vp: 9, weight: 2 },        // Increased value points
-  '51-100': { rp: 5, vp: 11, weight: 2.5 },    // Increased value points
-  '100+': { rp: 6, vp: 13, weight: 3 },        // Increased value points
+  '1-5': { rp: 3, vp: 6, weight: 1.5 },
+  '6-20': { rp: 4, vp: 8, weight: 2.0 },
+  '21-50': { rp: 5, vp: 10, weight: 2.5 },
+  '51-100': { rp: 6, vp: 12, weight: 3.0 },
+  '100+': { rp: 7, vp: 14, weight: 3.5 },
 };
 
 const INDUSTRY_INSIGHTS: Record<string, IndustryInsight> = {
@@ -142,6 +142,19 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
         large: ["Complex integration needs", "International compliance requirements"]
       }
     },
+    Accounting: {
+      description: "Your accounting firm's IT infrastructure directly impacts your ability to serve clients and protect sensitive financial data. The combination of your firm's size, data handling practices, and current IT support structure influences your overall risk profile. Accounting firms face particular challenges during tax periods and when handling multiple clients' financial information, making IT reliability and security paramount. We can help you develop strategies to manage these peak periods whilst maintaining security standards.",
+      industrySpecific: [
+        "Financial data security requirements",
+        "Tax season peak performance needs",
+        "Client confidentiality standards"
+      ],
+      sizeSpecific: {
+        small: ["Basic financial software needs", "Limited IT resources"],
+        medium: ["Growing client data management", "Multiple service lines"],
+        large: ["Enterprise financial systems", "Multiple office locations"]
+      }
+    },
     Retail: {
       description: "Your retail business's IT infrastructure plays a vital role in maintaining customer service, managing transactions, and protecting customer data. Given your business size and operational model, your technology needs focus on maintaining consistent service whilst protecting payment systems and customer information. The retail sector faces unique challenges in balancing accessibility with security, particularly in managing point-of-sale systems and e-commerce platforms. Our team can help you explore cost-effective solutions to address these specific challenges.",
       industrySpecific: [
@@ -166,19 +179,6 @@ const CATEGORY_INSIGHTS: Record<string, Record<Industry, {
         small: ["Basic patient record management", "Limited IT resources"],
         medium: ["Multiple practitioner coordination", "Growing patient data volumes"],
         large: ["Complex integration with health systems", "Multi-location challenges"]
-      }
-    },
-    Accounting: {
-      description: "Your accounting firm's IT infrastructure directly impacts your ability to serve clients and protect sensitive financial data. The combination of your firm's size, data handling practices, and current IT support structure influences your overall risk profile. Accounting firms face particular challenges during tax periods and when handling multiple clients' financial information, making IT reliability and security paramount. We can help you develop strategies to manage these peak periods whilst maintaining security standards.",
-      industrySpecific: [
-        "Financial data security requirements",
-        "Tax season peak performance needs",
-        "Client confidentiality standards"
-      ],
-      sizeSpecific: {
-        small: ["Basic financial software needs", "Limited IT resources"],
-        medium: ["Growing client data management", "Multiple service lines"],
-        large: ["Enterprise financial systems", "Multiple office locations"]
       }
     },
     Other: {
@@ -401,31 +401,31 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let profileRiskScore = 0;
   let profileValueScore = 0;
 
-  // Business Size (weighted more heavily)
+  // Business Size (significantly increased weights)
   const sizeWeights = BUSINESS_SIZE_WEIGHTS[data.businessSize];
-  profileRiskScore += sizeWeights.rp * sizeWeights.weight;
-  profileValueScore += sizeWeights.vp * 1.5; // Increased value multiplier
+  profileRiskScore += sizeWeights.rp * sizeWeights.weight * 1.5; // Additional multiplier
+  profileValueScore += sizeWeights.vp * 2.0; // Increased multiplier
 
-  // Sensitive Data (increased value weight)
+  // Sensitive Data (increased weights)
   if (data.sensitiveData === 'Yes') {
-    profileRiskScore += 8 * 2;
-    profileValueScore += 12; // Increased from 8
+    profileRiskScore += 10 * 2.5; // Increased from 8 * 2
+    profileValueScore += 15;      // Increased from 12
   } else if (data.sensitiveData === 'Not Sure') {
-    profileRiskScore += 6 * 1.5;
-    profileValueScore += 9; // Increased from 6
+    profileRiskScore += 8 * 2.0;  // Increased from 6 * 1.5
+    profileValueScore += 12;      // Increased from 9
   }
 
-  // Internal IT (significantly increased value points)
+  // Internal IT (increased weights)
   if (data.internalIT === 'No') {
-    profileRiskScore += 7 * 1.5;
-    profileValueScore += 15; // Increased from 8
+    profileRiskScore += 9 * 2.0;  // Increased from 7 * 1.5
+    profileValueScore += 18;      // Increased from 15
   } else if (data.internalIT === 'We outsource IT') {
-    profileRiskScore += 4;
-    profileValueScore += 12; // Increased from 6
+    profileRiskScore += 6 * 1.5;  // Increased from 4
+    profileValueScore += 15;      // Increased from 12
   }
 
-  // Apply industry value modifier
-  profileValueScore *= 1.5; // Additional value multiplier
+  // Apply industry value modifier with increased multiplier
+  profileValueScore *= 2.0; // Increased from 1.5
   
   // Normalize profile scores
   profileRiskScore = (profileRiskScore / 100) * 33;
@@ -460,37 +460,37 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let securityRiskScore = 0;
   let securityValueScore = 0;
 
-  // Last Audit (increased value weight)
+  // Last Audit (increased weights)
   if (data.lastAudit === 'Never') {
-    securityRiskScore += 10 * 3;
-    securityValueScore += 15; // Increased from 10
+    securityRiskScore += 12 * 3.5; // Increased from 10 * 3
+    securityValueScore += 18;      // Increased from 15
   } else if (data.lastAudit === 'Over a year ago') {
-    securityRiskScore += 7 * 2;
-    securityValueScore += 12; // Increased from 7
+    securityRiskScore += 9 * 2.5;  // Increased from 7 * 2
+    securityValueScore += 15;      // Increased from 12
   } else if (data.lastAudit === '6-12 months ago') {
-    securityRiskScore += 4 * 1.5;
-    securityValueScore += 8; // Increased from 4
+    securityRiskScore += 6 * 2.0;  // Increased from 4 * 1.5
+    securityValueScore += 10;      // Increased from 8
   }
 
-  // MFA (increased value weight)
+  // MFA (increased weights)
   if (data.mfaEnabled === 'No') {
-    securityRiskScore += 8 * 2.5;
-    securityValueScore += 14; // Increased from 8
+    securityRiskScore += 10 * 3.0; // Increased from 8 * 2.5
+    securityValueScore += 16;      // Increased from 14
   } else if (data.mfaEnabled === 'Not Sure') {
-    securityRiskScore += 6 * 2;
-    securityValueScore += 10; // Increased from 6
+    securityRiskScore += 8 * 2.5;  // Increased from 6 * 2
+    securityValueScore += 12;      // Increased from 10
   }
 
-  // Backup Frequency (increased value weight)
+  // Backup Frequency (increased weights)
   if (data.backupFrequency === "We don't back up data") {
-    securityRiskScore += 10 * 3;
-    securityValueScore += 15; // Increased from 10
+    securityRiskScore += 12 * 3.5; // Increased from 10 * 3
+    securityValueScore += 18;      // Increased from 15
   } else if (data.backupFrequency === 'Monthly') {
-    securityRiskScore += 7 * 2;
-    securityValueScore += 12; // Increased from 7
+    securityRiskScore += 9 * 2.5;  // Increased from 7 * 2
+    securityValueScore += 15;      // Increased from 12
   } else if (data.backupFrequency === 'Weekly') {
-    securityRiskScore += 4 * 1.5;
-    securityValueScore += 8; // Increased from 4
+    securityRiskScore += 6 * 2.0;  // Increased from 4 * 1.5
+    securityValueScore += 10;      // Increased from 8
   }
 
   // Normalize security scores
@@ -528,37 +528,37 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let complianceRiskScore = 0;
   let complianceValueScore = 0;
 
-  // Data Regulations (increased value weight)
+  // Data Regulations (increased weights)
   if (data.dataRegulations === 'Yes') {
-    complianceRiskScore += 8 * 2;
-    complianceValueScore += 14; // Increased from 8
+    complianceRiskScore += 10 * 2.5; // Increased from 8 * 2
+    complianceValueScore += 16;      // Increased from 14
   } else if (data.dataRegulations === 'Not Sure') {
-    complianceRiskScore += 6 * 1.5;
-    complianceValueScore += 10; // Increased from 6
+    complianceRiskScore += 8 * 2.0;  // Increased from 6 * 1.5
+    complianceValueScore += 12;      // Increased from 10
   }
 
-  // IT Issues Frequency (significantly increased value weight)
+  // IT Issues Frequency (increased weights)
   if (data.itIssues === 'Daily') {
-    complianceRiskScore += 10 * 3;
-    complianceValueScore += 18; // Increased from 10
+    complianceRiskScore += 12 * 3.5; // Increased from 10 * 3
+    complianceValueScore += 20;      // Increased from 18
   } else if (data.itIssues === 'Weekly') {
-    complianceRiskScore += 7 * 2;
-    complianceValueScore += 14; // Increased from 7
+    complianceRiskScore += 9 * 2.5;  // Increased from 7 * 2
+    complianceValueScore += 16;      // Increased from 14
   } else if (data.itIssues === 'Occasionally') {
-    complianceRiskScore += 4;
-    complianceValueScore += 8; // Increased from 4
+    complianceRiskScore += 6 * 2.0;  // Increased from 4
+    complianceValueScore += 10;      // Increased from 8
   }
 
-  // Response Time Needed (increased value weight)
+  // Response Time Needed (increased weights)
   if (data.responseNeeded === 'Within minutes') {
-    complianceRiskScore += 8 * 3;
-    complianceValueScore += 16; // Increased from 10
+    complianceRiskScore += 10 * 3.5; // Increased from 8 * 3
+    complianceValueScore += 18;      // Increased from 16
   } else if (data.responseNeeded === 'Within an hour') {
-    complianceRiskScore += 6 * 2;
-    complianceValueScore += 12; // Increased from 8
+    complianceRiskScore += 8 * 2.5;  // Increased from 6 * 2
+    complianceValueScore += 14;      // Increased from 12
   } else if (data.responseNeeded === 'Same day') {
-    complianceRiskScore += 4 * 1.5;
-    complianceValueScore += 9; // Increased from 6
+    complianceRiskScore += 6 * 2.0;  // Increased from 4 * 1.5
+    complianceValueScore += 11;      // Increased from 9
   }
 
   // Normalize compliance scores
@@ -595,10 +595,10 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
   totalValuePoints = Math.min(Math.round(totalValuePoints), 100);
 
-  // Adjusted risk level thresholds to generate more medium and high risks
+  // New risk level thresholds as specified
   let riskLevel: 'Low' | 'Medium' | 'High';
-  if (totalRiskPoints < 35) riskLevel = 'Low';           // Lowered from 40
-  else if (totalRiskPoints < 60) riskLevel = 'Medium';   // Lowered from 70
+  if (totalRiskPoints < 25) riskLevel = 'Low';           // Lowered from 35
+  else if (totalRiskPoints < 50) riskLevel = 'Medium';   // Lowered from 60
   else riskLevel = 'High';
 
   // Generate executive summary
