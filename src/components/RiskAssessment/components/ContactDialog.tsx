@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -118,6 +119,26 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       if (submissionError) {
         console.error('Database submission error:', submissionError);
         throw submissionError;
+      }
+
+      // Call the webhook with assessment data
+      if (assessmentId) {
+        const { data: webhookResponse, error: webhookError } = await supabase.functions.invoke('assessment-webhook', {
+          body: {
+            assessmentId,
+            contactData: {
+              ...contactData,
+              submission_type: mode
+            }
+          }
+        });
+
+        if (webhookError) {
+          console.error('Webhook error:', webhookError);
+          // Don't throw here, as we still want to proceed with PDF download if requested
+        } else {
+          console.log('Webhook response:', webhookResponse);
+        }
       }
 
       if (mode === 'download') {
