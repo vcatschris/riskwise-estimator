@@ -816,6 +816,93 @@ export type Database = {
         }
         Relationships: []
       }
+      ss_risk_survey: {
+        Row: {
+          backup_frequency: string | null
+          business_name: string
+          business_size: string
+          category_details: Json
+          cloud_provider: string | null
+          created_at: string | null
+          current_provider: boolean | null
+          data_regulations: string | null
+          email: string
+          executive_summary: Json
+          id: string
+          industry: string
+          it_issues: string | null
+          last_audit: string | null
+          max_possible_score: number
+          max_value_possible: number
+          mfa_enabled: string | null
+          name: string
+          newsletter: boolean | null
+          provider_duration: string | null
+          response_needed: string | null
+          risk_level: string
+          risk_score: number
+          sensitive_data: string | null
+          updated_at: string | null
+          value_score: number
+        }
+        Insert: {
+          backup_frequency?: string | null
+          business_name: string
+          business_size: string
+          category_details: Json
+          cloud_provider?: string | null
+          created_at?: string | null
+          current_provider?: boolean | null
+          data_regulations?: string | null
+          email: string
+          executive_summary: Json
+          id?: string
+          industry: string
+          it_issues?: string | null
+          last_audit?: string | null
+          max_possible_score: number
+          max_value_possible: number
+          mfa_enabled?: string | null
+          name: string
+          newsletter?: boolean | null
+          provider_duration?: string | null
+          response_needed?: string | null
+          risk_level: string
+          risk_score: number
+          sensitive_data?: string | null
+          updated_at?: string | null
+          value_score: number
+        }
+        Update: {
+          backup_frequency?: string | null
+          business_name?: string
+          business_size?: string
+          category_details?: Json
+          cloud_provider?: string | null
+          created_at?: string | null
+          current_provider?: boolean | null
+          data_regulations?: string | null
+          email?: string
+          executive_summary?: Json
+          id?: string
+          industry?: string
+          it_issues?: string | null
+          last_audit?: string | null
+          max_possible_score?: number
+          max_value_possible?: number
+          mfa_enabled?: string | null
+          name?: string
+          newsletter?: boolean | null
+          provider_duration?: string | null
+          response_needed?: string | null
+          risk_level?: string
+          risk_score?: number
+          sensitive_data?: string | null
+          updated_at?: string | null
+          value_score?: number
+        }
+        Relationships: []
+      }
       ss_tool_risk: {
         Row: {
           backup_frequency: string | null

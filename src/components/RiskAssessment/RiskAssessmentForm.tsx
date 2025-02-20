@@ -102,7 +102,7 @@ export function RiskAssessmentForm() {
       const {
         data,
         error
-      } = await supabase.from('ss_tool_risk').insert({
+      } = await supabase.from('ss_risk_survey').insert({
         name: formData.name,
         email: formData.email,
         business_name: formData.businessName,
