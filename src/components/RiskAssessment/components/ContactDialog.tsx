@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -169,44 +168,26 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
               },
               mode: 'no-cors', // Add this to handle CORS
               body: JSON.stringify({
-                timestamp: new Date().toISOString(),
-                contact_info: contactData,
-                assessment_data: assessment,
+                name: contactData.name,
+                email: contactData.email,
+                company: contactData.company,
+                phone: contactData.phone,
+                newsletter: contactData.newsletter,
+                submission_type: contactData.submission_type,
+                business_size: assessment.business_size,
+                industry: assessment.industry,
+                risk_level: assessment.risk_level,
+                risk_score: assessment.risk_score,
+                value_score: assessment.value_score,
                 pricing: {
-                  monthly: finalPrice,
-                  annual: annualPrice,
-                  is_high_compliance: isHighCompliance,
-                  currency: 'GBP'
+                  monthly: Math.round(finalPrice),
+                  annual: Math.round(annualPrice),
                 },
+                top_risks: executiveSummary.topRisks,
+                is_high_compliance: isHighCompliance,
                 package_inclusions: packageInclusions,
-                narrative: `New IT Security Assessment Submission\n` +
-                  `Business: ${assessment.business_name}\n` +
-                  `Contact: ${contactData.name} (${contactData.email})\n` +
-                  `${contactData.phone ? `Phone: ${contactData.phone}\n` : ''}` +
-                  `\nRisk Assessment Results:\n` +
-                  `- Risk Level: ${assessment.risk_level}\n` +
-                  `- Risk Score: ${assessment.risk_score}/${assessment.max_possible_score}\n` +
-                  `- Value Score: ${assessment.value_score}/${assessment.max_value_possible}\n` +
-                  `\nBusiness Profile:\n` +
-                  `- Industry: ${assessment.industry}\n` +
-                  `- Size: ${assessment.business_size} employees\n` +
-                  `- Current Provider: ${assessment.current_provider ? 'Yes' : 'No'}\n` +
-                  `${assessment.current_provider ? `- Provider Duration: ${assessment.provider_duration}\n` : ''}` +
-                  `\nPricing Estimate:\n` +
-                  `- Monthly Investment: £${finalPrice}\n` +
-                  `- Annual Investment: £${annualPrice}\n` +
-                  `\nPackage Includes:\n${packageInclusions.map(item => `- ${item}`).join('\n')}\n` +
-                  `\nKey Risk Areas:\n${executiveSummary.topRisks.map((risk: string) => `- ${risk}`).join('\n')}\n` +
-                  `\nOpportunity Summary:\n` +
-                  `This ${assessment.risk_level.toLowerCase()} risk assessment indicates ${
-                    assessment.risk_level === 'High' ? 'urgent security needs' :
-                    assessment.risk_level === 'Medium' ? 'significant improvement opportunities' :
-                    'potential for security enhancement'
-                  } in ${assessment.business_name}'s IT infrastructure.\n` +
-                  `${isHighCompliance ? 'The business operates in a high-compliance industry, requiring enhanced security measures.\n' : ''}` +
-                  `\nContact Preferences:\n` +
-                  `- Newsletter Subscription: ${contactData.newsletter ? 'Yes' : 'No'}\n` +
-                  `- Submission Type: ${contactData.submission_type}`
+                summary: `${assessment.business_name} (${assessment.industry}) - ${assessment.risk_level} Risk Level`,
+                submission_date: new Date().toISOString()
               }),
             });
 
