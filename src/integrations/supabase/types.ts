@@ -1032,6 +1032,60 @@ export type Database = {
         }
         Relationships: []
       }
+      tam_sam_som: {
+        Row: {
+          analysis: Json | null
+          assumptions: string | null
+          company_name: string
+          competitors: string | null
+          created_at: string | null
+          email: string
+          geographic_focus: string
+          id: string
+          industry: string
+          product_description: string
+          sam: number
+          som: number
+          tam: number
+          target_customers: string
+          updated_at: string | null
+        }
+        Insert: {
+          analysis?: Json | null
+          assumptions?: string | null
+          company_name: string
+          competitors?: string | null
+          created_at?: string | null
+          email: string
+          geographic_focus: string
+          id?: string
+          industry: string
+          product_description: string
+          sam: number
+          som: number
+          tam: number
+          target_customers: string
+          updated_at?: string | null
+        }
+        Update: {
+          analysis?: Json | null
+          assumptions?: string | null
+          company_name?: string
+          competitors?: string | null
+          created_at?: string | null
+          email?: string
+          geographic_focus?: string
+          id?: string
+          industry?: string
+          product_description?: string
+          sam?: number
+          som?: number
+          tam?: number
+          target_customers?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
