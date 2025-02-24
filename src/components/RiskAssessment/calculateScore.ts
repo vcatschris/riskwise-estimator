@@ -1,4 +1,4 @@
-import { AssessmentData, RiskScore, IndustryInsight, Industry, BusinessSize, CategoryInsight } from './types';
+import { AssessmentData, RiskScore, IndustryInsight, Industry, BusinessSize, CategoryInsight, CategoryDetail } from './types';
 
 // Base weights for different industries (significantly increased weights)
 const INDUSTRY_WEIGHTS = {
