@@ -55,18 +55,6 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('itSupportType', value)}>
-        <SelectTrigger>
-          <SelectValue placeholder="What kind of IT support does your business have?" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="No formal IT support">No formal IT support</SelectItem>
-          <SelectItem value="An internal expert/team">An internal expert/team</SelectItem>
-          <SelectItem value="An external IT support partner">An external IT support partner</SelectItem>
-          <SelectItem value="Not sure">Not sure</SelectItem>
-        </SelectContent>
-      </Select>
-
       <Select onValueChange={(value) => onInputChange('infrastructure', value)}>
         <SelectTrigger>
           <SelectValue placeholder="What best describes your IT infrastructure?" />

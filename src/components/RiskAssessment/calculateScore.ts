@@ -585,8 +585,8 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {
       values.push("Reduced downtime and improved system reliability");
     }
-    if (data.responseNeeded === 'Within minutes' || data.responseNeeded === 'Within an hour') {
-      values.push("Rapid response IT support available 24/7");
+    if (data.itCriticality === 'IT downtime causes immediate operational issues') {
+      values.push("High-availability IT systems with priority support");
     }
     return values;
   };
