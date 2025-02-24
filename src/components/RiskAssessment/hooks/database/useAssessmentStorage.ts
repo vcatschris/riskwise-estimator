@@ -4,20 +4,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { AssessmentData } from '../../types';
 import { validateSurveyData } from '../validation/useStepValidation';
 
+const generateUniqueIdentifier = () => {
+  const timestamp = new Date().getTime();
+  const random = Math.floor(Math.random() * 10000);
+  return `SURVEY-${timestamp}-${random}`;
+};
+
 export const saveAssessmentResults = async (assessment: any, formData: Partial<AssessmentData>) => {
   try {
     console.log('Saving assessment results:', assessment);
     
-    if (!validateSurveyData(formData)) {
-      return null;
-    }
-
+    // Generate unique identifier
+    const uniqueId = generateUniqueIdentifier();
+    
     const { data: surveyData, error: surveyError } = await supabase
       .from('ss_risk_survey')
       .insert({
-        name: formData.name,
-        email: formData.email,
-        business_name: formData.businessName,
+        business_name: uniqueId, // Use unique ID as business name
+        email: `${uniqueId}@survey.local`, // Generate a placeholder email
+        name: uniqueId, // Use unique ID as name
         newsletter: formData.newsletter,
         current_provider: formData.currentProvider,
         provider_duration: formData.providerDuration,
