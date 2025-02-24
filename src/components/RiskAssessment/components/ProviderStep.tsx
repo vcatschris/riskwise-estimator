@@ -34,17 +34,31 @@ export const ProviderStep: React.FC<ProviderStepProps> = ({ formData, onInputCha
       </div>
 
       {formData.currentProvider && (
-        <Select onValueChange={value => onInputChange('providerDuration', value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="How long have you had this IT support?" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
-            <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
-            <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
-            <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
-          </SelectContent>
-        </Select>
+        <>
+          <Select onValueChange={value => onInputChange('providerDuration', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="How long have you had this IT support?" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
+              <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
+              <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
+              <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={value => onInputChange('itSupportType', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="What kind of IT support does your business have?" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="No formal IT support">No formal IT support</SelectItem>
+              <SelectItem value="An internal expert/team">An internal expert/team</SelectItem>
+              <SelectItem value="An external IT support partner">An external IT support partner</SelectItem>
+              <SelectItem value="Not sure">Not sure</SelectItem>
+            </SelectContent>
+          </Select>
+        </>
       )}
 
       <Select onValueChange={value => onInputChange('cloudProvider', value)}>

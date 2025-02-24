@@ -38,9 +38,15 @@ export function RiskAssessmentForm() {
           toast.error("Please indicate if you have an IT provider");
           return false;
         }
-        if (formData.currentProvider && !formData.providerDuration) {
-          toast.error("Please select how long you've been with your provider");
-          return false;
+        if (formData.currentProvider) {
+          if (!formData.providerDuration) {
+            toast.error("Please select how long you've been with your provider");
+            return false;
+          }
+          if (!formData.itSupportType) {
+            toast.error("Please select your type of IT support");
+            return false;
+          }
         }
         if (!formData.cloudProvider) {
           toast.error("Please select your cloud provider");
