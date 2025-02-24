@@ -386,16 +386,7 @@ const calculateMaxScores = () => {
 export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let totalRiskPoints = 0;
   let totalValuePoints = 0;
-  const details = [];
-
-  const getDescriptionForCategory = (category: string) => {
-    const insights = CATEGORY_INSIGHTS[category][data.industry || 'Other'];
-    return {
-      description: insights.description,
-      industrySpecific: insights.industrySpecific,
-      sizeSpecific: insights.sizeSpecific
-    };
-  };
+  const details: CategoryDetail[] = [];
 
   // Business Profile Risk (33% of total)
   let profileRiskScore = 0;
@@ -469,6 +460,29 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints += profileRiskScore;
   totalValuePoints += profileValueScore;
 
+  // Add Business Profile category details
+  details.push({
+    category: 'Business Profile',
+    riskScore: profileRiskScore,
+    valueScore: profileValueScore,
+    recommendations: [
+      'Implement comprehensive IT management strategy',
+      'Review and update data handling procedures',
+      'Assess current IT support model effectiveness'
+    ],
+    insights: getCategoryInsights('Business Profile', data.industry, data.businessSize),
+    riskAreas: [
+      'Current IT support structure may need enhancement',
+      'Data handling procedures require review',
+      'Infrastructure complexity increases risk exposure'
+    ],
+    valueAreas: [
+      'Opportunity for improved IT efficiency',
+      'Enhanced data protection capabilities',
+      'Streamlined IT support processes'
+    ]
+  });
+
   // Security Risk (33% of total)
   let securityRiskScore = 0;
   let securityValueScore = 0;
@@ -504,6 +518,29 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
 
   totalRiskPoints += securityRiskScore;
   totalValuePoints += securityValueScore;
+
+  // Add Security category details
+  details.push({
+    category: 'Security',
+    riskScore: securityRiskScore,
+    valueScore: securityValueScore,
+    recommendations: [
+      'Implement regular security audits',
+      'Enable multi-factor authentication',
+      'Establish robust backup procedures'
+    ],
+    insights: getCategoryInsights('Security', data.industry, data.businessSize),
+    riskAreas: [
+      'Security audit frequency needs improvement',
+      'Authentication mechanisms require strengthening',
+      'Data backup procedures need review'
+    ],
+    valueAreas: [
+      'Enhanced security posture',
+      'Improved data protection',
+      'Better business continuity'
+    ]
+  });
 
   // Compliance & Support Risk (34% of total)
   let complianceRiskScore = 0;
