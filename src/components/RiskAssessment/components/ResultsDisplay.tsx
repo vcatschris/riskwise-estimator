@@ -22,13 +22,13 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const getCtaText = () => {
     switch (assessment.level) {
       case 'High':
-        return 'Request Security Assessment';
+        return 'Get Urgent Security Support';
       case 'Medium':
-        return 'Schedule Security Review';
+        return 'Discuss Potential Security Improvements';
       case 'Low':
-        return 'Explore opportunities to maintain your security posture';
+        return 'Review My IT Security Options';
       default:
-        return 'Request Consultation';
+        return 'Contact Support';
     }
   };
 
@@ -45,7 +45,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     }
   };
 
-  // Function to check if business size is more than 5 users
   const isEligibleForTrial = () => {
     const size = formData.businessSize;
     if (!size) return false;
