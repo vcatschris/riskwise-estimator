@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -48,44 +49,58 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw new Error('Risk report element not found');
       }
 
-      const contentWidth = reportElement.scrollWidth;
-      const contentHeight = reportElement.scrollHeight;
-
       // Configure element for capture
-      reportElement.style.width = `${contentWidth}px`;
-      reportElement.style.height = `${contentHeight}px`;
+      const originalStyles = {
+        width: reportElement.style.width,
+        height: reportElement.style.height,
+        position: reportElement.style.position,
+        overflow: reportElement.style.overflow
+      };
+
+      // Set styles for capture
+      reportElement.style.width = `${reportElement.scrollWidth}px`;
+      reportElement.style.height = `${reportElement.scrollHeight}px`;
       reportElement.style.position = 'relative';
       reportElement.style.overflow = 'visible';
       
       // Give the browser time to apply the styles
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      const canvas = await html2canvas(reportElement, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        width: contentWidth,
-        height: contentHeight,
-        logging: true
-      });
-      
-      console.log('Canvas generated successfully');
-      
-      // Create PDF with proper dimensions
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      
-      const pdf = new jsPDF({
-        orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
-        unit: 'px',
-        format: [imgWidth, imgHeight]
-      });
-      
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
-      console.log('PDF created successfully');
-      
-      return pdf;
+      try {
+        const canvas = await html2canvas(reportElement, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: reportElement.scrollWidth,
+          height: reportElement.scrollHeight,
+          logging: true
+        });
+        
+        console.log('Canvas generated successfully');
+        
+        // Create PDF with proper dimensions
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        
+        const pdf = new jsPDF({
+          orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
+          unit: 'px',
+          format: [imgWidth, imgHeight]
+        });
+        
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+        console.log('PDF created successfully');
+        
+        // Restore original styles
+        Object.assign(reportElement.style, originalStyles);
+        
+        return pdf;
+      } catch (error) {
+        // Restore original styles even if there's an error
+        Object.assign(reportElement.style, originalStyles);
+        throw error;
+      }
     } catch (error) {
       console.error('PDF generation error:', error);
       throw error;
@@ -94,6 +109,8 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (loading) return;
+    
     setLoading(true);
 
     try {
@@ -121,50 +138,44 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw submissionError;
       }
 
-      // Send data to Edge Function
-      try {
-        console.log("Triggering webhook via Edge Function...");
-        const { data: { session } } = await supabase.auth.getSession();
-        const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token}`,
-          },
-          body: JSON.stringify({
-            assessmentId,
-            contactData,
-          }),
-        });
+      // Trigger webhook
+      console.log("Triggering webhook via Edge Function...");
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          assessmentId,
+          contactData,
+        }),
+      });
 
-        if (!response.ok) {
-          throw new Error(`Edge Function failed: ${response.statusText}`);
-        }
-
-        console.log('Webhook triggered successfully');
-        toast({
-          title: "Request Sent",
-          description: "Your information has been submitted successfully.",
-        });
-      } catch (error) {
-        console.error('Error triggering webhook:', error);
-        toast({
-          title: "Warning",
-          description: "Form submitted but notification failed. Our team will still receive your request.",
-        });
+      if (!response.ok) {
+        throw new Error(`Edge Function failed: ${response.statusText}`);
       }
 
+      // If it's a download request, generate and save PDF
       if (mode === 'download') {
         const pdf = await generatePDF();
         pdf.save('IT_Security_Assessment_Report.pdf');
       }
+
+      toast({
+        title: "Success",
+        description: mode === 'download' 
+          ? "Your report has been downloaded and our team will be in touch soon."
+          : "Your information has been submitted successfully. Our team will be in touch soon.",
+      });
       
       onOpenChange(false);
     } catch (error) {
       console.error('Submission error:', error);
       toast({
         title: "Error",
-        description: "Failed to submit your request. Please try again.",
+        description: "Failed to process your request. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -223,3 +234,4 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
     </Dialog>
   );
 };
+
