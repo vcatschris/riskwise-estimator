@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar, FileDown, ListChecks, Globe, Mail, Phone } from "lucide-react";
@@ -14,7 +14,6 @@ interface ResultsDisplayProps {
 }
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
-  const [showEstimate, setShowEstimate] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
@@ -61,14 +60,18 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             Download Full Report
           </Button>
 
-          <Button
-            onClick={() => setShowEstimate(true)}
-            size="lg"
-            className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
+          <a 
+            href="#investment-range"
+            className="w-full"
           >
-            <PoundSterling className="w-5 h-5" />
-            View Investment Range
-          </Button>
+            <Button
+              size="lg"
+              className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
+            >
+              <PoundSterling className="w-5 h-5" />
+              View Investment Range
+            </Button>
+          </a>
 
           <div className="col-span-1 sm:col-span-2">
             <Button 
@@ -255,8 +258,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
-        {/* Add Investment Range Card */}
-        <Card className="p-6">
+        {/* Investment Range Card */}
+        <Card id="investment-range" className="p-6 scroll-mt-8">
           <h4 className="text-xl font-semibold mb-4">Investment Range</h4>
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-center items-center gap-8 p-6 bg-gray-50 dark:bg-gray-950/30 rounded-lg">
