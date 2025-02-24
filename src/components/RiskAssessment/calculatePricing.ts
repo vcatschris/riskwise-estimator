@@ -93,15 +93,21 @@ export const calculatePricing = (data: AssessmentData) => {
   const monthlyPrice = selectedBand.midpoint;
   console.log('Monthly Price (Midpoint):', monthlyPrice);
   
-  // Step 5: Calculate annual price
+  // Step 5: Calculate annual values
   const annualPrice = monthlyPrice * 12;
+  const annualRange = {
+    min: selectedBand.range.min * 12,
+    max: selectedBand.range.max * 12
+  };
   console.log('Annual Price:', annualPrice);
+  console.log('Annual Range:', annualRange);
 
   return {
     totalPrice: monthlyPrice,
     annualPrice,
     basePackage: monthlyPrice,
     priceRange: selectedBand.range,
+    annualRange,
     isHighCompliance
   };
 };

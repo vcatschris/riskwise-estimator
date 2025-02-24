@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -142,7 +141,9 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 <p className="text-3xl font-semibold text-purple-600 dark:text-purple-400">
                   £{pricing.annualPrice.toLocaleString()}
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">Based on monthly rate</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Annual Range: £{pricing.annualRange.min.toLocaleString()} - £{pricing.annualRange.max.toLocaleString()}
+                </p>
               </div>
             </div>
 
