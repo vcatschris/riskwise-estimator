@@ -5,7 +5,7 @@ import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Light
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ContactDialog } from './ContactDialog';
 
@@ -404,76 +404,65 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         {/* Detailed Category Reports */}
         {assessment.details.map((category, index) => (
           <Card key={index} className="p-6">
-            <h4 className="text-xl font-semibold mb-4">{category.category}</h4>
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">{category.insights.description}</p>
-              
-              <div className="grid gap-4 md:grid-cols-2">
+            <CardHeader className="pb-4">
+              <CardTitle>{category.category}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="prose dark:prose-invert max-w-none">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {category.insights.description}
+                </p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                  <h5 className="font-medium mb-3 text-brand-orange flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5" />
                     Risk Areas
                   </h5>
-                  <ul className="list-disc pl-4 space-y-1">
-                    {category.riskAreas.length > 0 ? (
-                      category.riskAreas.map((risk, idx) => (
-                        <li key={idx} className="text-sm">{risk}</li>
-                      ))
-                    ) : (
-                      <li className="text-sm">Standard risk considerations apply</li>
-                    )}
+                  <ul className="list-disc pl-4 space-y-2">
+                    {category.riskAreas.map((risk, idx) => (
+                      <li key={idx} className="text-sm">{risk}</li>
+                    ))}
                   </ul>
                 </div>
                 <div>
-                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
+                  <h5 className="font-medium mb-3 text-brand-orange flex items-center gap-2">
                     <TrendingUp className="h-5 w-5" />
                     Value Areas
                   </h5>
-                  <ul className="list-disc pl-4 space-y-1">
-                    {category.valueAreas.length > 0 ? (
-                      category.valueAreas.map((value, idx) => (
-                        <li key={idx} className="text-sm">{value}</li>
-                      ))
-                    ) : (
-                      <li className="text-sm">Standard value improvements available</li>
-                    )}
+                  <ul className="list-disc pl-4 space-y-2">
+                    {category.valueAreas.map((value, idx) => (
+                      <li key={idx} className="text-sm">{value}</li>
+                    ))}
                   </ul>
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
-                    <Building2 className="h-5 w-5" />
-                    Industry-Specific Considerations
-                  </h5>
-                  <ul className="list-disc pl-4 space-y-1">
-                    {category.insights.industrySpecific.length > 0 ? (
-                      category.insights.industrySpecific.map((insight, idx) => (
-                        <li key={idx} className="text-sm">{insight}</li>
-                      ))
-                    ) : (
-                      <li className="text-sm">Standard industry considerations apply</li>
-                    )}
-                  </ul>
-                </div>
-                <div>
-                  <h5 className="font-medium mb-2 text-brand-orange flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5" />
-                    Recommendations
-                  </h5>
-                  <ul className="list-disc pl-4 space-y-1">
-                    {category.recommendations.length > 0 ? (
-                      category.recommendations.map((rec, idx) => (
-                        <li key={idx} className="text-sm">{rec}</li>
-                      ))
-                    ) : (
-                      <li className="text-sm">Standard improvement recommendations apply</li>
-                    )}
-                  </ul>
-                </div>
+              <div>
+                <h5 className="font-medium mb-3 text-brand-orange flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Industry-Specific Considerations
+                </h5>
+                <ul className="list-disc pl-4 space-y-2">
+                  {category.insights.industrySpecific.map((insight, idx) => (
+                    <li key={idx} className="text-sm">{insight}</li>
+                  ))}
+                </ul>
               </div>
-            </div>
+
+              <div>
+                <h5 className="font-medium mb-3 text-brand-orange flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5" />
+                  Recommendations
+                </h5>
+                <ul className="list-disc pl-4 space-y-2">
+                  {category.recommendations.map((rec, idx) => (
+                    <li key={idx} className="text-sm">{rec}</li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
           </Card>
         ))}
       </div>
