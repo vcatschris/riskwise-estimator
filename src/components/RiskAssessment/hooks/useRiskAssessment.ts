@@ -21,6 +21,22 @@ export const useRiskAssessment = () => {
     }));
   };
 
+  const validateSurveyData = (data: Partial<AssessmentData>): boolean => {
+    if (!data.name?.trim()) {
+      toast.error("Name is required");
+      return false;
+    }
+    if (!data.email?.trim()) {
+      toast.error("Email is required");
+      return false;
+    }
+    if (!data.businessName?.trim()) {
+      toast.error("Business name is required");
+      return false;
+    }
+    return true;
+  };
+
   const validateStep = (): boolean => {
     switch (step) {
       case 'provider':
@@ -95,6 +111,11 @@ export const useRiskAssessment = () => {
     try {
       console.log('Saving assessment results:', assessment);
       
+      // Validate required fields before saving
+      if (!validateSurveyData(formData)) {
+        return null;
+      }
+
       // First save the survey data
       const { data: surveyData, error: surveyError } = await supabase
         .from('ss_risk_survey')
@@ -173,6 +194,11 @@ export const useRiskAssessment = () => {
       console.log('Calculated assessment:', assessment);
       const savedAssessment = await saveAssessmentResults(assessment);
       console.log('Saved assessment ID:', savedAssessment?.id);
+      
+      // Only proceed to results if save was successful
+      if (!savedAssessment) {
+        return;
+      }
     }
 
     if (step === 'provider') {
@@ -217,4 +243,3 @@ export const useRiskAssessment = () => {
     setShowEstimate
   };
 };
-
