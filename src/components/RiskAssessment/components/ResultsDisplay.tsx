@@ -23,26 +23,26 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const getCtaText = () => {
     switch (assessment.level) {
       case 'High':
-        return 'Get Urgent Security Support';
+        return 'Request Security Assessment';
       case 'Medium':
-        return 'Discuss Security Improvements';
+        return 'Schedule Security Review';
       case 'Low':
         return 'Review Security Options';
       default:
-        return 'Contact Support';
+        return 'Request Consultation';
     }
   };
 
   const getCtaDescription = () => {
     switch (assessment.level) {
       case 'High':
-        return 'Critical security issues require immediate attention';
+        return 'Receive a detailed security assessment and mitigation plan';
       case 'Medium':
-        return 'Address security gaps to protect your business';
+        return 'Review potential security enhancements for your business';
       case 'Low':
-        return 'Maintain and enhance your security posture';
+        return 'Explore opportunities to maintain your security posture';
       default:
-        return 'Learn more about our security solutions';
+        return 'Learn more about security solutions for your business';
     }
   };
 
@@ -75,238 +75,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12 px-4 sm:px-0">
-        <div className="flex flex-col items-center gap-2">
-          <Button
-            onClick={() => setShowDownloadDialog(true)}
-            size="lg"
-            variant="secondary"
-            className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
-          >
-            <FileDown className="w-5 h-5" />
-            Download Your Detailed Security Report
-          </Button>
-          <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
-            Get a comprehensive PDF report
-          </p>
-        </div>
-
-        <div className="flex flex-col items-center gap-2">
-          <Button
-            onClick={() => setShowEstimate(true)}
-            size="lg"
-            className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
-          >
-            <PoundSterling className="w-5 h-5" />
-            What should this cost me?
-          </Button>
-          <p className="text-muted-foreground text-xs sm:text-sm text-center font-bold">
-            View benchmark pricing
-          </p>
-        </div>
-      </div>
-
-      {showEstimate && (
-        <Card className="p-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="space-y-6"
-          >
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 text-sm font-medium mb-4">
-                Industry Benchmark Estimate
-              </div>
-              <div className="flex items-center justify-center gap-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
-                <PoundSterling className="h-6 w-6" />
-                <span>Recommended Investment Range</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-8 p-6 bg-gray-50 dark:bg-gray-950/30 rounded-lg">
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-2">Monthly Investment</p>
-                <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">
-                  £{pricing.totalPrice.toLocaleString()}
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Range: £{pricing.priceRange.min.toLocaleString()} - £{pricing.priceRange.max.toLocaleString()}
-                </p>
-              </div>
-              <div className="hidden sm:block w-px h-20 bg-gray-200 dark:bg-gray-800" />
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-2">Annual Investment</p>
-                <p className="text-3xl font-semibold text-purple-600 dark:text-purple-400">
-                  £{pricing.annualPrice.toLocaleString()}
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Annual Range: £{pricing.annualRange.min.toLocaleString()} - £{pricing.annualRange.max.toLocaleString()}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 mt-6">
-              <div className="space-y-4">
-                <h4 className="font-semibold text-lg flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-purple-500" />
-                  Based On Your Profile
-                </h4>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                    <span>Business Size: {formData.businessSize} users</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                    <span>Industry: {formData.industry}</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                    <span>{pricing.isHighCompliance ? "Enhanced compliance & security measures" : "Standard security package"}</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="font-semibold text-lg flex items-center gap-2">
-                  <ListChecks className="h-5 w-5 text-purple-500" />
-                  Included Services
-                </h4>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                    <span>24/7 Monitoring & Support</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                    <span>Security Incident Response</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                    <span>Regular Security Updates</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                    <span>Data Backup & Recovery</span>
-                  </li>
-                  {pricing.isHighCompliance && (
-                    <>
-                      <li className="flex items-start gap-2 text-sm">
-                        <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                        <span>Compliance Reporting & Auditing</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-sm">
-                        <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
-                        <span>Enhanced Security Controls</span>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
-            </div>
-
-            <div className="text-sm text-muted-foreground mt-6 bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
-              <div className="flex items-start gap-2">
-                <Info className="h-4 w-4 mt-1 text-blue-500 shrink-0" />
-                <div>
-                  <strong className="block mb-1">Industry Benchmark Note:</strong>
-                  This estimate is based on typical investment levels for businesses of your size and sector. 
-                  Actual pricing may vary based on your specific infrastructure requirements, compliance needs, 
-                  and desired service level.
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </Card>
-      )}
-
-      <div className="text-center space-y-4">
-        <motion.div
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className={`score-section p-8 rounded-2xl shadow-lg ${riskColor}`}
-        >
-          <h3 className="text-3xl font-bold mb-2">Risk Assessment Results</h3>
-          <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
-          <div className="flex justify-center gap-8 mt-6">
-            <div className="text-center">
-              <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getBadgeColor(assessment.total, assessment.maxPossible)}`}>
-                <span className="text-2xl font-semibold">{assessment.total}</span>
-                <span className="text-sm ml-1">/ {assessment.maxPossible}</span>
-              </div>
-              <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Risk Score</p>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
-                    <span>What's this?</span>
-                    <Info className="h-3 w-3" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <div className="text-center space-y-3">
-                      <p className="font-medium text-purple-900 dark:text-purple-100">
-                        Risk Score (0-100) measures potential vulnerabilities
-                      </p>
-                      <ul className="space-y-2 text-purple-800 dark:text-purple-200">
-                        <li>Business Profile (33%)</li>
-                        <li>Security Measures (33%)</li>
-                        <li>Compliance & Support (34%)</li>
-                      </ul>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <div className="text-center">
-              <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getBadgeColor(assessment.valueScore, assessment.maxValuePossible)}`}>
-                <span className="text-2xl font-semibold">{assessment.valueScore}</span>
-                <span className="text-sm ml-1">/ {assessment.maxValuePossible}</span>
-              </div>
-              <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Value Score</p>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
-                    <span>What's this?</span>
-                    <Info className="h-3 w-3" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <div className="text-center space-y-3">
-                      <p className="font-medium text-purple-900 dark:text-purple-100">
-                        Value Score (0-100) indicates potential benefits from improvements
-                      </p>
-                      <ul className="space-y-2 text-purple-800 dark:text-purple-200">
-                        <li>Business Profile Value (33%)</li>
-                        <li>Security Enhancement Value (33%)</li>
-                        <li>Compliance & Support Value (34%)</li>
-                      </ul>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="max-w-2xl mx-auto pt-6"
-        >
-          <Button 
-            size="lg"
-            onClick={() => setShowContactDialog(true)}
-            className="w-full sm:w-auto text-lg py-6 px-8"
-          >
-            {getCtaText()}
-          </Button>
-          <p className="text-muted-foreground text-sm mt-2">
-            {getCtaDescription()}
-          </p>
-        </motion.div>
-      </div>
-
       <div id="risk-report" className="space-y-8">
         <Card className="p-6">
           <div className="flex flex-col items-center justify-center text-center space-y-4">
@@ -319,10 +87,78 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
               IT Security Assessment Report
             </p>
             <p className="text-sm text-muted-foreground">
-              Prepared by <a href="https://supportstack.com/" target="_blank" rel="noopener noreferrer" className="text-brand-orange hover:underline">Support Stack</a>
+              Prepared by Support Stack
             </p>
           </div>
         </Card>
+
+        <div className="text-center space-y-4">
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className={`score-section p-8 rounded-2xl shadow-lg ${riskColor}`}
+          >
+            <h3 className="text-3xl font-bold mb-2">Risk Assessment Results</h3>
+            <p className="text-5xl font-bold mt-4">{assessment.level} Risk</p>
+            <div className="flex justify-center gap-8 mt-6">
+              <div className="text-center">
+                <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getBadgeColor(assessment.total, assessment.maxPossible)}`}>
+                  <span className="text-2xl font-semibold">{assessment.total}</span>
+                  <span className="text-sm ml-1">/ {assessment.maxPossible}</span>
+                </div>
+                <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Risk Score</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                      <span>What's this?</span>
+                      <Info className="h-3 w-3" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="text-center space-y-3">
+                        <p className="font-medium text-purple-900 dark:text-purple-100">
+                          Risk Score (0-100) measures potential vulnerabilities
+                        </p>
+                        <ul className="space-y-2 text-purple-800 dark:text-purple-200">
+                          <li>Business Profile (33%)</li>
+                          <li>Security Measures (33%)</li>
+                          <li>Compliance & Support (34%)</li>
+                        </ul>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="text-center">
+                <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getBadgeColor(assessment.valueScore, assessment.maxValuePossible)}`}>
+                  <span className="text-2xl font-semibold">{assessment.valueScore}</span>
+                  <span className="text-sm ml-1">/ {assessment.maxValuePossible}</span>
+                </div>
+                <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Value Score</p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                      <span>What's this?</span>
+                      <Info className="h-3 w-3" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="text-center space-y-3">
+                        <p className="font-medium text-purple-900 dark:text-purple-100">
+                          Value Score (0-100) indicates potential benefits from improvements
+                        </p>
+                        <ul className="space-y-2 text-purple-800 dark:text-purple-200">
+                          <li>Business Profile Value (33%)</li>
+                          <li>Security Enhancement Value (33%)</li>
+                          <li>Compliance & Support Value (34%)</li>
+                        </ul>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Risk Assessment Summary</h4>
@@ -460,36 +296,187 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         ))}
 
         <Card className="p-6">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <h4 className="text-xl font-semibold">Contact Us</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-2xl">
-              <a 
-                href="https://supportstack.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+          <div className="flex flex-col items-center justify-center space-y-6">
+            <h4 className="text-xl font-semibold">Next Steps</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
+              <Button
+                onClick={() => setShowDownloadDialog(true)}
+                size="lg"
+                variant="secondary"
+                className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
               >
-                <Globe className="h-5 w-5" />
-                <span>supportstack.com</span>
-              </a>
-              <a 
-                href="mailto:hello@supportstack.com"
-                className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+                <FileDown className="w-5 h-5" />
+                Download Full Report
+              </Button>
+
+              <Button
+                onClick={() => setShowEstimate(true)}
+                size="lg"
+                className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
               >
-                <Mail className="h-5 w-5" />
-                <span>hello@supportstack.com</span>
-              </a>
-              <a 
-                href="tel:03300552771"
-                className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
-              >
-                <Phone className="h-5 w-5" />
-                <span>0330 0552 771</span>
-              </a>
+                <PoundSterling className="w-5 h-5" />
+                View Investment Range
+              </Button>
+
+              <div className="col-span-1 sm:col-span-2">
+                <Button 
+                  size="lg"
+                  onClick={() => setShowContactDialog(true)}
+                  className="w-full text-lg py-6 px-8"
+                >
+                  {getCtaText()}
+                </Button>
+                <p className="text-muted-foreground text-sm mt-2 text-center">
+                  {getCtaDescription()}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full max-w-2xl pt-8 border-t">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <a 
+                  href="https://supportstack.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+                >
+                  <Globe className="h-5 w-5" />
+                  <span>supportstack.com</span>
+                </a>
+                <a 
+                  href="mailto:hello@supportstack.com"
+                  className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+                >
+                  <Mail className="h-5 w-5" />
+                  <span>hello@supportstack.com</span>
+                </a>
+                <a 
+                  href="tel:03300552771"
+                  className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+                >
+                  <Phone className="h-5 w-5" />
+                  <span>0330 0552 771</span>
+                </a>
+              </div>
             </div>
           </div>
         </Card>
       </div>
+
+      {showEstimate && (
+        <Card className="p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="space-y-6"
+          >
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 text-sm font-medium mb-4">
+                Industry Benchmark Estimate
+              </div>
+              <div className="flex items-center justify-center gap-2 text-2xl font-bold text-purple-600 dark:text-purple-400">
+                <PoundSterling className="h-6 w-6" />
+                <span>Recommended Investment Range</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-8 p-6 bg-gray-50 dark:bg-gray-950/30 rounded-lg">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">Monthly Investment</p>
+                <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">
+                  £{pricing.totalPrice.toLocaleString()}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Range: £{pricing.priceRange.min.toLocaleString()} - £{pricing.priceRange.max.toLocaleString()}
+                </p>
+              </div>
+              <div className="hidden sm:block w-px h-20 bg-gray-200 dark:bg-gray-800" />
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">Annual Investment</p>
+                <p className="text-3xl font-semibold text-purple-600 dark:text-purple-400">
+                  £{pricing.annualPrice.toLocaleString()}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Annual Range: £{pricing.annualRange.min.toLocaleString()} - £{pricing.annualRange.max.toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mt-6">
+              <div className="space-y-4">
+                <h4 className="font-semibold text-lg flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-purple-500" />
+                  Based On Your Profile
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Business Size: {formData.businessSize} users</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Industry: {formData.industry}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>{pricing.isHighCompliance ? "Enhanced compliance & security measures" : "Standard security package"}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-semibold text-lg flex items-center gap-2">
+                  <ListChecks className="h-5 w-5 text-purple-500" />
+                  Included Services
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>24/7 Monitoring & Support</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Security Incident Response</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Regular Security Updates</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Data Backup & Recovery</span>
+                  </li>
+                  {pricing.isHighCompliance && (
+                    <>
+                      <li className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                        <span>Compliance Reporting & Auditing</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                        <span>Enhanced Security Controls</span>
+                      </li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div className="text-sm text-muted-foreground mt-6 bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
+              <div className="flex items-start gap-2">
+                <Info className="h-4 w-4 mt-1 text-blue-500 shrink-0" />
+                <div>
+                  <strong className="block mb-1">Industry Benchmark Note:</strong>
+                  This estimate is based on typical investment levels for businesses of your size and sector. 
+                  Actual pricing may vary based on your specific infrastructure requirements, compliance needs, 
+                  and desired service level.
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </Card>
+      )}
 
       <ContactDialog 
         isOpen={showContactDialog}
