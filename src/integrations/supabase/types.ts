@@ -816,6 +816,56 @@ export type Database = {
         }
         Relationships: []
       }
+      ss_risk_results: {
+        Row: {
+          category_details: Json
+          created_at: string
+          executive_summary: Json
+          id: string
+          max_possible_score: number
+          max_value_possible: number
+          risk_level: string
+          risk_score: number
+          survey_id: string | null
+          updated_at: string
+          value_score: number
+        }
+        Insert: {
+          category_details: Json
+          created_at?: string
+          executive_summary: Json
+          id?: string
+          max_possible_score: number
+          max_value_possible: number
+          risk_level: string
+          risk_score: number
+          survey_id?: string | null
+          updated_at?: string
+          value_score: number
+        }
+        Update: {
+          category_details?: Json
+          created_at?: string
+          executive_summary?: Json
+          id?: string
+          max_possible_score?: number
+          max_value_possible?: number
+          risk_level?: string
+          risk_score?: number
+          survey_id?: string | null
+          updated_at?: string
+          value_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ss_risk_results_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "ss_risk_survey"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ss_risk_survey: {
         Row: {
           backup_frequency: string | null

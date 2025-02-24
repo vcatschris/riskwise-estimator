@@ -95,44 +95,68 @@ export const useRiskAssessment = () => {
     try {
       console.log('Saving assessment results:', assessment);
       
-      const {
-        data,
-        error
-      } = await supabase.from('ss_risk_survey').insert({
-        name: formData.name,
-        email: formData.email,
-        business_name: formData.businessName,
-        newsletter: formData.newsletter,
-        current_provider: formData.currentProvider,
-        provider_duration: formData.providerDuration,
-        cloud_provider: formData.cloudProvider,
-        industry: formData.industry,
-        business_size: formData.businessSize,
-        sensitive_data: formData.sensitiveData,
-        last_audit: formData.lastAudit,
-        mfa_enabled: formData.mfaEnabled,
-        backup_frequency: formData.backupFrequency,
-        data_regulations: formData.dataRegulations,
-        it_issues: formData.itIssues,
-        it_criticality: formData.itCriticality,
-        risk_score: assessment.total,
-        max_possible_score: assessment.maxPossible,
-        value_score: assessment.valueScore,
-        max_value_possible: assessment.maxValuePossible,
-        risk_level: assessment.level,
-        executive_summary: assessment.executiveSummary,
-        category_details: assessment.details
-      }).select();
+      // First save the survey data
+      const { data: surveyData, error: surveyError } = await supabase
+        .from('ss_risk_survey')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          business_name: formData.businessName,
+          newsletter: formData.newsletter,
+          current_provider: formData.currentProvider,
+          provider_duration: formData.providerDuration,
+          cloud_provider: formData.cloudProvider,
+          industry: formData.industry,
+          business_size: formData.businessSize,
+          sensitive_data: formData.sensitiveData,
+          last_audit: formData.lastAudit,
+          mfa_enabled: formData.mfaEnabled,
+          backup_frequency: formData.backupFrequency,
+          data_regulations: formData.dataRegulations,
+          it_issues: formData.itIssues,
+          risk_score: assessment.total,
+          max_possible_score: assessment.maxPossible,
+          value_score: assessment.valueScore,
+          max_value_possible: assessment.maxValuePossible,
+          risk_level: assessment.level,
+          executive_summary: assessment.executiveSummary,
+          category_details: assessment.details
+        })
+        .select();
 
-      if (error) {
-        console.error('Error saving assessment:', error);
+      if (surveyError) {
+        console.error('Error saving survey:', surveyError);
         toast.error('Failed to save assessment results');
         return null;
       }
 
-      console.log('Assessment saved successfully:', data);
+      // Then save the detailed results data
+      const { data: resultData, error: resultError } = await supabase
+        .from('ss_risk_results')
+        .insert({
+          risk_score: assessment.total,
+          max_possible_score: assessment.maxPossible,
+          value_score: assessment.valueScore,
+          max_value_possible: assessment.maxValuePossible,
+          risk_level: assessment.level,
+          executive_summary: assessment.executiveSummary,
+          category_details: assessment.details,
+          survey_id: surveyData[0].id
+        })
+        .select();
+
+      if (resultError) {
+        console.error('Error saving results:', resultError);
+        toast.error('Failed to save assessment results');
+        return null;
+      }
+
+      console.log('Assessment saved successfully:', {
+        survey: surveyData[0],
+        results: resultData[0]
+      });
       toast.success('Assessment results saved successfully');
-      return data[0];
+      return surveyData[0];
       
     } catch (error) {
       console.error('Error saving assessment:', error);
@@ -193,3 +217,4 @@ export const useRiskAssessment = () => {
     setShowEstimate
   };
 };
+
