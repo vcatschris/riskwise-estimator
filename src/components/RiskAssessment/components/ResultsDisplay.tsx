@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -27,7 +26,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       case 'Medium':
         return 'Schedule Security Review';
       case 'Low':
-        return 'Review Security Options';
+        return 'Explore opportunities to maintain your security posture';
       default:
         return 'Request Consultation';
     }
@@ -58,32 +57,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
   const NextStepsSection = () => (
     <Card className="p-6">
       <div className="flex flex-col items-center justify-center space-y-6">
-        <h4 className="text-xl font-semibold">Next Steps</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
-          <Button
-            onClick={() => setShowDownloadDialog(true)}
-            size="lg"
-            variant="secondary"
-            className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
-          >
-            <FileDown className="w-5 h-5" />
-            Download Full Report
-          </Button>
-
-          <a 
-            href="#investment-range"
-            className="w-full"
-          >
-            <Button
-              size="lg"
-              className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
-            >
-              <PoundSterling className="w-5 h-5" />
-              View Investment Range
-            </Button>
-          </a>
-
-          <div className="col-span-1 sm:col-span-2">
+        <div className="grid grid-cols-1 gap-4 w-full max-w-2xl">
+          <div className="col-span-1">
             <Button 
               size="lg"
               onClick={() => setShowContactDialog(true)}
@@ -97,7 +72,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
               </p>
               {isEligibleForTrial() && (
                 <p className="text-brand-orange text-sm font-medium text-center">
-                  ✨ Your business is eligible for a no-obligation 30-day free trial ✨
+                  ✨ Based on your answers, your business is eligible for a no-obligation 30-day free trial ✨
                 </p>
               )}
             </div>
