@@ -579,7 +579,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     if (data.sensitiveData === 'Yes') {
       values.push("Enhanced data protection and compliance support");
     }
-    if (data.internalIT === 'No') {
+    if (data.itSupportType === 'No formal IT support') {
       values.push("Professional IT management and support");
     }
     if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {

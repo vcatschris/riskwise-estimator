@@ -10,6 +10,7 @@ export type ITCriticality = 'IT downtime causes immediate operational issues' | 
 export type YesNoNotSure = 'Yes' | 'No' | 'Not Sure';
 export type CloudProvider = 'Microsoft' | 'Google' | 'Other' | "Don't Know";
 export type SupportDuration = 'Less than 1 year' | '1-2 years' | '3-5 years' | 'More than 5 years' | 'No current provider';
+export type ResponseTime = 'Within minutes' | 'Within an hour' | 'Within a day' | 'No specific requirement';
 
 export interface AssessmentData {
   // Personal Info
@@ -42,6 +43,7 @@ export interface AssessmentData {
   dataRegulations: YesNoNotSure;
   itIssues: DisruptionFrequency;
   itCriticality: ITCriticality;
+  responseNeeded: ResponseTime;
 }
 
 export interface IndustryInsight {
