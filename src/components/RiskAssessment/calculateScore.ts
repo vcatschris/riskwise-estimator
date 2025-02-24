@@ -401,32 +401,67 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let profileRiskScore = 0;
   let profileValueScore = 0;
 
-  // Business Size (significantly increased weights)
-  const sizeWeights = BUSINESS_SIZE_WEIGHTS[data.businessSize];
-  profileRiskScore += sizeWeights.rp * sizeWeights.weight * 1.5; // Additional multiplier
-  profileValueScore += sizeWeights.vp * 2.0; // Increased multiplier
+  // IT Support Type scoring
+  if (data.itSupportType === 'No formal IT support') {
+    profileRiskScore += 10;
+  } else if (data.itSupportType === 'An internal expert/team') {
+    profileRiskScore += 5;
+  } else if (data.itSupportType === 'Not sure') {
+    profileRiskScore += 7.5;
+  }
 
-  // Sensitive Data (increased weights)
+  // Infrastructure scoring
+  switch (data.infrastructure) {
+    case 'Cloud-based systems':
+      profileRiskScore += 5;
+      profileValueScore += 10;
+      break;
+    case 'Internal servers':
+      profileRiskScore += 10;
+      profileValueScore += 5;
+      break;
+    case 'Extensive IT network':
+      profileRiskScore += 15;
+      profileValueScore += 10;
+      break;
+    case 'Mixed environment':
+      profileRiskScore += 7.5;
+      profileValueScore += 7.5;
+      break;
+    case 'Not sure':
+      profileRiskScore += 10;
+      break;
+  }
+
+  // Work location scoring
+  switch (data.workLocation) {
+    case 'Single site, no remote working':
+      break; // +0 points
+    case 'Multiple sites, no remote working':
+      profileRiskScore += 5;
+      break;
+    case 'Single site, with remote working':
+      profileRiskScore += 7.5;
+      break;
+    case 'Multiple sites, with remote working':
+      profileRiskScore += 10;
+      break;
+    case 'Fully remote workforce':
+      profileRiskScore += 15;
+      break;
+  }
+
+  // Industry risk multiplier (2x for Legal/Finance/Accounting)
+  const industryMultiplier = ['Legal', 'Finance', 'Accounting'].includes(data.industry) ? 2 : 1;
+  profileRiskScore *= industryMultiplier;
+
+  // Sensitive data handling
   if (data.sensitiveData === 'Yes') {
-    profileRiskScore += 10 * 2.5; // Increased from 8 * 2
-    profileValueScore += 15;      // Increased from 12
+    profileRiskScore += 10;
   } else if (data.sensitiveData === 'Not Sure') {
-    profileRiskScore += 8 * 2.0;  // Increased from 6 * 1.5
-    profileValueScore += 12;      // Increased from 9
+    profileRiskScore += 5;
   }
 
-  // Internal IT (increased weights)
-  if (data.internalIT === 'No') {
-    profileRiskScore += 9 * 2.0;  // Increased from 7 * 1.5
-    profileValueScore += 18;      // Increased from 15
-  } else if (data.internalIT === 'We outsource IT') {
-    profileRiskScore += 6 * 1.5;  // Increased from 4
-    profileValueScore += 15;      // Increased from 12
-  }
-
-  // Apply industry value modifier with increased multiplier
-  profileValueScore *= 2.0; // Increased from 1.5
-  
   // Normalize profile scores
   profileRiskScore = (profileRiskScore / 100) * 33;
   profileValueScore = (profileValueScore / 100) * 33;
@@ -434,64 +469,34 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints += profileRiskScore;
   totalValuePoints += profileValueScore;
 
-  // Add Business Profile details
-  details.push({
-    category: 'Business Profile',
-    riskScore: profileRiskScore,
-    valueScore: profileValueScore,
-    recommendations: [
-      data.sensitiveData === 'Yes' ? 'Implement enhanced data protection measures' : '',
-      data.internalIT === 'No' ? 'Consider managed IT support for better security' : '',
-    ].filter(Boolean),
-    insights: getDescriptionForCategory('Business Profile'),
-    riskAreas: [
-      data.sensitiveData === 'Yes' ? 'Handling sensitive data requires additional protection' : '',
-      data.internalIT === 'No' ? 'Lack of internal IT support increases vulnerability' : '',
-      data.cloudServices === 'Yes' ? 'Cloud services need proper security configuration' : '',
-    ].filter(Boolean),
-    valueAreas: [
-      'Structured IT management approach',
-      'Enhanced data protection measures',
-      'Professional IT expertise and support',
-    ]
-  });
-
   // Security Risk (33% of total)
   let securityRiskScore = 0;
   let securityValueScore = 0;
 
-  // Last Audit (increased weights)
+  // Last Audit
   if (data.lastAudit === 'Never') {
-    securityRiskScore += 12 * 3.5; // Increased from 10 * 3
-    securityValueScore += 18;      // Increased from 15
+    securityRiskScore += 30;
   } else if (data.lastAudit === 'Over a year ago') {
-    securityRiskScore += 9 * 2.5;  // Increased from 7 * 2
-    securityValueScore += 15;      // Increased from 12
-  } else if (data.lastAudit === '6-12 months ago') {
-    securityRiskScore += 6 * 2.0;  // Increased from 4 * 1.5
-    securityValueScore += 10;      // Increased from 8
+    securityRiskScore += 20;
   }
 
-  // MFA (increased weights)
+  // MFA
   if (data.mfaEnabled === 'No') {
-    securityRiskScore += 10 * 3.0; // Increased from 8 * 2.5
-    securityValueScore += 16;      // Increased from 14
+    securityRiskScore += 17.5;
   } else if (data.mfaEnabled === 'Not Sure') {
-    securityRiskScore += 8 * 2.5;  // Increased from 6 * 2
-    securityValueScore += 12;      // Increased from 10
+    securityRiskScore += 10;
   }
 
-  // Backup Frequency (increased weights)
+  // Backup frequency
   if (data.backupFrequency === "We don't back up data") {
-    securityRiskScore += 12 * 3.5; // Increased from 10 * 3
-    securityValueScore += 18;      // Increased from 15
+    securityRiskScore += 30;
   } else if (data.backupFrequency === 'Monthly') {
-    securityRiskScore += 9 * 2.5;  // Increased from 7 * 2
-    securityValueScore += 15;      // Increased from 12
-  } else if (data.backupFrequency === 'Weekly') {
-    securityRiskScore += 6 * 2.0;  // Increased from 4 * 1.5
-    securityValueScore += 10;      // Increased from 8
+    securityRiskScore += 15;
   }
+
+  // Apply industry security multiplier
+  const securityMultiplier = ['Legal', 'Finance', 'Healthcare'].includes(data.industry) ? 1.5 : 1;
+  securityRiskScore *= securityMultiplier;
 
   // Normalize security scores
   securityRiskScore = (securityRiskScore / 100) * 33;
@@ -500,65 +505,33 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints += securityRiskScore;
   totalValuePoints += securityValueScore;
 
-  // Add Security details
-  details.push({
-    category: 'Security',
-    riskScore: securityRiskScore,
-    valueScore: securityValueScore,
-    recommendations: [
-      data.lastAudit === 'Never' ? 'Schedule regular security audits' : '',
-      data.mfaEnabled === 'No' ? 'Enable multi-factor authentication' : '',
-      data.backupFrequency === "We don't back up data" ? 'Implement regular backup strategy' : '',
-      data.endpointProtection === 'No' ? 'Deploy endpoint protection solutions' : '',
-    ].filter(Boolean),
-    insights: getDescriptionForCategory('Security'),
-    riskAreas: [
-      data.lastAudit === 'Never' ? 'No recent security audit' : '',
-      data.mfaEnabled === 'No' ? 'Missing multi-factor authentication' : '',
-      data.backupFrequency === "We don't back up data" ? 'No data backup strategy' : '',
-    ].filter(Boolean),
-    valueAreas: [
-      'Enhanced security measures',
-      'Regular security assessments',
-      'Comprehensive data protection',
-    ]
-  });
-
   // Compliance & Support Risk (34% of total)
   let complianceRiskScore = 0;
   let complianceValueScore = 0;
 
-  // Data Regulations (increased weights)
-  if (data.dataRegulations === 'Yes') {
-    complianceRiskScore += 10 * 2.5; // Increased from 8 * 2
-    complianceValueScore += 16;      // Increased from 14
-  } else if (data.dataRegulations === 'Not Sure') {
-    complianceRiskScore += 8 * 2.0;  // Increased from 6 * 1.5
-    complianceValueScore += 12;      // Increased from 10
+  // Data regulations
+  if (data.dataRegulations === 'Not Sure') {
+    complianceRiskScore += 7.5;
   }
 
-  // IT Issues Frequency (increased weights)
+  // IT Issues frequency
   if (data.itIssues === 'Daily') {
-    complianceRiskScore += 12 * 3.5; // Increased from 10 * 3
-    complianceValueScore += 20;      // Increased from 18
+    complianceRiskScore += 30;
   } else if (data.itIssues === 'Weekly') {
-    complianceRiskScore += 9 * 2.5;  // Increased from 7 * 2
-    complianceValueScore += 16;      // Increased from 14
-  } else if (data.itIssues === 'Occasionally') {
-    complianceRiskScore += 6 * 2.0;  // Increased from 4
-    complianceValueScore += 10;      // Increased from 8
+    complianceRiskScore += 20;
   }
 
-  // Response Time Needed (increased weights)
-  if (data.responseNeeded === 'Within minutes') {
-    complianceRiskScore += 10 * 3.5; // Increased from 8 * 3
-    complianceValueScore += 18;      // Increased from 16
-  } else if (data.responseNeeded === 'Within an hour') {
-    complianceRiskScore += 8 * 2.5;  // Increased from 6 * 2
-    complianceValueScore += 14;      // Increased from 12
-  } else if (data.responseNeeded === 'Same day') {
-    complianceRiskScore += 6 * 2.0;  // Increased from 4 * 1.5
-    complianceValueScore += 11;      // Increased from 9
+  // IT Criticality
+  switch (data.itCriticality) {
+    case 'IT downtime causes immediate operational issues':
+      complianceRiskScore += 21;
+      break;
+    case 'IT downtime impacts productivity but not critical operations':
+      complianceRiskScore += 15;
+      break;
+    case 'IT downtime is a minor inconvenience':
+      complianceRiskScore += 10;
+      break;
   }
 
   // Normalize compliance scores
@@ -568,37 +541,14 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints += complianceRiskScore;
   totalValuePoints += complianceValueScore;
 
-  // Add Compliance & Support details
-  details.push({
-    category: 'Compliance & Support',
-    riskScore: complianceRiskScore,
-    valueScore: complianceValueScore,
-    recommendations: [
-      data.dataRegulations === 'Yes' ? 'Maintain regular compliance audits and documentation' : '',
-      data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Implement proactive IT support measures' : '',
-      data.responseNeeded === 'Within minutes' || data.responseNeeded === 'Within an hour' ? 'Setup rapid response IT support system' : '',
-    ].filter(Boolean),
-    insights: getDescriptionForCategory('Compliance & Support'),
-    riskAreas: [
-      data.dataRegulations === 'Yes' ? 'Complex regulatory compliance requirements' : '',
-      data.itIssues === 'Daily' || data.itIssues === 'Weekly' ? 'Frequent IT disruptions affecting operations' : '',
-      data.responseNeeded === 'Within minutes' ? 'Critical response time requirements' : '',
-    ].filter(Boolean),
-    valueAreas: [
-      'Streamlined compliance management',
-      'Efficient IT support processes',
-      'Improved business continuity',
-    ]
-  });
-
   // Round scores and ensure they don't exceed 100
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
   totalValuePoints = Math.min(Math.round(totalValuePoints), 100);
 
-  // New risk level thresholds as specified
+  // New risk level thresholds
   let riskLevel: 'Low' | 'Medium' | 'High';
-  if (totalRiskPoints < 25) riskLevel = 'Low';           // Lowered from 35
-  else if (totalRiskPoints < 50) riskLevel = 'Medium';   // Lowered from 60
+  if (totalRiskPoints < 33) riskLevel = 'Low';
+  else if (totalRiskPoints <= 65) riskLevel = 'Medium';
   else riskLevel = 'High';
 
   // Generate executive summary

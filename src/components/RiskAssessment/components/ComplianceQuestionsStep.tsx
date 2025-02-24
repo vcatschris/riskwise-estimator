@@ -19,38 +19,45 @@ export function ComplianceQuestionsStep({ formData, onInputChange }: ComplianceQ
     >
       <Select onValueChange={(value) => onInputChange('dataRegulations', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="Do you need to follow data protection laws? (e.g., GDPR, HIPAA)" />
+          <SelectValue placeholder="Are you required to comply with specific data protection regulations?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Yes">Yes - We must follow specific regulations</SelectItem>
-          <SelectItem value="No">No - No special requirements</SelectItem>
-          <SelectItem value="Not Sure">Not sure about our obligations</SelectItem>
+          <SelectItem value="Yes">Yes - We have specific compliance requirements</SelectItem>
+          <SelectItem value="No">No - We don't have any specific requirements</SelectItem>
+          <SelectItem value="Not Sure">Not sure about our compliance requirements</SelectItem>
         </SelectContent>
       </Select>
 
       <Select onValueChange={(value) => onInputChange('itIssues', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="How often do you face IT problems? (e.g., crashes, slowness)" />
+          <SelectValue placeholder="How often do you experience IT issues that affect productivity?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Daily">Very frequently (multiple times per day)</SelectItem>
-          <SelectItem value="Weekly">Often (several times per week)</SelectItem>
-          <SelectItem value="Occasionally">Sometimes (few times per month)</SelectItem>
-          <SelectItem value="Rarely">Rarely (once every few months)</SelectItem>
-          <SelectItem value="Never">Never have technical issues</SelectItem>
+          <SelectItem value="Daily">Daily disruptions</SelectItem>
+          <SelectItem value="Weekly">Weekly issues</SelectItem>
+          <SelectItem value="Occasionally">Occasional problems</SelectItem>
+          <SelectItem value="Rarely">Rare issues</SelectItem>
+          <SelectItem value="Never">Never experience issues</SelectItem>
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('responseNeeded', value)}>
+      <Select onValueChange={(value) => onInputChange('itCriticality', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="How quickly do you need IT problems fixed?" />
+          <SelectValue placeholder="How critical is IT to your day-to-day operations?" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Within minutes">Emergency response (within minutes)</SelectItem>
-          <SelectItem value="Within an hour">Urgent response (within an hour)</SelectItem>
-          <SelectItem value="Same day">Same business day response</SelectItem>
-          <SelectItem value="Within a few days">Within 2-3 business days</SelectItem>
-          <SelectItem value="No urgency">No urgent requirements</SelectItem>
+          <SelectItem value="IT downtime causes immediate operational issues">
+            IT downtime causes immediate operational issues
+          </SelectItem>
+          <SelectItem value="IT downtime impacts productivity but not critical operations">
+            IT downtime impacts productivity but not critical operations
+          </SelectItem>
+          <SelectItem value="IT downtime is a minor inconvenience">
+            IT downtime is a minor inconvenience
+          </SelectItem>
+          <SelectItem value="IT is not critical to daily operations">
+            IT is not critical to daily operations
+          </SelectItem>
         </SelectContent>
       </Select>
     </motion.div>

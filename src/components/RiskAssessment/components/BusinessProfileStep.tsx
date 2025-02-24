@@ -33,7 +33,7 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
 
       <Select onValueChange={(value) => onInputChange('businessSize', value)}>
         <SelectTrigger>
-          <SelectValue placeholder="How many employees need IT support?" />
+          <SelectValue placeholder="How many employees use IT as a core part of their role?" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="1-5">Small Team (1-5 users)</SelectItem>
@@ -52,6 +52,44 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
           <SelectItem value="Yes">Yes - We handle confidential data (needs protection)</SelectItem>
           <SelectItem value="No">No - We don't handle sensitive information</SelectItem>
           <SelectItem value="Not Sure">Not sure what counts as sensitive data</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => onInputChange('itSupportType', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="What kind of IT support does your business have?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="No formal IT support">No formal IT support</SelectItem>
+          <SelectItem value="An internal expert/team">An internal expert/team</SelectItem>
+          <SelectItem value="An external IT support partner">An external IT support partner</SelectItem>
+          <SelectItem value="Not sure">Not sure</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => onInputChange('infrastructure', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="What best describes your IT infrastructure?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Cloud-based systems">Cloud-based systems</SelectItem>
+          <SelectItem value="Internal servers">Internal servers</SelectItem>
+          <SelectItem value="Extensive IT network">Extensive IT network</SelectItem>
+          <SelectItem value="Mixed environment">Mixed environment</SelectItem>
+          <SelectItem value="Not sure">Not sure</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={(value) => onInputChange('workLocation', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="How many locations do your staff work from, and do they routinely work from home?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Single site, no remote working">Single site, no remote working</SelectItem>
+          <SelectItem value="Multiple sites, no remote working">Multiple sites, no remote working</SelectItem>
+          <SelectItem value="Single site, with remote working">Single site, with remote working</SelectItem>
+          <SelectItem value="Multiple sites, with remote working">Multiple sites, with remote working</SelectItem>
+          <SelectItem value="Fully remote workforce">Fully remote workforce</SelectItem>
         </SelectContent>
       </Select>
     </motion.div>
