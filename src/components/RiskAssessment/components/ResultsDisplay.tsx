@@ -46,6 +46,75 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     }
   };
 
+  const NextStepsSection = () => (
+    <Card className="p-6">
+      <div className="flex flex-col items-center justify-center space-y-6">
+        <h4 className="text-xl font-semibold">Next Steps</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
+          <Button
+            onClick={() => setShowDownloadDialog(true)}
+            size="lg"
+            variant="secondary"
+            className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
+          >
+            <FileDown className="w-5 h-5" />
+            Download Full Report
+          </Button>
+
+          <Button
+            onClick={() => setShowEstimate(true)}
+            size="lg"
+            className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
+          >
+            <PoundSterling className="w-5 h-5" />
+            View Investment Range
+          </Button>
+
+          <div className="col-span-1 sm:col-span-2">
+            <Button 
+              size="lg"
+              onClick={() => setShowContactDialog(true)}
+              className="w-full text-lg py-6 px-8"
+            >
+              {getCtaText()}
+            </Button>
+            <p className="text-muted-foreground text-sm mt-2 text-center">
+              {getCtaDescription()}
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full max-w-2xl pt-8 border-t">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <a 
+              href="https://supportstack.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+            >
+              <Globe className="h-5 w-5" />
+              <span>supportstack.com</span>
+            </a>
+            <a 
+              href="mailto:hello@supportstack.com"
+              className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+            >
+              <Mail className="h-5 w-5" />
+              <span>hello@supportstack.com</span>
+            </a>
+            <a 
+              href="tel:03300552771"
+              className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+            >
+              <Phone className="h-5 w-5" />
+              <span>0330 0552 771</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
   useEffect(() => {
     const handleDialogClose = () => {
       const reportElement = document.getElementById('risk-report');
@@ -91,6 +160,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             </p>
           </div>
         </Card>
+
+        <NextStepsSection />
 
         <div className="text-center space-y-4">
           <motion.div
@@ -295,72 +366,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </Card>
         ))}
 
-        <Card className="p-6">
-          <div className="flex flex-col items-center justify-center space-y-6">
-            <h4 className="text-xl font-semibold">Next Steps</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
-              <Button
-                onClick={() => setShowDownloadDialog(true)}
-                size="lg"
-                variant="secondary"
-                className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
-              >
-                <FileDown className="w-5 h-5" />
-                Download Full Report
-              </Button>
-
-              <Button
-                onClick={() => setShowEstimate(true)}
-                size="lg"
-                className="w-full flex items-center gap-2 text-base sm:text-lg py-4 sm:py-6 whitespace-normal text-center"
-              >
-                <PoundSterling className="w-5 h-5" />
-                View Investment Range
-              </Button>
-
-              <div className="col-span-1 sm:col-span-2">
-                <Button 
-                  size="lg"
-                  onClick={() => setShowContactDialog(true)}
-                  className="w-full text-lg py-6 px-8"
-                >
-                  {getCtaText()}
-                </Button>
-                <p className="text-muted-foreground text-sm mt-2 text-center">
-                  {getCtaDescription()}
-                </p>
-              </div>
-            </div>
-
-            <div className="w-full max-w-2xl pt-8 border-t">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <a 
-                  href="https://supportstack.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
-                >
-                  <Globe className="h-5 w-5" />
-                  <span>supportstack.com</span>
-                </a>
-                <a 
-                  href="mailto:hello@supportstack.com"
-                  className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
-                >
-                  <Mail className="h-5 w-5" />
-                  <span>hello@supportstack.com</span>
-                </a>
-                <a 
-                  href="tel:03300552771"
-                  className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
-                >
-                  <Phone className="h-5 w-5" />
-                  <span>0330 0552 771</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </Card>
+        <NextStepsSection />
       </div>
 
       {showEstimate && (
