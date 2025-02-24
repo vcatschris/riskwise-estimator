@@ -323,7 +323,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
               IT Security Assessment Report
             </p>
             <p className="text-sm text-muted-foreground">
-              Prepared by Support Stack
+              Prepared by <a href="https://supportstack.com/" target="_blank" rel="noopener noreferrer" className="text-brand-orange hover:underline">Support Stack</a>
             </p>
           </div>
         </Card>
