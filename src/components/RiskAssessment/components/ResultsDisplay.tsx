@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -45,6 +46,15 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     }
   };
 
+  // Function to check if business size is more than 5 users
+  const isEligibleForTrial = () => {
+    const size = formData.businessSize;
+    if (!size) return false;
+    
+    const sizeNumber = parseInt(size);
+    return sizeNumber > 5;
+  };
+
   const NextStepsSection = () => (
     <Card className="p-6">
       <div className="flex flex-col items-center justify-center space-y-6">
@@ -81,9 +91,16 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             >
               {getCtaText()}
             </Button>
-            <p className="text-muted-foreground text-sm mt-2 text-center">
-              {getCtaDescription()}
-            </p>
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-sm mt-2 text-center">
+                {getCtaDescription()}
+              </p>
+              {isEligibleForTrial() && (
+                <p className="text-brand-orange text-sm font-medium text-center">
+                  ✨ Your business is eligible for a no-obligation 30-day free trial ✨
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
