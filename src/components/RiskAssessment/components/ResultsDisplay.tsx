@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar, FileDown, ListChecks } from "lucide-react";
+import { Info, PoundSterling, Check, AlertTriangle, TrendingUp, Building2, Lightbulb, ChartBar, FileDown, ListChecks, Globe, Mail, Phone } from "lucide-react";
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { calculatePricing } from '../calculatePricing';
@@ -75,7 +75,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
 
   return (
     <div className="space-y-8">
-      {/* Top CTAs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12 px-4 sm:px-0">
         <div className="flex flex-col items-center gap-2">
           <Button
@@ -222,7 +221,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         </Card>
       )}
 
-      {/* Risk Assessment Results */}
       <div className="text-center space-y-4">
         <motion.div
           initial={{ scale: 0.9 }}
@@ -290,7 +288,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </motion.div>
 
-        {/* Risk-based CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -311,7 +308,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       </div>
 
       <div id="risk-report" className="space-y-8">
-        {/* Report Header */}
         <Card className="p-6">
           <div className="flex flex-col items-center justify-center text-center space-y-4">
             <img 
@@ -328,7 +324,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
-        {/* Risk Assessment Summary */}
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Risk Assessment Summary</h4>
           <div className="space-y-4">
@@ -353,7 +348,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
-        {/* Executive Summary */}
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
           <div className="space-y-4">
@@ -401,7 +395,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
-        {/* Detailed Category Reports */}
         {assessment.details.map((category, index) => (
           <Card key={index} className="p-6">
             <CardHeader className="pb-4">
@@ -465,6 +458,37 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             </CardContent>
           </Card>
         ))}
+
+        <Card className="p-6">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <h4 className="text-xl font-semibold">Contact Us</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-2xl">
+              <a 
+                href="https://supportstack.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+              >
+                <Globe className="h-5 w-5" />
+                <span>supportstack.com</span>
+              </a>
+              <a 
+                href="mailto:hello@supportstack.com"
+                className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+              >
+                <Mail className="h-5 w-5" />
+                <span>hello@supportstack.com</span>
+              </a>
+              <a 
+                href="tel:03300552771"
+                className="flex items-center justify-center gap-2 text-brand-orange hover:text-brand-orange/80 transition-colors"
+              >
+                <Phone className="h-5 w-5" />
+                <span>0330 0552 771</span>
+              </a>
+            </div>
+          </div>
+        </Card>
       </div>
 
       <ContactDialog 
