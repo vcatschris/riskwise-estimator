@@ -90,8 +90,8 @@ export function RiskAssessmentForm() {
           toast.error("Please select your IT issue frequency");
           return false;
         }
-        if (!formData.responseNeeded?.trim()) {
-          toast.error("Please select your required response time");
+        if (!formData.itCriticality?.trim()) {
+          toast.error("Please select your IT criticality level");
           return false;
         }
         return true;
@@ -124,7 +124,7 @@ export function RiskAssessmentForm() {
         backup_frequency: formData.backupFrequency,
         data_regulations: formData.dataRegulations,
         it_issues: formData.itIssues,
-        response_needed: formData.responseNeeded,
+        it_criticality: formData.itCriticality,
         risk_score: assessment.total,
         max_possible_score: assessment.maxPossible,
         value_score: assessment.valueScore,
