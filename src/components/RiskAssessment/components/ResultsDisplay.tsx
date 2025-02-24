@@ -255,6 +255,106 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
+        {/* Add Investment Range Card */}
+        <Card className="p-6">
+          <h4 className="text-xl font-semibold mb-4">Investment Range</h4>
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-8 p-6 bg-gray-50 dark:bg-gray-950/30 rounded-lg">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">Monthly Investment</p>
+                <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">
+                  £{pricing.totalPrice.toLocaleString()}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Range: £{pricing.priceRange.min.toLocaleString()} - £{pricing.priceRange.max.toLocaleString()}
+                </p>
+              </div>
+              <div className="hidden sm:block w-px h-20 bg-gray-200 dark:bg-gray-800" />
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">Annual Investment</p>
+                <p className="text-3xl font-semibold text-purple-600 dark:text-purple-400">
+                  £{pricing.annualPrice.toLocaleString()}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Annual Range: £{pricing.annualRange.min.toLocaleString()} - £{pricing.annualRange.max.toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mt-6">
+              <div className="space-y-4">
+                <h4 className="font-semibold text-lg flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-purple-500" />
+                  Based On Your Profile
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Business Size: {formData.businessSize} users</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Industry: {formData.industry}</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>{pricing.isHighCompliance ? "Enhanced compliance & security measures" : "Standard security package"}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-semibold text-lg flex items-center gap-2">
+                  <ListChecks className="h-5 w-5 text-purple-500" />
+                  Included Services
+                </h4>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>24/7 Monitoring & Support</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Security Incident Response</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Regular Security Updates</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                    <span>Data Backup & Recovery</span>
+                  </li>
+                  {pricing.isHighCompliance && (
+                    <>
+                      <li className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                        <span>Compliance Reporting & Auditing</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 mt-1 text-green-500 shrink-0" />
+                        <span>Enhanced Security Controls</span>
+                      </li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div className="text-sm text-muted-foreground mt-6 bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
+              <div className="flex items-start gap-2">
+                <Info className="h-4 w-4 mt-1 text-blue-500 shrink-0" />
+                <div>
+                  <strong className="block mb-1">Industry Benchmark Note:</strong>
+                  This estimate is based on typical investment levels for businesses of your size and sector. 
+                  Actual pricing may vary based on your specific infrastructure requirements, compliance needs, 
+                  and desired service level.
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
         <Card className="p-6">
           <h4 className="text-xl font-semibold mb-4">Executive Summary</h4>
           <div className="space-y-4">
