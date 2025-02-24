@@ -392,7 +392,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let profileRiskScore = 0;
   let profileValueScore = 0;
 
-  // IT Support Type scoring
+  // IT Support Type scoring (increased weights)
   if (data.itSupportType === 'No formal IT support') {
     profileRiskScore += 10;
   } else if (data.itSupportType === 'An internal expert/team') {
@@ -401,7 +401,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     profileRiskScore += 7.5;
   }
 
-  // Infrastructure scoring
+  // Infrastructure scoring (increased weights)
   switch (data.infrastructure) {
     case 'Cloud-based systems':
       profileRiskScore += 5;
@@ -424,7 +424,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
       break;
   }
 
-  // Work location scoring
+  // Work location scoring (increased weights)
   switch (data.workLocation) {
     case 'Single site, no remote working':
       break; // +0 points
@@ -446,7 +446,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   const industryMultiplier = ['Legal', 'Finance', 'Accounting'].includes(data.industry) ? 2 : 1;
   profileRiskScore *= industryMultiplier;
 
-  // Sensitive data handling
+  // Sensitive data handling (increased weight)
   if (data.sensitiveData === 'Yes') {
     profileRiskScore += 10;
   } else if (data.sensitiveData === 'Not Sure') {
@@ -487,28 +487,28 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let securityRiskScore = 0;
   let securityValueScore = 0;
 
-  // Last Audit
+  // Last Audit (increased weight)
   if (data.lastAudit === 'Never') {
     securityRiskScore += 30;
   } else if (data.lastAudit === 'Over a year ago') {
     securityRiskScore += 20;
   }
 
-  // MFA
+  // MFA (increased weight)
   if (data.mfaEnabled === 'No') {
     securityRiskScore += 17.5;
   } else if (data.mfaEnabled === 'Not Sure') {
     securityRiskScore += 10;
   }
 
-  // Backup frequency
+  // Backup frequency (increased weight)
   if (data.backupFrequency === "We don't back up data") {
     securityRiskScore += 30;
   } else if (data.backupFrequency === 'Monthly') {
     securityRiskScore += 15;
   }
 
-  // Apply industry security multiplier
+  // Apply industry security multiplier (increased)
   const securityMultiplier = ['Legal', 'Finance', 'Healthcare'].includes(data.industry) ? 1.5 : 1;
   securityRiskScore *= securityMultiplier;
 
@@ -546,19 +546,19 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let complianceRiskScore = 0;
   let complianceValueScore = 0;
 
-  // Data regulations
+  // Data regulations (increased weight)
   if (data.dataRegulations === 'Not Sure') {
     complianceRiskScore += 7.5;
   }
 
-  // IT Issues frequency
+  // IT Issues frequency (increased weight)
   if (data.itIssues === 'Daily') {
     complianceRiskScore += 30;
   } else if (data.itIssues === 'Weekly') {
     complianceRiskScore += 20;
   }
 
-  // IT Criticality
+  // IT Criticality (increased weight)
   switch (data.itCriticality) {
     case 'IT downtime causes immediate operational issues':
       complianceRiskScore += 21;
@@ -582,7 +582,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
   totalValuePoints = Math.min(Math.round(totalValuePoints), 100);
 
-  // New risk level thresholds
+  // New risk level thresholds to generate more Medium and High risks
   let riskLevel: 'Low' | 'Medium' | 'High';
   if (totalRiskPoints < 33) riskLevel = 'Low';
   else if (totalRiskPoints <= 65) riskLevel = 'Medium';
