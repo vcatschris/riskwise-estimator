@@ -1,3 +1,4 @@
+
 import { AssessmentData, RiskScore, CategoryDetail } from './types';
 import { INDUSTRY_INSIGHTS } from './utils/industryInsights';
 import { getCategoryInsights } from './utils/categoryInsights';
@@ -16,9 +17,6 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   if (data.itSupportType === 'We do not have IT Support currently') {
     profileRiskScore += 25; // Higher risk for no IT support
     profileValueScore += 35; // Higher value potential
-  } else if (data.itSupportType === 'No formal IT support') {
-    profileRiskScore += 15;
-    profileValueScore += 25; // Increased value potential
   } else if (data.itSupportType === 'An internal expert/team') {
     profileRiskScore += 10;
     profileValueScore += 20; // Increased value potential
@@ -265,7 +263,7 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     if (data.sensitiveData === 'Yes') {
       values.push("Enhanced data protection and compliance support");
     }
-    if (data.itSupportType === 'No formal IT support') {
+    if (data.itSupportType === 'We do not have IT Support currently') {
       values.push("Professional IT management and support");
     }
     if (data.itIssues === 'Daily' || data.itIssues === 'Weekly') {
