@@ -17,7 +17,10 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4"
     >
-      <Select onValueChange={value => onInputChange('itSupportType', value)}>
+      <Select 
+        onValueChange={value => onInputChange('itSupportType', value)}
+        value={formData.itSupportType}
+      >
         <SelectTrigger>
           <SelectValue placeholder="What kind of IT support does your business have?" />
         </SelectTrigger>
@@ -30,7 +33,10 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
       </Select>
 
       {(formData.itSupportType === 'An internal expert/team' || formData.itSupportType === 'An external IT support partner') && (
-        <Select onValueChange={value => onInputChange('providerDuration', value)}>
+        <Select 
+          onValueChange={value => onInputChange('providerDuration', value)}
+          value={formData.providerDuration}
+        >
           <SelectTrigger>
             <SelectValue placeholder="How long have you had this IT support?" />
           </SelectTrigger>
@@ -42,6 +48,22 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
           </SelectContent>
         </Select>
       )}
+
+      {/* Add the required cloud provider field */}
+      <Select 
+        onValueChange={value => onInputChange('cloudProvider', value)}
+        value={formData.cloudProvider}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Which cloud provider do you primarily use?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Microsoft">Microsoft (Azure, 365)</SelectItem>
+          <SelectItem value="Google">Google (Workspace, Cloud)</SelectItem>
+          <SelectItem value="Other">Other cloud provider</SelectItem>
+          <SelectItem value="Don't Know">Don't know</SelectItem>
+        </SelectContent>
+      </Select>
     </motion.div>
   );
 }
