@@ -22,7 +22,15 @@ export const useRiskAssessment = () => {
   };
 
   const nextStep = async () => {
-    if (!validateStep(step, formData)) return;
+    // Log validation status for debugging
+    console.log('Current step:', step);
+    console.log('Current form data:', formData);
+    console.log('Is step valid:', validateStep(step, formData));
+    
+    if (!validateStep(step, formData)) {
+      console.log('Validation failed for step:', step);
+      return;
+    }
     
     if (step === 'operational') {
       const assessment = calculateRiskScore(formData as AssessmentData);
@@ -31,6 +39,7 @@ export const useRiskAssessment = () => {
       console.log('Saved assessment ID:', savedAssessment?.id);
       
       if (!savedAssessment) {
+        console.log('Failed to save assessment results');
         return;
       }
     }
