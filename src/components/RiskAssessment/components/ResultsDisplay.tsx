@@ -9,6 +9,8 @@ import { calculatePricing } from '../calculatePricing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ContactDialog } from './ContactDialog';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
@@ -574,4 +576,3 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     </div>
   );
 };
-
