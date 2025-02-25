@@ -4,14 +4,16 @@ import { Step } from '../../types/step';
 
 export const validateStep = (step: Step, formData: Partial<AssessmentData>): boolean => {
   switch (step) {
-    case 'provider':
-      return validateProviderStep(formData);
-    case 'profile':
-      return validateProfileStep(formData);
+    case 'business':
+      return validateBusinessStep(formData);
+    case 'itsupport':
+      return validateITSupportStep(formData);
+    case 'infrastructure':
+      return validateInfrastructureStep(formData);
     case 'security':
       return validateSecurityStep(formData);
-    case 'compliance':
-      return validateComplianceStep(formData);
+    case 'operational':
+      return validateOperationalStep(formData);
     case 'results':
       return true;
     default:
@@ -24,7 +26,12 @@ export const validateSurveyData = (formData: Partial<AssessmentData>): boolean =
   return true;
 };
 
-const validateProviderStep = (formData: Partial<AssessmentData>): boolean => {
+const validateBusinessStep = (formData: Partial<AssessmentData>): boolean => {
+  return !!formData.industry && 
+         !!formData.businessSize;
+};
+
+const validateITSupportStep = (formData: Partial<AssessmentData>): boolean => {
   // Check if itSupportType is set
   return !!formData.itSupportType && 
     // Only require providerDuration if they have support
@@ -35,9 +42,9 @@ const validateProviderStep = (formData: Partial<AssessmentData>): boolean => {
     !!formData.cloudProvider;
 };
 
-const validateProfileStep = (formData: Partial<AssessmentData>): boolean => {
-  return !!formData.industry && 
-         !!formData.businessSize;
+const validateInfrastructureStep = (formData: Partial<AssessmentData>): boolean => {
+  // Basic validation for infrastructure step
+  return true; // Adjust as needed based on required fields
 };
 
 const validateSecurityStep = (formData: Partial<AssessmentData>): boolean => {
@@ -46,7 +53,7 @@ const validateSecurityStep = (formData: Partial<AssessmentData>): boolean => {
          !!formData.backupFrequency;
 };
 
-const validateComplianceStep = (formData: Partial<AssessmentData>): boolean => {
+const validateOperationalStep = (formData: Partial<AssessmentData>): boolean => {
   return !!formData.dataRegulations && 
          !!formData.itIssues;
 };
