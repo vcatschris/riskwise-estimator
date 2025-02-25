@@ -3,10 +3,11 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Step, getTitleAndDescription } from './types/step';
-import { ProviderStep } from './components/ProviderStep';
 import { BusinessProfileStep } from './components/BusinessProfileStep';
-import { SecurityQuestionsStep } from './components/SecurityQuestionsStep';
-import { ComplianceQuestionsStep } from './components/ComplianceQuestionsStep';
+import { ITSupportStep } from './components/ITSupportStep';
+import { InfrastructureStep } from './components/InfrastructureStep';
+import { SecurityStep } from './components/SecurityStep';
+import { OperationalStep } from './components/OperationalStep';
 import { ResultsDisplay } from './components/ResultsDisplay';
 import { FormNavigation } from './components/FormNavigation';
 import { useRiskAssessment } from './hooks/useRiskAssessment';
@@ -32,10 +33,11 @@ export function RiskAssessmentForm() {
         <Progress value={progress} className="mt-2" />
       </CardHeader>
       <CardContent>
-        {step === 'provider' && <ProviderStep formData={formData} onInputChange={handleInputChange} />}
-        {step === 'profile' && <BusinessProfileStep formData={formData} onInputChange={handleInputChange} />}
-        {step === 'security' && <SecurityQuestionsStep formData={formData} onInputChange={handleInputChange} />}
-        {step === 'compliance' && <ComplianceQuestionsStep formData={formData} onInputChange={handleInputChange} />}
+        {step === 'business' && <BusinessProfileStep formData={formData} onInputChange={handleInputChange} />}
+        {step === 'itsupport' && <ITSupportStep formData={formData} onInputChange={handleInputChange} />}
+        {step === 'infrastructure' && <InfrastructureStep formData={formData} onInputChange={handleInputChange} />}
+        {step === 'security' && <SecurityStep formData={formData} onInputChange={handleInputChange} />}
+        {step === 'operational' && <OperationalStep formData={formData} onInputChange={handleInputChange} />}
         {step === 'results' && <ResultsDisplay formData={formData} />}
       </CardContent>
       <CardFooter>

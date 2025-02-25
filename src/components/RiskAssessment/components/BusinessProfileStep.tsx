@@ -55,19 +55,6 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('infrastructure', value)}>
-        <SelectTrigger>
-          <SelectValue placeholder="What best describes your IT infrastructure?" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Cloud-based systems">Cloud-based systems</SelectItem>
-          <SelectItem value="Internal servers">Internal servers</SelectItem>
-          <SelectItem value="Extensive IT network">Extensive IT network</SelectItem>
-          <SelectItem value="Mixed environment">Mixed environment</SelectItem>
-          <SelectItem value="Not sure">Not sure</SelectItem>
-        </SelectContent>
-      </Select>
-
       <Select onValueChange={(value) => onInputChange('workLocation', value)}>
         <SelectTrigger>
           <SelectValue placeholder="How many locations do your staff work from, and do they routinely work from home?" />

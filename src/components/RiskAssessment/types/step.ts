@@ -1,5 +1,5 @@
 
-export type Step = 'provider' | 'profile' | 'security' | 'compliance' | 'results';
+export type Step = 'business' | 'itsupport' | 'infrastructure' | 'security' | 'operational' | 'results';
 
 export interface StepInfo {
   title: string;
@@ -8,25 +8,30 @@ export interface StepInfo {
 
 export const getTitleAndDescription = (step: Step): StepInfo => {
   switch (step) {
-    case 'provider':
+    case 'business':
       return {
-        title: "Let's Start with Your Current IT Support",
-        description: "Understanding your current setup helps us identify potential gaps and opportunities for improvement when we build your report"
+        title: "Business Profile",
+        description: "Understanding your business context helps us identify industry-specific challenges and requirements"
       };
-    case 'profile':
+    case 'itsupport':
       return {
-        title: "Business Context",
-        description: "Different industries and business sizes face unique challenges - this helps us provide targeted recommendations"
+        title: "IT Support & Management",
+        description: "Tell us about how your IT systems are currently supported and managed"
+      };
+    case 'infrastructure':
+      return {
+        title: "IT Infrastructure & Systems",
+        description: "Help us understand the technology backbone that your business relies on"
       };
     case 'security':
       return {
-        title: "Security Measures",
+        title: "Security & Compliance",
         description: "These core security practices are critical indicators of your IT resilience"
       };
-    case 'compliance':
+    case 'operational':
       return {
-        title: "Operational Requirements",
-        description: "Help us understand your specific needs around compliance and response times"
+        title: "Operational Impact & Needs",
+        description: "Help us understand how IT affects your day-to-day business operations"
       };
     case 'results':
       return {

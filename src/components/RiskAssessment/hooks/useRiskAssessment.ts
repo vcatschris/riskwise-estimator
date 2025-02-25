@@ -7,8 +7,8 @@ import { validateStep } from './validation/useStepValidation';
 import { saveAssessmentResults } from './database/useAssessmentStorage';
 
 export const useRiskAssessment = () => {
-  const [step, setStep] = useState<Step>('provider');
-  const [progress, setProgress] = useState(20);
+  const [step, setStep] = useState<Step>('business');
+  const [progress, setProgress] = useState(16);
   const [showEstimate, setShowEstimate] = useState(false);
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
     currentProvider: false
@@ -24,7 +24,7 @@ export const useRiskAssessment = () => {
   const nextStep = async () => {
     if (!validateStep(step, formData)) return;
     
-    if (step === 'compliance') {
+    if (step === 'operational') {
       const assessment = calculateRiskScore(formData as AssessmentData);
       console.log('Calculated assessment:', assessment);
       const savedAssessment = await saveAssessmentResults(assessment, formData);
@@ -35,33 +35,39 @@ export const useRiskAssessment = () => {
       }
     }
 
-    if (step === 'provider') {
-      setStep('profile');
-      setProgress(40);
-    } else if (step === 'profile') {
+    if (step === 'business') {
+      setStep('itsupport');
+      setProgress(32);
+    } else if (step === 'itsupport') {
+      setStep('infrastructure');
+      setProgress(48);
+    } else if (step === 'infrastructure') {
       setStep('security');
-      setProgress(60);
+      setProgress(64);
     } else if (step === 'security') {
-      setStep('compliance');
+      setStep('operational');
       setProgress(80);
-    } else if (step === 'compliance') {
+    } else if (step === 'operational') {
       setStep('results');
       setProgress(100);
     }
   };
 
   const previousStep = () => {
-    if (step === 'profile') {
-      setStep('provider');
-      setProgress(20);
+    if (step === 'itsupport') {
+      setStep('business');
+      setProgress(16);
+    } else if (step === 'infrastructure') {
+      setStep('itsupport');
+      setProgress(32);
     } else if (step === 'security') {
-      setStep('profile');
-      setProgress(40);
-    } else if (step === 'compliance') {
+      setStep('infrastructure');
+      setProgress(48);
+    } else if (step === 'operational') {
       setStep('security');
-      setProgress(60);
+      setProgress(64);
     } else if (step === 'results') {
-      setStep('compliance');
+      setStep('operational');
       setProgress(80);
     }
   };
