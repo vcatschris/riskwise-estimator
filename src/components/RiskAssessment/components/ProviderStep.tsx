@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AssessmentData } from '../types';
@@ -19,44 +18,30 @@ export const ProviderStep: React.FC<ProviderStepProps> = ({ formData, onInputCha
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4"
     >
-      <div className="rounded-lg border p-4 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <Checkbox
-            id="currentProvider"
-            checked={formData.currentProvider}
-            onCheckedChange={checked => onInputChange('currentProvider', checked)}
-            className="h-5 w-5"
-          />
-          <Label htmlFor="currentProvider" className="text-lg font-medium">
-            We currently have IT support (internal team or external provider)
-          </Label>
-        </div>
-      </div>
+      <Select onValueChange={value => onInputChange('itSupportType', value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="What kind of IT support does your business have?" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="An internal expert/team">An internal expert/team</SelectItem>
+          <SelectItem value="An external IT support partner">An external IT support partner</SelectItem>
+          <SelectItem value="We do not have IT Support currently">We do not have IT Support currently</SelectItem>
+          <SelectItem value="Not sure">Not sure what kind of IT support we have</SelectItem>
+        </SelectContent>
+      </Select>
 
-      {formData.currentProvider && (
-        <>
-          <Select onValueChange={value => onInputChange('itSupportType', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="What kind of IT support does your business have?" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="An internal expert/team">An internal expert/team</SelectItem>
-              <SelectItem value="An external IT support partner">An external IT support partner</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select onValueChange={value => onInputChange('providerDuration', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="How long have you had this IT support?" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
-              <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
-              <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
-              <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
-            </SelectContent>
-          </Select>
-        </>
+      {(formData.itSupportType === 'An internal expert/team' || formData.itSupportType === 'An external IT support partner') && (
+        <Select onValueChange={value => onInputChange('providerDuration', value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="How long have you had this IT support?" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Less than 1 year">New relationship (Less than 1 year)</SelectItem>
+            <SelectItem value="1-2 years">Established (1-2 years)</SelectItem>
+            <SelectItem value="3-5 years">Long-term (3-5 years)</SelectItem>
+            <SelectItem value="More than 5 years">Very long-term (More than 5 years)</SelectItem>
+          </SelectContent>
+        </Select>
       )}
 
       <Select onValueChange={value => onInputChange('cloudProvider', value)}>

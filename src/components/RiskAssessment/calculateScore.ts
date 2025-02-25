@@ -1,4 +1,3 @@
-
 import { AssessmentData, RiskScore, CategoryDetail } from './types';
 import { INDUSTRY_INSIGHTS } from './utils/industryInsights';
 import { getCategoryInsights } from './utils/categoryInsights';
@@ -14,7 +13,10 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   let profileValueScore = 0;
 
   // IT Support Type scoring (increased weights)
-  if (data.itSupportType === 'No formal IT support') {
+  if (data.itSupportType === 'We do not have IT Support currently') {
+    profileRiskScore += 25; // Higher risk for no IT support
+    profileValueScore += 35; // Higher value potential
+  } else if (data.itSupportType === 'No formal IT support') {
     profileRiskScore += 15;
     profileValueScore += 25; // Increased value potential
   } else if (data.itSupportType === 'An internal expert/team') {
@@ -295,4 +297,3 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     details,
   };
 }
-

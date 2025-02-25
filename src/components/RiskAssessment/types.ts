@@ -1,6 +1,7 @@
+
 export type BusinessSize = '1-5' | '6-20' | '21-50' | '51-100' | '100+';
 export type Industry = 'Accounting' | 'Legal' | 'Finance' | 'Retail' | 'Healthcare' | 'Other';
-export type ITSupport = 'No formal IT support' | 'An internal expert/team' | 'An external IT support partner' | 'Not sure';
+export type ITSupport = 'We do not have IT Support currently' | 'An internal expert/team' | 'An external IT support partner' | 'Not sure';
 export type Infrastructure = 'Cloud-based systems' | 'Internal servers' | 'Extensive IT network' | 'Mixed environment' | 'Not sure';
 export type WorkLocation = 'Single site, no remote working' | 'Multiple sites, no remote working' | 'Single site, with remote working' | 'Multiple sites, with remote working' | 'Fully remote workforce';
 export type TimePeriod = 'Less than 6 months ago' | '6-12 months ago' | 'Over a year ago' | 'Never';

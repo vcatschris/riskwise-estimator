@@ -25,11 +25,14 @@ export const validateSurveyData = (formData: Partial<AssessmentData>): boolean =
 };
 
 const validateProviderStep = (formData: Partial<AssessmentData>): boolean => {
-  return formData.currentProvider !== undefined &&
-    (formData.currentProvider ? 
-      (!!formData.providerDuration && !!formData.cloudProvider) : 
-      true
-    );
+  // Check if itSupportType is set
+  return !!formData.itSupportType && 
+    // Only require providerDuration if they have support
+    ((formData.itSupportType === 'An internal expert/team' || 
+     formData.itSupportType === 'An external IT support partner') ? 
+      !!formData.providerDuration : true) && 
+    // Always require cloudProvider
+    !!formData.cloudProvider;
 };
 
 const validateProfileStep = (formData: Partial<AssessmentData>): boolean => {
