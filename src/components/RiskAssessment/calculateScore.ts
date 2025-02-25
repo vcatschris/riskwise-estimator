@@ -15,63 +15,66 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
 
   // IT Support Type scoring (increased weights)
   if (data.itSupportType === 'No formal IT support') {
-    profileRiskScore += 10;
+    profileRiskScore += 15;
   } else if (data.itSupportType === 'An internal expert/team') {
+    profileRiskScore += 10;
+  } else if (data.itSupportType === 'An external IT support partner') {
     profileRiskScore += 5;
   } else if (data.itSupportType === 'Not sure') {
-    profileRiskScore += 7.5;
+    profileRiskScore += 12;
   }
 
   // Infrastructure scoring (increased weights)
   switch (data.infrastructure) {
     case 'Cloud-based systems':
-      profileRiskScore += 5;
-      profileValueScore += 10;
+      profileRiskScore += 10;
+      profileValueScore += 15;
       break;
     case 'Internal servers':
-      profileRiskScore += 10;
-      profileValueScore += 5;
-      break;
-    case 'Extensive IT network':
       profileRiskScore += 15;
       profileValueScore += 10;
       break;
+    case 'Extensive IT network':
+      profileRiskScore += 20;
+      profileValueScore += 15;
+      break;
     case 'Mixed environment':
-      profileRiskScore += 7.5;
-      profileValueScore += 7.5;
+      profileRiskScore += 12.5;
+      profileValueScore += 10;
       break;
     case 'Not sure':
-      profileRiskScore += 10;
+      profileRiskScore += 15;
       break;
   }
 
   // Work location scoring (increased weights)
   switch (data.workLocation) {
     case 'Single site, no remote working':
-      break;
-    case 'Multiple sites, no remote working':
       profileRiskScore += 5;
       break;
-    case 'Single site, with remote working':
-      profileRiskScore += 7.5;
-      break;
-    case 'Multiple sites, with remote working':
+    case 'Multiple sites, no remote working':
       profileRiskScore += 10;
       break;
-    case 'Fully remote workforce':
+    case 'Single site, with remote working':
+      profileRiskScore += 12.5;
+      break;
+    case 'Multiple sites, with remote working':
       profileRiskScore += 15;
+      break;
+    case 'Fully remote workforce':
+      profileRiskScore += 20;
       break;
   }
 
-  // Industry risk multiplier (2x for Legal/Finance/Accounting)
-  const industryMultiplier = ['Legal', 'Finance', 'Accounting'].includes(data.industry) ? 2 : 1;
+  // Industry risk multiplier (3x for Legal/Finance/Accounting)
+  const industryMultiplier = ['Legal', 'Finance', 'Accounting'].includes(data.industry) ? 3 : 1;
   profileRiskScore *= industryMultiplier;
 
   // Sensitive data handling (increased weight)
   if (data.sensitiveData === 'Yes') {
-    profileRiskScore += 10;
+    profileRiskScore += 15;
   } else if (data.sensitiveData === 'Not Sure') {
-    profileRiskScore += 5;
+    profileRiskScore += 10;
   }
 
   // Normalize profile scores
@@ -110,27 +113,27 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
 
   // Last Audit (increased weight)
   if (data.lastAudit === 'Never') {
-    securityRiskScore += 30;
+    securityRiskScore += 35;
   } else if (data.lastAudit === 'Over a year ago') {
-    securityRiskScore += 20;
+    securityRiskScore += 25;
   }
 
   // MFA (increased weight)
   if (data.mfaEnabled === 'No') {
-    securityRiskScore += 17.5;
+    securityRiskScore += 25;
   } else if (data.mfaEnabled === 'Not Sure') {
-    securityRiskScore += 10;
+    securityRiskScore += 15;
   }
 
   // Backup frequency (increased weight)
   if (data.backupFrequency === "We don't back up data") {
-    securityRiskScore += 30;
+    securityRiskScore += 35;
   } else if (data.backupFrequency === 'Monthly') {
-    securityRiskScore += 15;
+    securityRiskScore += 20;
   }
 
   // Apply industry security multiplier (increased)
-  const securityMultiplier = ['Legal', 'Finance', 'Healthcare'].includes(data.industry) ? 1.5 : 1;
+  const securityMultiplier = ['Legal', 'Finance', 'Healthcare'].includes(data.industry) ? 2 : 1;
   securityRiskScore *= securityMultiplier;
 
   // Normalize security scores
@@ -169,26 +172,26 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
 
   // Data regulations (increased weight)
   if (data.dataRegulations === 'Not Sure') {
-    complianceRiskScore += 7.5;
+    complianceRiskScore += 15;
   }
 
   // IT Issues frequency (increased weight)
   if (data.itIssues === 'Daily') {
-    complianceRiskScore += 30;
+    complianceRiskScore += 35;
   } else if (data.itIssues === 'Weekly') {
-    complianceRiskScore += 20;
+    complianceRiskScore += 25;
   }
 
   // IT Criticality (increased weight)
   switch (data.itCriticality) {
     case 'IT downtime causes immediate operational issues':
-      complianceRiskScore += 21;
+      complianceRiskScore += 25;
       break;
     case 'IT downtime impacts productivity but not critical operations':
-      complianceRiskScore += 15;
+      complianceRiskScore += 20;
       break;
     case 'IT downtime is a minor inconvenience':
-      complianceRiskScore += 10;
+      complianceRiskScore += 15;
       break;
   }
 
@@ -203,10 +206,10 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
   totalValuePoints = Math.min(Math.round(totalValuePoints), 100);
 
-  // New risk level thresholds to generate more Medium and High risks
+  // New risk level thresholds
   let riskLevel: 'Low' | 'Medium' | 'High';
-  if (totalRiskPoints < 33) riskLevel = 'Low';
-  else if (totalRiskPoints <= 65) riskLevel = 'Medium';
+  if (totalRiskPoints < 40) riskLevel = 'Low';
+  else if (totalRiskPoints <= 70) riskLevel = 'Medium';
   else riskLevel = 'High';
 
   const getTopRisks = () => {
@@ -266,4 +269,3 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
     details,
   };
 }
-

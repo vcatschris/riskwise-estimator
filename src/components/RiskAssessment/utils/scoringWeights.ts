@@ -2,12 +2,12 @@
 import { Industry, BusinessSize } from '../types';
 
 export const INDUSTRY_WEIGHTS = {
-  Accounting: { risk: 3.5, rp: 9, vp: 14 },
-  Legal: { risk: 3.5, rp: 9, vp: 14 },
-  Finance: { risk: 3.5, rp: 9, vp: 14 },
-  Healthcare: { risk: 3.5, rp: 8, vp: 13 },
-  Retail: { risk: 3.0, rp: 7, vp: 12 },
-  Other: { risk: 2.5, rp: 6, vp: 10 },
+  Accounting: { risk: 4.0, rp: 10, vp: 15 },
+  Legal: { risk: 4.0, rp: 10, vp: 15 },
+  Finance: { risk: 4.0, rp: 10, vp: 15 },
+  Healthcare: { risk: 4.0, rp: 9, vp: 14 },
+  Retail: { risk: 3.5, rp: 8, vp: 12 },
+  Other: { risk: 3.0, rp: 7, vp: 11 },
 };
 
 export const BUSINESS_SIZE_WEIGHTS = {
@@ -21,4 +21,3 @@ export const BUSINESS_SIZE_WEIGHTS = {
 export const calculateMaxScores = () => {
   return { maxRiskPoints: 100, maxValuePoints: 100 };
 };
-
