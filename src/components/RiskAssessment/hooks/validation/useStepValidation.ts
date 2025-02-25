@@ -42,9 +42,7 @@ const validateITSupportStep = (formData: Partial<AssessmentData>): boolean => {
     // Only require providerDuration if they have support
     ((formData.itSupportType === 'An internal expert/team' || 
      formData.itSupportType === 'An external IT support partner') ? 
-      !!formData.providerDuration : true) && 
-    // Always require cloudProvider
-    !!formData.cloudProvider;
+      !!formData.providerDuration : true);
 };
 
 const validateInfrastructureStep = (formData: Partial<AssessmentData>): boolean => {

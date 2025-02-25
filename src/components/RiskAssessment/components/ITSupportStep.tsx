@@ -48,22 +48,6 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
           </SelectContent>
         </Select>
       )}
-
-      {/* Add the required cloud provider field */}
-      <Select 
-        onValueChange={value => onInputChange('cloudProvider', value)}
-        value={formData.cloudProvider}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Which cloud provider do you primarily use?" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Microsoft">Microsoft (Azure, 365)</SelectItem>
-          <SelectItem value="Google">Google (Workspace, Cloud)</SelectItem>
-          <SelectItem value="Other">Other cloud provider</SelectItem>
-          <SelectItem value="Don't Know">Don't know</SelectItem>
-        </SelectContent>
-      </Select>
     </motion.div>
   );
 }
