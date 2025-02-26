@@ -170,8 +170,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </Card>
 
-        {/* Download button at the top */}
-        <div className="flex justify-end">
+        {/* Download button at the top - centered */}
+        <div className="flex justify-center">
           <Button
             onClick={handleDownloadClick}
             variant="secondary"
@@ -182,8 +182,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             Download PDF Report
           </Button>
         </div>
-
-        <NextStepsSection />
 
         <div className="text-center space-y-4">
           <motion.div
@@ -386,6 +384,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         <Card className="p-4 sm:p-6">
           <h4 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Executive Summary</h4>
           <div className="space-y-4">
+            <div className="prose dark:prose-invert max-w-none">
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                {assessment.executiveSummary.narrative}
+              </p>
+            </div>
+
             <div>
               <h5 className="font-medium text-brand-orange flex items-center gap-2 mb-2 text-base sm:text-lg">
                 <ChartBar className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -493,19 +497,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             </CardContent>
           </Card>
         ))}
-
-        {/* Download button at the bottom */}
-        <div className="flex justify-center">
-          <Button
-            onClick={handleDownloadClick}
-            variant="secondary"
-            size="lg"
-            className="flex items-center gap-2"
-          >
-            <FileDown className="h-4 w-4" />
-            Download PDF Report
-          </Button>
-        </div>
 
         <NextStepsSection />
       </div>
