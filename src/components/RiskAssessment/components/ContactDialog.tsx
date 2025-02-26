@@ -138,29 +138,43 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw submissionError;
       }
 
-      // Trigger webhook
-      console.log("Triggering webhook via Edge Function...");
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({
-          assessmentId,
-          contactData,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Edge Function failed: ${response.statusText}`);
+      // Try to trigger webhook, but don't fail the whole process if it fails
+      try {
+        console.log("Triggering webhook via Edge Function...");
+        const { data: { session } } = await supabase.auth.getSession();
+        await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({
+            assessmentId,
+            contactData,
+          }),
+        });
+      } catch (webhookError) {
+        // Log the webhook error but continue with PDF generation
+        console.error('Webhook error (non-critical):', webhookError);
       }
 
       // If it's a download request, generate and save PDF
       if (mode === 'download') {
-        const pdf = await generatePDF();
-        pdf.save('IT_Security_Assessment_Report.pdf');
+        try {
+          const pdf = await generatePDF();
+          pdf.save('IT_Security_Assessment_Report.pdf');
+        } catch (pdfError) {
+          console.error('PDF generation error:', pdfError);
+          toast({
+            title: "PDF Generation Error",
+            description: "We couldn't generate your PDF, but your information has been saved.",
+            variant: "destructive",
+          });
+          // Still close the dialog since the form submission was successful
+          onOpenChange(false);
+          setLoading(false);
+          return;
+        }
       }
 
       toast({
