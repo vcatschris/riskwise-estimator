@@ -74,6 +74,7 @@ export interface ExecutiveSummary {
   topRisks: string[];
   recommendations: string[];
   valueProposition: string[];
+  narrative?: string; // Added the narrative property as optional
 }
 
 export interface RiskScore {

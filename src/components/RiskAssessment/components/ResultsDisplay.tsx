@@ -384,11 +384,13 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         <Card className="p-4 sm:p-6">
           <h4 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Executive Summary</h4>
           <div className="space-y-4">
-            <div className="prose dark:prose-invert max-w-none">
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                {assessment.executiveSummary.narrative}
-              </p>
-            </div>
+            {assessment.executiveSummary.narrative && (
+              <div className="prose dark:prose-invert max-w-none">
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {assessment.executiveSummary.narrative}
+                </p>
+              </div>
+            )}
 
             <div>
               <h5 className="font-medium text-brand-orange flex items-center gap-2 mb-2 text-base sm:text-lg">
