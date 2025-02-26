@@ -49,91 +49,102 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw new Error('Risk report element not found');
       }
 
-      // Configure element for capture
-      const originalStyles = {
-        width: reportElement.style.width,
-        height: reportElement.style.height,
-        position: reportElement.style.position,
-        overflow: reportElement.style.overflow,
-        visibility: reportElement.style.visibility,
-        display: reportElement.style.display,
-        zIndex: reportElement.style.zIndex
-      };
-
-      // Set styles for capture
-      reportElement.style.width = `${reportElement.scrollWidth}px`;
-      reportElement.style.height = `${reportElement.scrollHeight}px`;
-      reportElement.style.position = 'relative';
-      reportElement.style.overflow = 'visible';
-      reportElement.style.visibility = 'visible';
-      reportElement.style.display = 'block';
-      reportElement.style.zIndex = '9999';
+      // Clone the report element so we can modify it without affecting the UI
+      const clone = reportElement.cloneNode(true) as HTMLElement;
       
-      // Pre-process all score badges to ensure they're properly displayed
-      const badges = reportElement.querySelectorAll('[class*="rounded-full border"]');
+      // Apply styles to the clone to make sure it's visible during capture
+      clone.style.width = `${reportElement.scrollWidth}px`;
+      clone.style.height = `${reportElement.scrollHeight}px`;
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+      clone.style.overflow = 'visible';
+      clone.style.visibility = 'visible';
+      clone.style.display = 'block';
+      clone.style.zIndex = '9999';
+      clone.style.backgroundColor = '#ffffff';
+      
+      // Find all badge elements in the clone
+      const badges = clone.querySelectorAll('[class*="rounded-full border"]');
+      
+      // Process each badge to ensure scores are visible
       badges.forEach(badge => {
         if (badge instanceof HTMLElement) {
+          // Force badges to be visible
           badge.style.opacity = '1';
           badge.style.visibility = 'visible';
           badge.style.display = 'inline-flex';
+          badge.style.alignItems = 'center';
+          badge.style.justifyContent = 'center';
+          badge.style.padding = '8px 12px';
           
-          // Make badge content more visible
-          const spans = badge.querySelectorAll('span');
-          spans.forEach(span => {
-            if (span instanceof HTMLElement) {
-              span.style.opacity = '1';
-              span.style.visibility = 'visible';
-              span.style.color = window.getComputedStyle(span).color;
-              span.style.fontWeight = 'bold';
+          // Extract the score text
+          const scoreText = badge.textContent || '';
+          console.log('Badge text content:', scoreText);
+          
+          // Extract numbers from the text (score and max score if present)
+          const matches = scoreText.match(/(\d+)(?:\s*\/\s*(\d+))?/);
+          
+          if (matches) {
+            const mainScore = matches[1];
+            const maxScore = matches[2] || '';
+            
+            // Create a completely new element structure for the badge
+            badge.innerHTML = '';
+            
+            // Main score (larger, bold)
+            const mainScoreSpan = document.createElement('span');
+            mainScoreSpan.textContent = mainScore;
+            mainScoreSpan.style.fontSize = '20px';
+            mainScoreSpan.style.fontWeight = 'bold';
+            mainScoreSpan.style.opacity = '1';
+            mainScoreSpan.style.visibility = 'visible';
+            mainScoreSpan.style.lineHeight = '1';
+            badge.appendChild(mainScoreSpan);
+            
+            // If there's a max score, add it with a slash
+            if (maxScore) {
+              const slashSpan = document.createElement('span');
+              slashSpan.textContent = ' / ';
+              slashSpan.style.fontSize = '16px';
+              slashSpan.style.opacity = '1';
+              slashSpan.style.visibility = 'visible';
+              badge.appendChild(slashSpan);
+              
+              const maxScoreSpan = document.createElement('span');
+              maxScoreSpan.textContent = maxScore;
+              maxScoreSpan.style.fontSize = '16px';
+              maxScoreSpan.style.opacity = '1';
+              maxScoreSpan.style.visibility = 'visible';
+              badge.appendChild(maxScoreSpan);
             }
-          });
+          } else {
+            console.log('No score pattern found in badge:', scoreText);
+          }
         }
       });
       
-      // Give the browser time to apply the styles
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Add the modified clone to the document body temporarily
+      document.body.appendChild(clone);
+      
+      // Wait for the browser to render the clone
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('Generating canvas from cloned element...');
       
       try {
-        const canvas = await html2canvas(reportElement, {
+        // Generate the canvas from the cloned element
+        const canvas = await html2canvas(clone, {
           scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
-          width: reportElement.scrollWidth,
-          height: reportElement.scrollHeight,
           logging: true,
-          onclone: (clonedDoc) => {
-            // Process the cloned document
-            const clonedReport = clonedDoc.getElementById('risk-report');
-            if (clonedReport) {
-              // Make all badges visible with proper styling in the clone
-              const clonedBadges = clonedReport.querySelectorAll('[class*="rounded-full border"]');
-              clonedBadges.forEach(badge => {
-                if (badge instanceof HTMLElement) {
-                  badge.style.opacity = '1';
-                  badge.style.visibility = 'visible';
-                  badge.style.display = 'inline-flex';
-                  
-                  // Directly modify the innerHTML to ensure text is visible
-                  const scoreText = badge.textContent;
-                  if (scoreText) {
-                    // Extract numbers from the text (main score and max score if present)
-                    const matches = scoreText.match(/(\d+)(?:\s*\/\s*(\d+))?/);
-                    if (matches) {
-                      const mainScore = matches[1];
-                      const maxScore = matches[2] || '';
-                      
-                      if (maxScore) {
-                        badge.innerHTML = `<span style="font-weight:bold;font-size:1.25rem;opacity:1;visibility:visible;">${mainScore}</span><span style="font-size:0.875rem;margin-left:0.25rem;opacity:1;visibility:visible;">/ ${maxScore}</span>`;
-                      } else {
-                        badge.innerHTML = `<span style="font-weight:bold;font-size:1.25rem;opacity:1;visibility:visible;">${mainScore}</span>`;
-                      }
-                    }
-                  }
-                }
-              });
-            }
-          }
+          removeContainer: false, // Important to keep the container
+          ignoreElements: (element) => 
+            element.classList?.contains('hidden') || 
+            window.getComputedStyle(element).display === 'none' ||
+            window.getComputedStyle(element).visibility === 'hidden'
         });
         
         console.log('Canvas generated successfully');
@@ -148,16 +159,19 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           format: [imgWidth, imgHeight]
         });
         
+        // Add the canvas image to the PDF
         pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
         console.log('PDF created successfully');
         
-        // Restore original styles
-        Object.assign(reportElement.style, originalStyles);
+        // Remove the cloned element from the document
+        document.body.removeChild(clone);
         
         return pdf;
       } catch (error) {
-        // Restore original styles even if there's an error
-        Object.assign(reportElement.style, originalStyles);
+        // Remove the cloned element even if there's an error
+        if (document.body.contains(clone)) {
+          document.body.removeChild(clone);
+        }
         throw error;
       }
     } catch (error) {
