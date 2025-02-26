@@ -49,94 +49,77 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw new Error('Risk report element not found');
       }
 
+      // Create a temporary container for the cloned content
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.top = '-9999px';
+      container.style.left = '-9999px';
+      container.style.width = reportElement.offsetWidth + 'px';
+      container.style.height = 'auto';
+      container.style.overflow = 'visible';
+      document.body.appendChild(container);
+      
       // Clone the report element to manipulate it without affecting the UI
       const cloneReport = reportElement.cloneNode(true) as HTMLElement;
+      container.appendChild(cloneReport);
       
-      // Make sure all content is visible in the clone
+      // Force all content to be visible in the clone
       cloneReport.style.display = 'block';
       cloneReport.style.visibility = 'visible';
+      cloneReport.style.width = reportElement.offsetWidth + 'px';
+      cloneReport.style.height = 'auto';
       
-      // Process all score badges and values in the clone
-      const processBadges = (element: HTMLElement) => {
-        // Find all badge containers
-        const badges = element.querySelectorAll('[class*="rounded-full border"]');
-        
-        badges.forEach(badge => {
-          if (badge instanceof HTMLElement) {
-            badge.style.display = 'inline-flex';
-            badge.style.visibility = 'visible';
-            badge.style.opacity = '1';
-            
-            // Find and make visible all score values and max values
-            const scoreValues = badge.querySelectorAll('.score-value, [class*="font-semibold"]');
-            const scoreMax = badge.querySelectorAll('.score-max, [class*="text-xs"], [class*="text-sm"]');
-            
-            // Ensure score values are visible
-            scoreValues.forEach(value => {
-              if (value instanceof HTMLElement) {
-                value.style.display = 'inline';
-                value.style.visibility = 'visible';
-                value.style.opacity = '1';
-                // Force the text to be black in case it's using a color that doesn't show up well in PDF
-                value.style.color = '#000000';
+      // Pre-process all score badges and ensure their visibility
+      const badges = cloneReport.querySelectorAll('[class*="rounded-full border"]');
+      badges.forEach((badge) => {
+        if (badge instanceof HTMLElement) {
+          badge.style.display = 'inline-flex';
+          badge.style.visibility = 'visible';
+          badge.style.opacity = '1';
+          
+          // Find score values and ensure they're visible
+          const scoreElements = badge.querySelectorAll('.score-value, .score-max, [class*="font-semibold"], [class*="text-xs"], [class*="text-sm"]');
+          scoreElements.forEach((element) => {
+            if (element instanceof HTMLElement) {
+              // Store the original text content
+              const originalText = element.textContent;
+              
+              // Reset the element to ensure proper rendering
+              element.style.display = 'inline';
+              element.style.visibility = 'visible';
+              element.style.opacity = '1';
+              element.style.color = '#000000';
+              element.style.fontWeight = '700';
+              
+              // Ensure text content is preserved
+              if (originalText) {
+                element.textContent = originalText;
               }
-            });
-            
-            // Ensure score max values are visible
-            scoreMax.forEach(max => {
-              if (max instanceof HTMLElement) {
-                max.style.display = 'inline';
-                max.style.visibility = 'visible';
-                max.style.opacity = '1';
-                max.style.color = '#000000';
-              }
-            });
-          }
-        });
-      };
+            }
+          });
+        }
+      });
       
-      // Process the badges in the clone
-      processBadges(cloneReport);
+      // Wait for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Take a screenshot of the processed clone
+      // Use html2canvas with proper settings
       const canvas = await html2canvas(cloneReport, {
         scale: 2, // Higher scale for better quality
         useCORS: true,
         allowTaint: true,
         logging: true,
-        onclone: (documentClone) => {
-          // Find the cloned report element in the cloned document
-          const clonedReport = documentClone.getElementById('risk-report');
-          if (clonedReport) {
-            // Make sure the report is visible in the cloned document
-            clonedReport.style.display = 'block';
-            clonedReport.style.visibility = 'visible';
-            
-            // Process all badges in the cloned document
-            if (clonedReport instanceof HTMLElement) {
-              processBadges(clonedReport);
-            }
-            
-            // Additional specific targeting for score elements
-            const scoreElements = clonedReport.querySelectorAll('.score-value, .score-max');
-            scoreElements.forEach(el => {
-              if (el instanceof HTMLElement) {
-                el.style.display = 'inline';
-                el.style.visibility = 'visible';
-                el.style.opacity = '1';
-                el.style.color = '#000000';
-                
-                // Force parent elements to be visible too
-                let parent = el.parentElement;
-                while (parent) {
-                  parent.style.display = parent.tagName === 'DIV' ? 'flex' : 'inline';
-                  parent.style.visibility = 'visible';
-                  parent.style.opacity = '1';
-                  parent = parent.parentElement;
-                }
-              }
-            });
+        backgroundColor: '#ffffff',
+        ignoreElements: (element) => {
+          // Don't ignore elements with score values
+          if (element.classList && 
+             (element.classList.contains('score-value') || 
+              element.classList.contains('score-max') ||
+              element.classList.contains('font-semibold'))) {
+            return false;
           }
+          // Allow hiding of elements that we don't want in the PDF
+          return element.classList?.contains('pdf-ignore') || false;
         }
       });
       
@@ -155,6 +138,9 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       // Add the canvas image to the PDF
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
       console.log('PDF created successfully');
+      
+      // Clean up the temporary container
+      document.body.removeChild(container);
       
       return pdf;
     } catch (error) {
@@ -218,6 +204,11 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       try {
         const pdf = await generatePDF();
         pdf.save('IT_Security_Assessment_Report.pdf');
+        
+        toast({
+          title: "Success",
+          description: "Your information has been submitted successfully and your report has been downloaded. Our team will be in touch soon.",
+        });
       } catch (pdfError) {
         console.error('PDF generation error:', pdfError);
         toast({
@@ -225,17 +216,8 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           description: "We couldn't generate your PDF, but your information has been saved.",
           variant: "destructive",
         });
-        // Still close the dialog since the form submission was successful
-        onOpenChange(false);
-        setLoading(false);
-        return;
       }
 
-      toast({
-        title: "Success",
-        description: "Your information has been submitted successfully and your report has been downloaded. Our team will be in touch soon.",
-      });
-      
       onOpenChange(false);
     } catch (error) {
       console.error('Submission error:', error);
