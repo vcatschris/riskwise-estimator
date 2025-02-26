@@ -195,8 +195,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4 sm:mt-6">
               <div className="text-center">
                 <div className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-full border ${getBadgeColor(assessment.total, assessment.maxPossible)}`}>
-                  <span className="text-xl sm:text-2xl font-semibold">{assessment.total}</span>
-                  <span className="text-xs sm:text-sm ml-1">/ {assessment.maxPossible}</span>
+                  <span className="text-xl sm:text-2xl font-semibold score-value">{assessment.total}</span>
+                  <span className="text-xs sm:text-sm ml-1 score-max">/ {assessment.maxPossible}</span>
                 </div>
                 <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Risk Score</p>
                 <p className="text-xs font-medium px-4 mt-1">
@@ -225,8 +225,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
               </div>
               <div className="text-center">
                 <div className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-full border ${getValueScoreColor(assessment.valueScore, assessment.maxValuePossible)}`}>
-                  <span className="text-xl sm:text-2xl font-semibold">{assessment.valueScore}</span>
-                  <span className="text-xs sm:text-sm ml-1">/ {assessment.maxValuePossible}</span>
+                  <span className="text-xl sm:text-2xl font-semibold score-value">{assessment.valueScore}</span>
+                  <span className="text-xs sm:text-sm ml-1 score-max">/ {assessment.maxValuePossible}</span>
                 </div>
                 <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Value Score</p>
                 <p className="text-xs font-medium px-4 mt-1">

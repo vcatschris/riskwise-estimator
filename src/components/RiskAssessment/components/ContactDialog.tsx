@@ -49,131 +49,78 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw new Error('Risk report element not found');
       }
 
-      // Clone the report element so we can modify it without affecting the UI
-      const clone = reportElement.cloneNode(true) as HTMLElement;
-      
-      // Apply styles to the clone to make sure it's visible during capture
-      clone.style.width = `${reportElement.scrollWidth}px`;
-      clone.style.height = `${reportElement.scrollHeight}px`;
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
-      clone.style.top = '0';
-      clone.style.overflow = 'visible';
-      clone.style.visibility = 'visible';
-      clone.style.display = 'block';
-      clone.style.zIndex = '9999';
-      clone.style.backgroundColor = '#ffffff';
-      
-      // Find all badge elements in the clone
-      const badges = clone.querySelectorAll('[class*="rounded-full border"]');
-      
-      // Process each badge to ensure scores are visible
-      badges.forEach(badge => {
-        if (badge instanceof HTMLElement) {
-          // Force badges to be visible
-          badge.style.opacity = '1';
-          badge.style.visibility = 'visible';
-          badge.style.display = 'inline-flex';
-          badge.style.alignItems = 'center';
-          badge.style.justifyContent = 'center';
-          badge.style.padding = '8px 12px';
-          
-          // Extract the score text
-          const scoreText = badge.textContent || '';
-          console.log('Badge text content:', scoreText);
-          
-          // Extract numbers from the text (score and max score if present)
-          const matches = scoreText.match(/(\d+)(?:\s*\/\s*(\d+))?/);
-          
-          if (matches) {
-            const mainScore = matches[1];
-            const maxScore = matches[2] || '';
+      // Take a screenshot of the entire report
+      const canvas = await html2canvas(reportElement, {
+        scale: 2, // Higher scale for better quality
+        useCORS: true,
+        allowTaint: true,
+        logging: true,
+        onclone: (documentClone) => {
+          // Find the cloned report element in the cloned document
+          const clonedReport = documentClone.getElementById('risk-report');
+          if (clonedReport) {
+            // Make sure the report is visible in the cloned document
+            clonedReport.style.display = 'block';
+            clonedReport.style.visibility = 'visible';
             
-            // Create a completely new element structure for the badge
-            badge.innerHTML = '';
+            // Find all badge elements in the clone
+            const badges = clonedReport.querySelectorAll('[class*="rounded-full border"]');
             
-            // Main score (larger, bold)
-            const mainScoreSpan = document.createElement('span');
-            mainScoreSpan.textContent = mainScore;
-            mainScoreSpan.style.fontSize = '20px';
-            mainScoreSpan.style.fontWeight = 'bold';
-            mainScoreSpan.style.opacity = '1';
-            mainScoreSpan.style.visibility = 'visible';
-            mainScoreSpan.style.lineHeight = '1';
-            badge.appendChild(mainScoreSpan);
-            
-            // If there's a max score, add it with a slash
-            if (maxScore) {
-              const slashSpan = document.createElement('span');
-              slashSpan.textContent = ' / ';
-              slashSpan.style.fontSize = '16px';
-              slashSpan.style.opacity = '1';
-              slashSpan.style.visibility = 'visible';
-              badge.appendChild(slashSpan);
-              
-              const maxScoreSpan = document.createElement('span');
-              maxScoreSpan.textContent = maxScore;
-              maxScoreSpan.style.fontSize = '16px';
-              maxScoreSpan.style.opacity = '1';
-              maxScoreSpan.style.visibility = 'visible';
-              badge.appendChild(maxScoreSpan);
-            }
-          } else {
-            console.log('No score pattern found in badge:', scoreText);
+            // Make badges and their text content visible
+            badges.forEach(badge => {
+              if (badge instanceof HTMLElement) {
+                badge.style.display = 'inline-flex';
+                badge.style.visibility = 'visible';
+                badge.style.opacity = '1';
+                
+                // Ensure the text inside the badge is visible
+                const children = badge.children;
+                for (let i = 0; i < children.length; i++) {
+                  const child = children[i];
+                  if (child instanceof HTMLElement) {
+                    child.style.display = 'inline';
+                    child.style.visibility = 'visible';
+                    child.style.opacity = '1';
+                  }
+                }
+              }
+            });
+
+            // Make sure any "hidden" elements that should be in the PDF are visible
+            const hiddenElements = clonedReport.querySelectorAll('.hidden, [style*="display: none"], [style*="visibility: hidden"]');
+            hiddenElements.forEach(el => {
+              if (el instanceof HTMLElement) {
+                // Only make visible if it's part of a score or important for the report
+                if (el.closest('[class*="rounded-full border"]') || 
+                    el.classList.contains('text-score') || 
+                    el.classList.contains('score-value')) {
+                  el.style.display = 'inline';
+                  el.style.visibility = 'visible';
+                  el.style.opacity = '1';
+                }
+              }
+            });
           }
         }
       });
       
-      // Add the modified clone to the document body temporarily
-      document.body.appendChild(clone);
+      console.log('Canvas generated successfully');
       
-      // Wait for the browser to render the clone
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Create PDF with proper dimensions
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
       
-      console.log('Generating canvas from cloned element...');
+      const pdf = new jsPDF({
+        orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [imgWidth, imgHeight]
+      });
       
-      try {
-        // Generate the canvas from the cloned element
-        const canvas = await html2canvas(clone, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          logging: true,
-          removeContainer: false, // Important to keep the container
-          ignoreElements: (element) => 
-            element.classList?.contains('hidden') || 
-            window.getComputedStyle(element).display === 'none' ||
-            window.getComputedStyle(element).visibility === 'hidden'
-        });
-        
-        console.log('Canvas generated successfully');
-        
-        // Create PDF with proper dimensions
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        
-        const pdf = new jsPDF({
-          orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
-          unit: 'px',
-          format: [imgWidth, imgHeight]
-        });
-        
-        // Add the canvas image to the PDF
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
-        console.log('PDF created successfully');
-        
-        // Remove the cloned element from the document
-        document.body.removeChild(clone);
-        
-        return pdf;
-      } catch (error) {
-        // Remove the cloned element even if there's an error
-        if (document.body.contains(clone)) {
-          document.body.removeChild(clone);
-        }
-        throw error;
-      }
+      // Add the canvas image to the PDF
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+      console.log('PDF created successfully');
+      
+      return pdf;
     } catch (error) {
       console.error('PDF generation error:', error);
       throw error;
