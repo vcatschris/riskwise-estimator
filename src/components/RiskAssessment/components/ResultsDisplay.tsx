@@ -56,72 +56,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     return sizeNumber > 5;
   };
 
-  const generatePDF = async () => {
-    try {
-      console.log('Attempting to generate PDF...');
-      const reportElement = document.getElementById('risk-report');
-      
-      if (!reportElement) {
-        console.error('Risk report element not found');
-        throw new Error('Risk report element not found');
-      }
-
-      // Configure element for capture
-      const originalStyles = {
-        width: reportElement.style.width,
-        height: reportElement.style.height,
-        position: reportElement.style.position,
-        overflow: reportElement.style.overflow
-      };
-
-      // Set styles for capture
-      reportElement.style.width = `${reportElement.scrollWidth}px`;
-      reportElement.style.height = `${reportElement.scrollHeight}px`;
-      reportElement.style.position = 'relative';
-      reportElement.style.overflow = 'visible';
-      
-      // Give the browser time to apply the styles
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      try {
-        const canvas = await html2canvas(reportElement, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          width: reportElement.scrollWidth,
-          height: reportElement.scrollHeight,
-          logging: true
-        });
-        
-        console.log('Canvas generated successfully');
-        
-        // Create PDF with proper dimensions
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        
-        const pdf = new jsPDF({
-          orientation: imgWidth > imgHeight ? 'landscape' : 'portrait',
-          unit: 'px',
-          format: [imgWidth, imgHeight]
-        });
-        
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
-        console.log('PDF created successfully');
-        
-        // Restore original styles
-        Object.assign(reportElement.style, originalStyles);
-        
-        pdf.save('IT_Security_Assessment_Report.pdf');
-      } catch (error) {
-        // Restore original styles even if there's an error
-        Object.assign(reportElement.style, originalStyles);
-        throw error;
-      }
-    } catch (error) {
-      console.error('PDF generation error:', error);
-      throw error;
-    }
+  const handleDownloadClick = () => {
+    setShowDownloadDialog(true);
   };
 
   const NextStepsSection = () => (
@@ -237,7 +173,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         {/* Download button at the top */}
         <div className="flex justify-end">
           <Button
-            onClick={generatePDF}
+            onClick={handleDownloadClick}
             variant="secondary"
             size="lg"
             className="flex items-center gap-2"
@@ -561,7 +497,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
         {/* Download button at the bottom */}
         <div className="flex justify-center">
           <Button
-            onClick={generatePDF}
+            onClick={handleDownloadClick}
             variant="secondary"
             size="lg"
             className="flex items-center gap-2"

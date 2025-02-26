@@ -234,4 +234,3 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
     </Dialog>
   );
 };
-
