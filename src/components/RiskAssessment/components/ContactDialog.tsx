@@ -54,7 +54,9 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         width: reportElement.style.width,
         height: reportElement.style.height,
         position: reportElement.style.position,
-        overflow: reportElement.style.overflow
+        overflow: reportElement.style.overflow,
+        visibility: reportElement.style.visibility,
+        display: reportElement.style.display
       };
 
       // Set styles for capture
@@ -62,9 +64,20 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       reportElement.style.height = `${reportElement.scrollHeight}px`;
       reportElement.style.position = 'relative';
       reportElement.style.overflow = 'visible';
+      reportElement.style.visibility = 'visible';
+      reportElement.style.display = 'block';
+      
+      // Ensure all score badges are rendered properly before capture
+      const badges = reportElement.querySelectorAll('[class*="rounded-full border"]');
+      badges.forEach(badge => {
+        if (badge instanceof HTMLElement) {
+          badge.style.opacity = '1';
+          badge.style.visibility = 'visible';
+        }
+      });
       
       // Give the browser time to apply the styles
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       try {
         const canvas = await html2canvas(reportElement, {
@@ -74,7 +87,21 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           backgroundColor: '#ffffff',
           width: reportElement.scrollWidth,
           height: reportElement.scrollHeight,
-          logging: true
+          logging: true,
+          onclone: (clonedDoc) => {
+            // Ensure scores are visible in the cloned document
+            const clonedReport = clonedDoc.getElementById('risk-report');
+            if (clonedReport) {
+              const clonedBadges = clonedReport.querySelectorAll('[class*="rounded-full border"]');
+              clonedBadges.forEach(badge => {
+                if (badge instanceof HTMLElement) {
+                  badge.style.opacity = '1';
+                  badge.style.visibility = 'visible';
+                  badge.style.display = 'inline-flex';
+                }
+              });
+            }
+          }
         });
         
         console.log('Canvas generated successfully');
@@ -158,30 +185,26 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         console.error('Webhook error (non-critical):', webhookError);
       }
 
-      // If it's a download request, generate and save PDF
-      if (mode === 'download') {
-        try {
-          const pdf = await generatePDF();
-          pdf.save('IT_Security_Assessment_Report.pdf');
-        } catch (pdfError) {
-          console.error('PDF generation error:', pdfError);
-          toast({
-            title: "PDF Generation Error",
-            description: "We couldn't generate your PDF, but your information has been saved.",
-            variant: "destructive",
-          });
-          // Still close the dialog since the form submission was successful
-          onOpenChange(false);
-          setLoading(false);
-          return;
-        }
+      // Generate and save PDF for both consultation and download modes
+      try {
+        const pdf = await generatePDF();
+        pdf.save('IT_Security_Assessment_Report.pdf');
+      } catch (pdfError) {
+        console.error('PDF generation error:', pdfError);
+        toast({
+          title: "PDF Generation Error",
+          description: "We couldn't generate your PDF, but your information has been saved.",
+          variant: "destructive",
+        });
+        // Still close the dialog since the form submission was successful
+        onOpenChange(false);
+        setLoading(false);
+        return;
       }
 
       toast({
         title: "Success",
-        description: mode === 'download' 
-          ? "Your report has been downloaded and our team will be in touch soon."
-          : "Your information has been submitted successfully. Our team will be in touch soon.",
+        description: "Your information has been submitted successfully and your report has been downloaded. Our team will be in touch soon.",
       });
       
       onOpenChange(false);
@@ -241,7 +264,7 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
             </Label>
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Processing...' : mode === 'download' ? 'Download Report' : 'Request Consultation'}
+            {loading ? 'Processing...' : mode === 'download' ? 'Download Report' : 'Request Consultation & Download Report'}
           </Button>
         </form>
       </DialogContent>
