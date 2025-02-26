@@ -20,13 +20,12 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Use npm/node for building on Netlify, falling back to Bun only when available
+  // Disable Bun-specific features when running on Netlify
   optimizeDeps: {
-    // Ensure we don't use Bun-specific features during build
     force: process.env.NETLIFY ? true : false,
   },
   build: {
-    // Ensure we use a standard build process on Netlify
+    // Use standard build process on Netlify
     brotliSize: process.env.NETLIFY ? false : true,
     sourcemap: true,
   }
