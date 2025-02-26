@@ -15,10 +15,13 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
+      className="space-y-4 w-full"
     >
-      <Select onValueChange={(value) => onInputChange('industry', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('industry', value)}
+        value={formData.industry}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="What type of business are you? (for compliance needs)" />
         </SelectTrigger>
         <SelectContent>
@@ -31,8 +34,11 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('businessSize', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('businessSize', value)}
+        value={formData.businessSize}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="How many employees use IT as a core part of their role?" />
         </SelectTrigger>
         <SelectContent>
@@ -44,8 +50,11 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('sensitiveData', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('sensitiveData', value)}
+        value={formData.sensitiveData}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Do you handle sensitive information? (customer data, financial records, etc.)" />
         </SelectTrigger>
         <SelectContent>
@@ -55,8 +64,11 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('workLocation', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('workLocation', value)}
+        value={formData.workLocation}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="How many locations do your staff work from, and do they routinely work from home?" />
         </SelectTrigger>
         <SelectContent>

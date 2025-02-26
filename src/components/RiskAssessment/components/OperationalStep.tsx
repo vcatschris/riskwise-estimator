@@ -15,10 +15,13 @@ export function OperationalStep({ formData, onInputChange }: OperationalStepProp
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
+      className="space-y-4 w-full"
     >
-      <Select onValueChange={(value) => onInputChange('itIssues', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('itIssues', value)}
+        value={formData.itIssues}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="How often do you experience IT issues that affect productivity?" />
         </SelectTrigger>
         <SelectContent>
@@ -30,8 +33,11 @@ export function OperationalStep({ formData, onInputChange }: OperationalStepProp
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('itCriticality', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('itCriticality', value)}
+        value={formData.itCriticality}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="How critical is IT to your day-to-day operations?" />
         </SelectTrigger>
         <SelectContent>

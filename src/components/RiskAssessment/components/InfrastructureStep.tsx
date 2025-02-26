@@ -15,10 +15,13 @@ export function InfrastructureStep({ formData, onInputChange }: InfrastructureSt
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
+      className="space-y-4 w-full"
     >
-      <Select onValueChange={(value) => onInputChange('infrastructure', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('infrastructure', value)}
+        value={formData.infrastructure}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="What best describes your IT infrastructure?" />
         </SelectTrigger>
         <SelectContent>
@@ -30,8 +33,11 @@ export function InfrastructureStep({ formData, onInputChange }: InfrastructureSt
         </SelectContent>
       </Select>
 
-      <Select onValueChange={value => onInputChange('cloudProvider', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={value => onInputChange('cloudProvider', value)}
+        value={formData.cloudProvider}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Which platform do you use for email & documents?" />
         </SelectTrigger>
         <SelectContent>

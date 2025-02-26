@@ -15,13 +15,13 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
+      className="space-y-4 w-full"
     >
       <Select 
         onValueChange={value => onInputChange('itSupportType', value)}
         value={formData.itSupportType}
       >
-        <SelectTrigger>
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="What kind of IT support does your business have?" />
         </SelectTrigger>
         <SelectContent>
@@ -37,7 +37,7 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
           onValueChange={value => onInputChange('providerDuration', value)}
           value={formData.providerDuration}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="How long have you had this IT support?" />
           </SelectTrigger>
           <SelectContent>

@@ -15,10 +15,13 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-4"
+      className="space-y-4 w-full"
     >
-      <Select onValueChange={(value) => onInputChange('lastAudit', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('lastAudit', value)}
+        value={formData.lastAudit}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="When was your last IT security check? (e.g., vulnerability scan)" />
         </SelectTrigger>
         <SelectContent>
@@ -29,8 +32,11 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('mfaEnabled', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('mfaEnabled', value)}
+        value={formData.mfaEnabled}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Do you use two-step login? (mobile code + password)" />
         </SelectTrigger>
         <SelectContent>
@@ -40,8 +46,11 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('backupFrequency', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('backupFrequency', value)}
+        value={formData.backupFrequency}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="How often do you back up your business data?" />
         </SelectTrigger>
         <SelectContent>
@@ -53,8 +62,11 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={(value) => onInputChange('dataRegulations', value)}>
-        <SelectTrigger>
+      <Select 
+        onValueChange={(value) => onInputChange('dataRegulations', value)}
+        value={formData.dataRegulations}
+      >
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Are you required to comply with specific data protection regulations?" />
         </SelectTrigger>
         <SelectContent>

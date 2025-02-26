@@ -33,7 +33,9 @@ export const validateSurveyData = (formData: Partial<AssessmentData>): boolean =
 
 const validateBusinessStep = (formData: Partial<AssessmentData>): boolean => {
   return !!formData.industry && 
-         !!formData.businessSize;
+         !!formData.businessSize &&
+         !!formData.sensitiveData &&
+         !!formData.workLocation;
 };
 
 const validateITSupportStep = (formData: Partial<AssessmentData>): boolean => {
@@ -46,17 +48,19 @@ const validateITSupportStep = (formData: Partial<AssessmentData>): boolean => {
 };
 
 const validateInfrastructureStep = (formData: Partial<AssessmentData>): boolean => {
-  // Require at least the infrastructure field
-  return !!formData.infrastructure;
+  // Require all infrastructure fields
+  return !!formData.infrastructure &&
+         !!formData.cloudProvider;
 };
 
 const validateSecurityStep = (formData: Partial<AssessmentData>): boolean => {
   return !!formData.lastAudit && 
          !!formData.mfaEnabled &&
-         !!formData.backupFrequency;
+         !!formData.backupFrequency &&
+         !!formData.dataRegulations;
 };
 
 const validateOperationalStep = (formData: Partial<AssessmentData>): boolean => {
-  return !!formData.dataRegulations && 
-         !!formData.itIssues;
+  return !!formData.itIssues && 
+         !!formData.itCriticality;
 };

@@ -11,17 +11,21 @@ interface FormNavigationProps {
 
 export function FormNavigation({ step, onPrevious, onNext }: FormNavigationProps) {
   return (
-    <div className="flex justify-between">
-      {step !== 'business' && (
-        <Button variant="outline" onClick={onPrevious} type="button">
-          Previous
-        </Button>
-      )}
-      {step !== 'results' && (
-        <Button className="ml-auto" onClick={onNext} type="button">
-          {step === 'operational' ? 'View Results' : 'Next'}
-        </Button>
-      )}
+    <div className="flex justify-between w-full">
+      <div>
+        {step !== 'business' && (
+          <Button variant="outline" onClick={onPrevious} type="button">
+            Previous
+          </Button>
+        )}
+      </div>
+      <div>
+        {step !== 'results' && (
+          <Button onClick={onNext} type="button">
+            {step === 'operational' ? 'View Results' : 'Next'}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
