@@ -136,19 +136,21 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' 
       : 'text-red-500 bg-red-50 dark:bg-red-950/30';
 
-  const getBadgeColor = (score: number, maxScore: number) => {
+  // New function to get the appropriate text color based on risk score
+  const getRiskScoreTextColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
-    if (percentage < 40) return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800';
-    if (percentage < 70) return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800';
-    return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800';
+    if (percentage < 40) return 'text-green-600 dark:text-green-400';
+    if (percentage < 70) return 'text-orange-600 dark:text-orange-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
-  const getValueScoreColor = (score: number, maxScore: number) => {
+  // New function to get the appropriate text color based on value score
+  const getValueScoreTextColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
-    if (percentage > 50) return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800';
-    if (percentage < 40) return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800';
-    if (percentage < 70) return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800';
-    return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800';
+    if (percentage > 50) return 'text-green-600 dark:text-green-400';
+    if (percentage < 40) return 'text-green-600 dark:text-green-400';
+    if (percentage < 70) return 'text-orange-600 dark:text-orange-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
   return (
@@ -194,9 +196,13 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
             <p className="text-4xl sm:text-5xl font-bold mt-3 sm:mt-4">{assessment.level} Risk</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4 sm:mt-6">
               <div className="text-center">
-                <div className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-full border ${getBadgeColor(assessment.total, assessment.maxPossible)}`}>
-                  <span className="text-xl sm:text-2xl font-semibold score-value">{assessment.total}</span>
-                  <span className="text-xs sm:text-sm ml-1 score-max">/ {assessment.maxPossible}</span>
+                <div className="py-2">
+                  <span className={`text-xl sm:text-2xl font-semibold ${getRiskScoreTextColor(assessment.total, assessment.maxPossible)}`}>
+                    {assessment.total}
+                  </span>
+                  <span className="text-xs sm:text-sm ml-1 text-gray-500 dark:text-gray-400">
+                    / {assessment.maxPossible}
+                  </span>
                 </div>
                 <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Risk Score</p>
                 <p className="text-xs font-medium px-4 mt-1">
@@ -224,9 +230,13 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 </TooltipProvider>
               </div>
               <div className="text-center">
-                <div className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-full border ${getValueScoreColor(assessment.valueScore, assessment.maxValuePossible)}`}>
-                  <span className="text-xl sm:text-2xl font-semibold score-value">{assessment.valueScore}</span>
-                  <span className="text-xs sm:text-sm ml-1 score-max">/ {assessment.maxValuePossible}</span>
+                <div className="py-2">
+                  <span className={`text-xl sm:text-2xl font-semibold ${getValueScoreTextColor(assessment.valueScore, assessment.maxValuePossible)}`}>
+                    {assessment.valueScore}
+                  </span>
+                  <span className="text-xs sm:text-sm ml-1 text-gray-500 dark:text-gray-400">
+                    / {assessment.maxValuePossible}
+                  </span>
                 </div>
                 <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Value Score</p>
                 <p className="text-xs font-medium px-4 mt-1">

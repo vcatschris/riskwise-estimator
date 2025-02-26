@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
@@ -42,7 +43,6 @@ const DialogContent = React.forwardRef<
       {...props}
       onOpenAutoFocus={(e) => {
         e.preventDefault(); // Prevent autofocus to avoid page jumping
-        // This helps with keeping elements in place for PDF generation
         if (props.onOpenAutoFocus) {
           props.onOpenAutoFocus(e);
         }
