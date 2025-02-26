@@ -5,9 +5,27 @@
   justify-content: flex-start !important;
 }
 
+/* Ensure value text is left-aligned */
+[data-radix-select-value] {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  width: 100%;
+}
+
+/* Ensure SelectValue placeholder text is left-aligned */
+[data-radix-select-trigger] span {
+  text-align: left !important;
+  display: block;
+  width: 100%;
+}
+
 /* Override any conflicting mobile-specific styles */
 @media (max-width: 768px) {
   [data-radix-select-trigger] span {
+    text-align: left !important;
+  }
+  
+  [data-radix-select-value] {
     text-align: left !important;
   }
 }
