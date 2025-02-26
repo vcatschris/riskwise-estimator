@@ -21,7 +21,7 @@ export function OperationalStep({ formData, onInputChange }: OperationalStepProp
         onValueChange={(value) => onInputChange('itIssues', value)}
         value={formData.itIssues}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="How often do you experience IT issues that affect productivity?" />
         </SelectTrigger>
         <SelectContent>
@@ -37,7 +37,7 @@ export function OperationalStep({ formData, onInputChange }: OperationalStepProp
         onValueChange={(value) => onInputChange('itCriticality', value)}
         value={formData.itCriticality}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="How critical is IT to your day-to-day operations?" />
         </SelectTrigger>
         <SelectContent>

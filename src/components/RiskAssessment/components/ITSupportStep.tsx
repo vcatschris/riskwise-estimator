@@ -21,7 +21,7 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
         onValueChange={value => onInputChange('itSupportType', value)}
         value={formData.itSupportType}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="What kind of IT support does your business have?" />
         </SelectTrigger>
         <SelectContent>
@@ -37,7 +37,7 @@ export function ITSupportStep({ formData, onInputChange }: ITSupportStepProps) {
           onValueChange={value => onInputChange('providerDuration', value)}
           value={formData.providerDuration}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full text-left">
             <SelectValue placeholder="How long have you had this IT support?" />
           </SelectTrigger>
           <SelectContent>

@@ -21,7 +21,7 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
         onValueChange={(value) => onInputChange('lastAudit', value)}
         value={formData.lastAudit}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="When was your last IT security check? (e.g., vulnerability scan)" />
         </SelectTrigger>
         <SelectContent>
@@ -36,7 +36,7 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
         onValueChange={(value) => onInputChange('mfaEnabled', value)}
         value={formData.mfaEnabled}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="Do you use two-step login? (mobile code + password)" />
         </SelectTrigger>
         <SelectContent>
@@ -50,7 +50,7 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
         onValueChange={(value) => onInputChange('backupFrequency', value)}
         value={formData.backupFrequency}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="How often do you back up your business data?" />
         </SelectTrigger>
         <SelectContent>
@@ -66,7 +66,7 @@ export function SecurityStep({ formData, onInputChange }: SecurityStepProps) {
         onValueChange={(value) => onInputChange('dataRegulations', value)}
         value={formData.dataRegulations}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="Are you required to comply with specific data protection regulations?" />
         </SelectTrigger>
         <SelectContent>

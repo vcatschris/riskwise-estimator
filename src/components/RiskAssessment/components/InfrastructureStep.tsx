@@ -21,7 +21,7 @@ export function InfrastructureStep({ formData, onInputChange }: InfrastructureSt
         onValueChange={(value) => onInputChange('infrastructure', value)}
         value={formData.infrastructure}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="What best describes your IT infrastructure?" />
         </SelectTrigger>
         <SelectContent>
@@ -37,7 +37,7 @@ export function InfrastructureStep({ formData, onInputChange }: InfrastructureSt
         onValueChange={value => onInputChange('cloudProvider', value)}
         value={formData.cloudProvider}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="Which platform do you use for email & documents?" />
         </SelectTrigger>
         <SelectContent>

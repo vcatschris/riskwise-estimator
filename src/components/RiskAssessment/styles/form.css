@@ -19,13 +19,23 @@
   width: 100%;
 }
 
+/* Additional selector for the placeholder text */
+.radix-placeholder {
+  text-align: left !important;
+}
+
+/* Make sure the SelectItem components are also left-aligned */
+[data-radix-select-item] {
+  text-align: left !important;
+}
+
 /* Override any conflicting mobile-specific styles */
 @media (max-width: 768px) {
-  [data-radix-select-trigger] span {
+  [data-radix-select-trigger],
+  [data-radix-select-trigger] span,
+  [data-radix-select-value],
+  [data-radix-select-item] {
     text-align: left !important;
-  }
-  
-  [data-radix-select-value] {
-    text-align: left !important;
+    justify-content: flex-start !important;
   }
 }
