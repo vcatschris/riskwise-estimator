@@ -257,30 +257,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </motion.div>
         </div>
 
-        <Card className="p-4 sm:p-6">
-          <h4 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Risk Assessment Summary</h4>
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3 sm:p-4 rounded-lg bg-gray-50 dark:bg-gray-900">
-              <div>
-                <p className="font-medium text-base sm:text-lg mb-2 sm:mb-0">Overall Risk Level</p>
-                <p className={`text-xl sm:text-2xl font-bold ${riskColor}`}>{assessment.level} Risk</p>
-              </div>
-              <div className="mt-3 sm:mt-0 text-left sm:text-right">
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Risk Score</p>
-                    <p className="font-semibold text-sm sm:text-base">{assessment.total} / {assessment.maxPossible}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Value Score</p>
-                    <p className="font-semibold text-sm sm:text-base">{assessment.valueScore} / {assessment.maxValuePossible}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-
         {/* Investment Range Card */}
         <Card id="investment-range" className="p-4 sm:p-6 scroll-mt-8">
           <h4 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Investment Range</h4>
