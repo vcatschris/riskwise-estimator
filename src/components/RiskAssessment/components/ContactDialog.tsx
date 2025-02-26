@@ -56,7 +56,8 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         position: reportElement.style.position,
         overflow: reportElement.style.overflow,
         visibility: reportElement.style.visibility,
-        display: reportElement.style.display
+        display: reportElement.style.display,
+        zIndex: reportElement.style.zIndex
       };
 
       // Set styles for capture
@@ -66,18 +67,31 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       reportElement.style.overflow = 'visible';
       reportElement.style.visibility = 'visible';
       reportElement.style.display = 'block';
+      reportElement.style.zIndex = '9999';
       
-      // Ensure all score badges are rendered properly before capture
+      // Pre-process all score badges to ensure they're properly displayed
       const badges = reportElement.querySelectorAll('[class*="rounded-full border"]');
       badges.forEach(badge => {
         if (badge instanceof HTMLElement) {
           badge.style.opacity = '1';
           badge.style.visibility = 'visible';
+          badge.style.display = 'inline-flex';
+          
+          // Make badge content more visible
+          const spans = badge.querySelectorAll('span');
+          spans.forEach(span => {
+            if (span instanceof HTMLElement) {
+              span.style.opacity = '1';
+              span.style.visibility = 'visible';
+              span.style.color = window.getComputedStyle(span).color;
+              span.style.fontWeight = 'bold';
+            }
+          });
         }
       });
       
       // Give the browser time to apply the styles
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       try {
         const canvas = await html2canvas(reportElement, {
@@ -89,15 +103,33 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           height: reportElement.scrollHeight,
           logging: true,
           onclone: (clonedDoc) => {
-            // Ensure scores are visible in the cloned document
+            // Process the cloned document
             const clonedReport = clonedDoc.getElementById('risk-report');
             if (clonedReport) {
+              // Make all badges visible with proper styling in the clone
               const clonedBadges = clonedReport.querySelectorAll('[class*="rounded-full border"]');
               clonedBadges.forEach(badge => {
                 if (badge instanceof HTMLElement) {
                   badge.style.opacity = '1';
                   badge.style.visibility = 'visible';
                   badge.style.display = 'inline-flex';
+                  
+                  // Directly modify the innerHTML to ensure text is visible
+                  const scoreText = badge.textContent;
+                  if (scoreText) {
+                    // Extract numbers from the text (main score and max score if present)
+                    const matches = scoreText.match(/(\d+)(?:\s*\/\s*(\d+))?/);
+                    if (matches) {
+                      const mainScore = matches[1];
+                      const maxScore = matches[2] || '';
+                      
+                      if (maxScore) {
+                        badge.innerHTML = `<span style="font-weight:bold;font-size:1.25rem;opacity:1;visibility:visible;">${mainScore}</span><span style="font-size:0.875rem;margin-left:0.25rem;opacity:1;visibility:visible;">/ ${maxScore}</span>`;
+                      } else {
+                        badge.innerHTML = `<span style="font-weight:bold;font-size:1.25rem;opacity:1;visibility:visible;">${mainScore}</span>`;
+                      }
+                    }
+                  }
                 }
               });
             }
