@@ -21,7 +21,7 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         onValueChange={(value) => onInputChange('industry', value)}
         value={formData.industry}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="What type of business are you? (for compliance needs)" />
         </SelectTrigger>
         <SelectContent>
@@ -38,7 +38,7 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         onValueChange={(value) => onInputChange('businessSize', value)}
         value={formData.businessSize}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="How many employees use IT as a core part of their role?" />
         </SelectTrigger>
         <SelectContent>
@@ -54,7 +54,7 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         onValueChange={(value) => onInputChange('sensitiveData', value)}
         value={formData.sensitiveData}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="Do you handle sensitive information? (customer data, financial records, etc.)" />
         </SelectTrigger>
         <SelectContent>
@@ -68,7 +68,7 @@ export function BusinessProfileStep({ formData, onInputChange }: BusinessProfile
         onValueChange={(value) => onInputChange('workLocation', value)}
         value={formData.workLocation}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full text-left">
           <SelectValue placeholder="How many locations do your staff work from, and do they routinely work from home?" />
         </SelectTrigger>
         <SelectContent>

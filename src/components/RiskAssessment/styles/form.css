@@ -1,0 +1,13 @@
+
+/* Ensure consistent text alignment in Select components across all devices */
+[data-radix-select-trigger] {
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+
+/* Override any conflicting mobile-specific styles */
+@media (max-width: 768px) {
+  [data-radix-select-trigger] span {
+    text-align: left !important;
+  }
+}

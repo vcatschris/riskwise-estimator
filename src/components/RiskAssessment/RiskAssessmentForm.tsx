@@ -11,6 +11,7 @@ import { OperationalStep } from './components/OperationalStep';
 import { ResultsDisplay } from './components/ResultsDisplay';
 import { FormNavigation } from './components/FormNavigation';
 import { useRiskAssessment } from './hooks/useRiskAssessment';
+import './styles/form.css';
 
 export function RiskAssessmentForm() {
   const {
