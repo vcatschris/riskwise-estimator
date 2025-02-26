@@ -1,4 +1,3 @@
-
 import { AssessmentData, RiskScore, CategoryDetail } from './types';
 import { INDUSTRY_INSIGHTS } from './utils/industryInsights';
 import { getCategoryInsights } from './utils/categoryInsights';
@@ -227,6 +226,29 @@ export const calculateRiskScore = (data: AssessmentData): RiskScore => {
 
   totalRiskPoints += complianceRiskScore;
   totalValuePoints += complianceValueScore;
+
+  // Add Compliance & Support category details
+  details.push({
+    category: 'Compliance & Support',
+    riskScore: complianceRiskScore,
+    valueScore: complianceValueScore,
+    recommendations: [
+      'Implement compliance monitoring system',
+      'Review IT support response times',
+      'Establish clear compliance protocols'
+    ],
+    insights: getCategoryInsights('Compliance & Support', data.industry, data.businessSize),
+    riskAreas: [
+      'Current compliance monitoring may need enhancement',
+      'IT support response times require review',
+      'Data regulation adherence needs assessment'
+    ],
+    valueAreas: [
+      'Improved compliance tracking',
+      'Enhanced IT support efficiency',
+      'Better regulatory alignment'
+    ]
+  });
 
   // Round scores and ensure they don't exceed 100
   totalRiskPoints = Math.min(Math.round(totalRiskPoints), 100);
