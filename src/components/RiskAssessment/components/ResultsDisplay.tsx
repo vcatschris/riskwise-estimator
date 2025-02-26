@@ -207,6 +207,14 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800';
   };
 
+  const getValueScoreColor = (score: number, maxScore: number) => {
+    const percentage = (score / maxScore) * 100;
+    if (percentage > 50) return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800';
+    if (percentage < 40) return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800';
+    if (percentage < 70) return 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800';
+    return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800';
+  };
+
   return (
     <div className="space-y-6 sm:space-y-8">
       <div id="risk-report" className="space-y-6 sm:space-y-8">
@@ -257,9 +265,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                   <span className="text-xs sm:text-sm ml-1">/ {assessment.maxPossible}</span>
                 </div>
                 <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Risk Score</p>
+                <p className="text-xs font-medium px-4 mt-1">
+                  <strong>Your Risk Score reflects the potential risks of not reviewing your IT services, with 100 indicating a high risk.</strong>
+                </p>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto mt-1">
                       <span>What's this?</span>
                       <Info className="h-3 w-3" />
                     </TooltipTrigger>
@@ -279,14 +290,17 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
                 </TooltipProvider>
               </div>
               <div className="text-center">
-                <div className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-full border ${getBadgeColor(assessment.valueScore, assessment.maxValuePossible)}`}>
+                <div className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-full border ${getValueScoreColor(assessment.valueScore, assessment.maxValuePossible)}`}>
                   <span className="text-xl sm:text-2xl font-semibold">{assessment.valueScore}</span>
                   <span className="text-xs sm:text-sm ml-1">/ {assessment.maxValuePossible}</span>
                 </div>
                 <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Value Score</p>
+                <p className="text-xs font-medium px-4 mt-1">
+                  <strong>Your Value Score highlights the potential benefits and opportunities of making strategic changes, with 100 representing maximum value.</strong>
+                </p>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto">
+                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto mt-1">
                       <span>What's this?</span>
                       <Info className="h-3 w-3" />
                     </TooltipTrigger>
