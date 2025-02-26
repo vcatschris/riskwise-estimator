@@ -49,8 +49,57 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw new Error('Risk report element not found');
       }
 
-      // Take a screenshot of the entire report
-      const canvas = await html2canvas(reportElement, {
+      // Clone the report element to manipulate it without affecting the UI
+      const cloneReport = reportElement.cloneNode(true) as HTMLElement;
+      
+      // Make sure all content is visible in the clone
+      cloneReport.style.display = 'block';
+      cloneReport.style.visibility = 'visible';
+      
+      // Process all score badges and values in the clone
+      const processBadges = (element: HTMLElement) => {
+        // Find all badge containers
+        const badges = element.querySelectorAll('[class*="rounded-full border"]');
+        
+        badges.forEach(badge => {
+          if (badge instanceof HTMLElement) {
+            badge.style.display = 'inline-flex';
+            badge.style.visibility = 'visible';
+            badge.style.opacity = '1';
+            
+            // Find and make visible all score values and max values
+            const scoreValues = badge.querySelectorAll('.score-value, [class*="font-semibold"]');
+            const scoreMax = badge.querySelectorAll('.score-max, [class*="text-xs"], [class*="text-sm"]');
+            
+            // Ensure score values are visible
+            scoreValues.forEach(value => {
+              if (value instanceof HTMLElement) {
+                value.style.display = 'inline';
+                value.style.visibility = 'visible';
+                value.style.opacity = '1';
+                // Force the text to be black in case it's using a color that doesn't show up well in PDF
+                value.style.color = '#000000';
+              }
+            });
+            
+            // Ensure score max values are visible
+            scoreMax.forEach(max => {
+              if (max instanceof HTMLElement) {
+                max.style.display = 'inline';
+                max.style.visibility = 'visible';
+                max.style.opacity = '1';
+                max.style.color = '#000000';
+              }
+            });
+          }
+        });
+      };
+      
+      // Process the badges in the clone
+      processBadges(cloneReport);
+      
+      // Take a screenshot of the processed clone
+      const canvas = await html2canvas(cloneReport, {
         scale: 2, // Higher scale for better quality
         useCORS: true,
         allowTaint: true,
@@ -63,40 +112,27 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
             clonedReport.style.display = 'block';
             clonedReport.style.visibility = 'visible';
             
-            // Find all badge elements in the clone
-            const badges = clonedReport.querySelectorAll('[class*="rounded-full border"]');
+            // Process all badges in the cloned document
+            if (clonedReport instanceof HTMLElement) {
+              processBadges(clonedReport);
+            }
             
-            // Make badges and their text content visible
-            badges.forEach(badge => {
-              if (badge instanceof HTMLElement) {
-                badge.style.display = 'inline-flex';
-                badge.style.visibility = 'visible';
-                badge.style.opacity = '1';
-                
-                // Ensure the text inside the badge is visible
-                const children = badge.children;
-                for (let i = 0; i < children.length; i++) {
-                  const child = children[i];
-                  if (child instanceof HTMLElement) {
-                    child.style.display = 'inline';
-                    child.style.visibility = 'visible';
-                    child.style.opacity = '1';
-                  }
-                }
-              }
-            });
-
-            // Make sure any "hidden" elements that should be in the PDF are visible
-            const hiddenElements = clonedReport.querySelectorAll('.hidden, [style*="display: none"], [style*="visibility: hidden"]');
-            hiddenElements.forEach(el => {
+            // Additional specific targeting for score elements
+            const scoreElements = clonedReport.querySelectorAll('.score-value, .score-max');
+            scoreElements.forEach(el => {
               if (el instanceof HTMLElement) {
-                // Only make visible if it's part of a score or important for the report
-                if (el.closest('[class*="rounded-full border"]') || 
-                    el.classList.contains('text-score') || 
-                    el.classList.contains('score-value')) {
-                  el.style.display = 'inline';
-                  el.style.visibility = 'visible';
-                  el.style.opacity = '1';
+                el.style.display = 'inline';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+                el.style.color = '#000000';
+                
+                // Force parent elements to be visible too
+                let parent = el.parentElement;
+                while (parent) {
+                  parent.style.display = parent.tagName === 'DIV' ? 'flex' : 'inline';
+                  parent.style.visibility = 'visible';
+                  parent.style.opacity = '1';
+                  parent = parent.parentElement;
                 }
               }
             });
