@@ -85,6 +85,19 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
           </div>
         </div>
 
+        {/* Download button at the bottom */}
+        <div className="w-full max-w-2xl pt-6 mt-4">
+          <Button
+            onClick={handleDownloadClick}
+            variant="secondary"
+            size="lg"
+            className="flex items-center gap-2 mx-auto"
+          >
+            <FileDown className="h-4 w-4" />
+            Download PDF Report
+          </Button>
+        </div>
+
         <div className="w-full max-w-2xl pt-6 sm:pt-8 border-t">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
             <a 
