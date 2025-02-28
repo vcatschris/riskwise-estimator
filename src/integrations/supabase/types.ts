@@ -380,40 +380,49 @@ export type Database = {
       }
       form_completions: {
         Row: {
-          agency_email: string
+          agency_email: string | null
           agency_name: string
           analysis: Json | null
           created_at: string | null
+          currency: string | null
           decision_maker_role: string
           id: string
           name: string
           newsletter: boolean | null
+          project_type: string | null
+          project_value: number | null
           sale_type: string
           total_score: number
           updated_at: string | null
         }
         Insert: {
-          agency_email: string
+          agency_email?: string | null
           agency_name: string
           analysis?: Json | null
           created_at?: string | null
+          currency?: string | null
           decision_maker_role: string
           id?: string
           name: string
           newsletter?: boolean | null
+          project_type?: string | null
+          project_value?: number | null
           sale_type: string
           total_score: number
           updated_at?: string | null
         }
         Update: {
-          agency_email?: string
+          agency_email?: string | null
           agency_name?: string
           analysis?: Json | null
           created_at?: string | null
+          currency?: string | null
           decision_maker_role?: string
           id?: string
           name?: string
           newsletter?: boolean | null
+          project_type?: string | null
+          project_value?: number | null
           sale_type?: string
           total_score?: number
           updated_at?: string | null
