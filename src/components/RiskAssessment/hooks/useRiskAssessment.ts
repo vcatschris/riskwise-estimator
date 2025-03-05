@@ -5,6 +5,8 @@ import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { validateStep } from './validation/useStepValidation';
 import { saveAssessmentResults, getRecentAssessment } from './database/useAssessmentStorage';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from '@/hooks/use-toast';
 
 export const useRiskAssessment = () => {
   const [step, setStep] = useState<Step>('business');
@@ -16,6 +18,7 @@ export const useRiskAssessment = () => {
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [recentAssessment, setRecentAssessment] = useState<any>(null);
   const [loadingRecent, setLoadingRecent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
     setFormData(prev => ({
@@ -46,17 +49,34 @@ export const useRiskAssessment = () => {
     
     if (!validateStep(step, formData)) {
       console.log('Validation failed for step:', step);
+      toast({
+        title: "Validation Failed",
+        description: "Please complete all required fields before proceeding.",
+        variant: "destructive"
+      });
       return;
     }
     
-    if (step === 'operational') {
-      const assessment = calculateRiskScore(formData as AssessmentData);
-      console.log('Calculated assessment:', assessment);
-      const result = await saveAssessmentResults(assessment, formData);
-      console.log('Saved assessment ID:', result?.id);
-      
-      if (result.id) {
-        setAssessmentId(result.id);
+    if (step === 'operational' && !isSubmitting) {
+      setIsSubmitting(true);
+      try {
+        const assessment = calculateRiskScore(formData as AssessmentData);
+        console.log('Calculated assessment:', assessment);
+        const result = await saveAssessmentResults(assessment, formData);
+        console.log('Saved assessment ID:', result?.id);
+        
+        if (result.id) {
+          setAssessmentId(result.id);
+        }
+      } catch (error) {
+        console.error('Error during assessment submission:', error);
+        toast({
+          title: "Error",
+          description: "There was an error processing your assessment, but you can still view your results.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsSubmitting(false);
       }
     }
 
@@ -104,6 +124,7 @@ export const useRiskAssessment = () => {
     assessmentId,
     recentAssessment,
     loadingRecent,
+    isSubmitting,
     handleInputChange,
     nextStep,
     previousStep,

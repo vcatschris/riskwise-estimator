@@ -71,13 +71,19 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
     // Generate unique identifier
     const uniqueId = generateUniqueIdentifier();
     
-    // First try to enable service role for this operation to bypass RLS
-    const { data: surveyData, error: surveyError } = await supabase
+    // Try using service role key, or insert with anonymous access if available 
+    // First check if there's an active session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // Here we would normally use the service role API key, but since we can't 
+    // include that in client-side code for security reasons, we'll handle the failure case gracefully
+    
+    let insertQuery = supabase
       .from('ss_risk_survey')
       .insert({
-        business_name: formData.businessName || uniqueId, // Fixed property name to match type definition
-        email: formData.email || `${uniqueId}@survey.local`, // Use provided email if available
-        name: formData.name || uniqueId, // Use provided name if available
+        business_name: formData.businessName || uniqueId,
+        email: formData.email || `${uniqueId}@survey.local`,
+        name: formData.name || uniqueId,
         newsletter: formData.newsletter,
         current_provider: formData.currentProvider,
         provider_duration: formData.providerDuration,
@@ -97,15 +103,21 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
         risk_level: assessment.level,
         executive_summary: assessment.executiveSummary,
         category_details: assessment.details
-      })
-      .select();
+      });
+    
+    // If we have a session, use it
+    if (session) {
+      insertQuery = insertQuery.select();
+    }
+    
+    const { data: surveyData, error: surveyError } = await insertQuery;
 
     if (surveyError) {
       console.error('Error saving survey:', surveyError);
       // Continue with in-memory assessment instead of failing
       toast({
         title: "Assessment Completed",
-        description: "Your assessment results have been calculated. However, we couldn't save them to the database for later access.",
+        description: "Your assessment results have been calculated. However, we couldn't save them to the database due to access permissions. You can still view and download your results.",
         variant: "default"
       });
       
@@ -119,7 +131,7 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
 
     // If the survey was saved successfully, save the detailed results
     if (surveyData && surveyData[0]) {
-      const { data: resultData, error: resultError } = await supabase
+      let resultQuery = supabase
         .from('ss_risk_results')
         .insert({
           risk_score: assessment.total,
@@ -130,15 +142,21 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
           executive_summary: assessment.executiveSummary,
           category_details: assessment.details,
           survey_id: surveyData[0].id
-        })
-        .select();
+        });
+      
+      // If we have a session, use it
+      if (session) {
+        resultQuery = resultQuery.select();
+      }
+      
+      const { data: resultData, error: resultError } = await resultQuery;
 
       if (resultError) {
         console.error('Error saving results:', resultError);
         // Continue with partial success
         toast({
           title: "Assessment Saved Partially",
-          description: "Your assessment was saved, but detailed results couldn't be stored.",
+          description: "Your assessment was saved, but detailed results couldn't be stored due to access permissions.",
           variant: "default"
         });
         
@@ -178,7 +196,7 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
     console.error('Error saving assessment:', error);
     toast({
       title: "Assessment Completed",
-      description: "Your assessment has been completed successfully, but we couldn't save it to the database.",
+      description: "Your assessment has been completed successfully, but we couldn't save it to the database due to an unexpected error. You can still view and download your results.",
       variant: "default"
     });
     
