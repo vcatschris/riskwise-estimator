@@ -10,6 +10,60 @@ const generateUniqueIdentifier = () => {
   return `SURVEY-${timestamp}-${random}`;
 };
 
+export const getRecentAssessment = async () => {
+  try {
+    // Get the most recent survey entry
+    const { data: surveyData, error: surveyError } = await supabase
+      .from('ss_risk_survey')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1);
+    
+    if (surveyError) {
+      console.error('Error fetching recent survey:', surveyError);
+      toast({
+        title: "Error",
+        description: "Could not fetch recent assessment data.",
+        variant: "destructive"
+      });
+      return null;
+    }
+    
+    if (!surveyData || surveyData.length === 0) {
+      console.log('No recent surveys found');
+      return null;
+    }
+    
+    // Get the detailed results for this survey
+    const surveyId = surveyData[0].id;
+    const { data: resultData, error: resultError } = await supabase
+      .from('ss_risk_results')
+      .select('*')
+      .eq('survey_id', surveyId)
+      .single();
+    
+    if (resultError) {
+      console.error('Error fetching result details:', resultError);
+    }
+    
+    // Format the timestamp to a readable date
+    const createdAt = new Date(surveyData[0].created_at);
+    const formattedDate = createdAt.toLocaleString();
+    
+    // Return combined data
+    return {
+      survey: {
+        ...surveyData[0],
+        created_at_formatted: formattedDate
+      },
+      details: resultData || null
+    };
+  } catch (error) {
+    console.error('Error in getRecentAssessment:', error);
+    return null;
+  }
+};
+
 export const saveAssessmentResults = async (assessment: any, formData: Partial<AssessmentData>) => {
   try {
     console.log('Saving assessment results:', assessment);

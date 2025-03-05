@@ -4,7 +4,7 @@ import { Step } from '../types/step';
 import { AssessmentData } from '../types';
 import { calculateRiskScore } from '../calculateScore';
 import { validateStep } from './validation/useStepValidation';
-import { saveAssessmentResults } from './database/useAssessmentStorage';
+import { saveAssessmentResults, getRecentAssessment } from './database/useAssessmentStorage';
 
 export const useRiskAssessment = () => {
   const [step, setStep] = useState<Step>('business');
@@ -14,12 +14,28 @@ export const useRiskAssessment = () => {
     currentProvider: false
   });
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
+  const [recentAssessment, setRecentAssessment] = useState<any>(null);
+  const [loadingRecent, setLoadingRecent] = useState(false);
 
   const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const fetchRecentAssessment = async () => {
+    setLoadingRecent(true);
+    try {
+      const data = await getRecentAssessment();
+      setRecentAssessment(data);
+      console.log('Recent assessment data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching recent assessment:', error);
+    } finally {
+      setLoadingRecent(false);
+    }
   };
 
   const nextStep = async () => {
@@ -86,10 +102,13 @@ export const useRiskAssessment = () => {
     progress,
     formData,
     assessmentId,
+    recentAssessment,
+    loadingRecent,
     handleInputChange,
     nextStep,
     previousStep,
     showEstimate,
-    setShowEstimate
+    setShowEstimate,
+    fetchRecentAssessment
   };
 };
