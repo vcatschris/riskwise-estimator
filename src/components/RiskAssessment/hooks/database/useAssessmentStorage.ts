@@ -71,13 +71,11 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
     // Generate unique identifier
     const uniqueId = generateUniqueIdentifier();
     
-    // Try using service role key, or insert with anonymous access if available 
-    // First check if there's an active session
-    const { data: { session } } = await supabase.auth.getSession();
+    // Check if there's an active session
+    const { data: sessionData } = await supabase.auth.getSession();
+    const session = sessionData?.session;
     
-    // Here we would normally use the service role API key, but since we can't 
-    // include that in client-side code for security reasons, we'll handle the failure case gracefully
-    
+    // Create the base insert query
     let insertQuery = supabase
       .from('ss_risk_survey')
       .insert({
@@ -104,12 +102,8 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
         executive_summary: assessment.executiveSummary,
         category_details: assessment.details
       });
-    
-    // If we have a session, use it
-    if (session) {
-      insertQuery = insertQuery.select();
-    }
-    
+
+    // Execute the insert operation
     const { data: surveyData, error: surveyError } = await insertQuery;
 
     if (surveyError) {
@@ -129,8 +123,15 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
       };
     }
 
-    // If the survey was saved successfully, save the detailed results
-    if (surveyData && surveyData[0]) {
+    // If the survey was saved successfully, get the ID
+    let surveyId = null;
+    if (Array.isArray(surveyData) && surveyData.length > 0) {
+      surveyId = surveyData[0]?.id;
+    }
+
+    // If we have a survey ID, save the detailed results
+    if (surveyId) {
+      // Create the base insert query for results
       let resultQuery = supabase
         .from('ss_risk_results')
         .insert({
@@ -141,14 +142,10 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
           risk_level: assessment.level,
           executive_summary: assessment.executiveSummary,
           category_details: assessment.details,
-          survey_id: surveyData[0].id
+          survey_id: surveyId
         });
-      
-      // If we have a session, use it
-      if (session) {
-        resultQuery = resultQuery.select();
-      }
-      
+        
+      // Execute the insert operation
       const { data: resultData, error: resultError } = await resultQuery;
 
       if (resultError) {
@@ -162,14 +159,14 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
         
         return {
           success: true,
-          id: surveyData[0].id,
+          id: surveyId,
           assessment: assessment
         };
       }
 
       console.log('Assessment saved successfully:', {
-        survey: surveyData[0],
-        results: resultData?.[0]
+        survey: surveyData && surveyData[0],
+        results: resultData
       });
       
       toast({
@@ -180,7 +177,7 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
       
       return {
         success: true,
-        id: surveyData[0].id,
+        id: surveyId,
         assessment: assessment
       };
     }

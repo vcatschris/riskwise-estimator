@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Step } from '../types/step';
 import { AssessmentData } from '../types';
@@ -42,7 +41,6 @@ export const useRiskAssessment = () => {
   };
 
   const nextStep = async () => {
-    // Log validation status for debugging
     console.log('Current step:', step);
     console.log('Current form data:', formData);
     console.log('Is step valid:', validateStep(step, formData));
@@ -63,9 +61,9 @@ export const useRiskAssessment = () => {
         const assessment = calculateRiskScore(formData as AssessmentData);
         console.log('Calculated assessment:', assessment);
         const result = await saveAssessmentResults(assessment, formData);
-        console.log('Saved assessment ID:', result?.id);
+        console.log('Saved assessment result:', result);
         
-        if (result.id) {
+        if (result?.id) {
           setAssessmentId(result.id);
         }
       } catch (error) {
