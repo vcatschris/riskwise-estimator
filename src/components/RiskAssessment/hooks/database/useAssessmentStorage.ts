@@ -1,4 +1,3 @@
-
 import { toast } from '@/hooks/use-toast';
 import { supabase } from "@/integrations/supabase/client";
 import { AssessmentData } from '../../types';
@@ -125,8 +124,13 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
 
     // If the survey was saved successfully, get the ID
     let surveyId = null;
-    if (surveyData !== null && Array.isArray(surveyData) && surveyData.length > 0) {
-      surveyId = surveyData[0]?.id;
+    if (surveyData !== null) {
+      if (Array.isArray(surveyData) && surveyData.length > 0) {
+        surveyId = surveyData[0]?.id;
+      } else if (typeof surveyData === 'object' && surveyData !== null) {
+        // Handle case where surveyData might be a single object
+        surveyId = (surveyData as any).id;
+      }
     }
 
     // If we have a survey ID, save the detailed results
@@ -165,7 +169,7 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
       }
 
       console.log('Assessment saved successfully:', {
-        survey: surveyData && Array.isArray(surveyData) ? surveyData[0] : null,
+        survey: surveyData !== null ? (Array.isArray(surveyData) ? surveyData[0] : surveyData) : null,
         results: resultData
       });
       
