@@ -67,6 +67,9 @@ export const getRecentAssessment = async () => {
 // Define a type for the survey data record
 type SurveyRecord = { id: string, [key: string]: any };
 
+// Define a type for the survey data array to avoid 'never' type issues
+type SurveyDataArray = SurveyRecord[];
+
 export const saveAssessmentResults = async (assessment: any, formData: Partial<AssessmentData>) => {
   try {
     console.log('Saving assessment results:', assessment);
@@ -131,9 +134,11 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
     
     if (surveyData) {
       if (Array.isArray(surveyData)) {
-        if (surveyData.length > 0) {
+        // Explicitly cast the array to our defined type to avoid 'never' type issues
+        const typedArray = surveyData as SurveyDataArray;
+        if (typedArray.length > 0) {
           // Handle array case
-          const record = surveyData[0] as SurveyRecord;
+          const record = typedArray[0];
           surveyId = record?.id;
         }
       } else if (typeof surveyData === 'object' && surveyData !== null) {
@@ -182,8 +187,10 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
       
       if (surveyData) {
         if (Array.isArray(surveyData)) {
-          if (surveyData.length > 0) {
-            surveyDataToLog = surveyData[0] as SurveyRecord;
+          // Explicitly cast the array to our defined type
+          const typedArray = surveyData as SurveyDataArray;
+          if (typedArray.length > 0) {
+            surveyDataToLog = typedArray[0];
           }
         } else if (typeof surveyData === 'object' && surveyData !== null) {
           surveyDataToLog = surveyData as SurveyRecord;
