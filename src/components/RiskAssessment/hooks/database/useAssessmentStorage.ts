@@ -125,7 +125,7 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
 
     // If the survey was saved successfully, get the ID
     let surveyId = null;
-    if (Array.isArray(surveyData) && surveyData.length > 0) {
+    if (surveyData !== null && Array.isArray(surveyData) && surveyData.length > 0) {
       surveyId = surveyData[0]?.id;
     }
 
@@ -165,7 +165,7 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
       }
 
       console.log('Assessment saved successfully:', {
-        survey: surveyData && surveyData[0],
+        survey: surveyData && Array.isArray(surveyData) ? surveyData[0] : null,
         results: resultData
       });
       
