@@ -89,7 +89,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
           </div>
         </div>
 
-        {/* Download button at the bottom */}
         <div className="w-full max-w-2xl pt-6 mt-4">
           <Button
             onClick={handleDownloadClick}
@@ -190,7 +189,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
           </div>
         </Card>
 
-        {/* Download button at the top - centered */}
         <div className="flex justify-center">
           <Button
             onClick={handleDownloadClick}
@@ -404,7 +402,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
           </Card>
         ))}
 
-        {/* Investment Range Card - Moved after the assessment details */}
         <Card id="investment-range" className="p-4 sm:p-6 scroll-mt-8">
           <h4 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Investment Range</h4>
           <div className="space-y-4 sm:space-y-6">
@@ -509,7 +506,13 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
 
       <ContactDialog 
         isOpen={isDialogOpen} 
-        onOpenChange={setIsDialogOpen} 
+        onOpenChange={(open) => {
+          if (dialogMode === 'consultation') {
+            setShowContactDialog(open);
+          } else {
+            setShowDownloadDialog(open);
+          }
+        }} 
         riskLevel={assessment.level as 'Low' | 'Medium' | 'High'} 
         mode={dialogMode}
         assessmentId={assessmentId} 

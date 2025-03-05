@@ -21,7 +21,7 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
     const { data: surveyData, error: surveyError } = await supabase
       .from('ss_risk_survey')
       .insert({
-        business_name: formData.business_name || uniqueId, // Use provided business name if available
+        business_name: formData.businessName || uniqueId, // Fixed property name to match type definition
         email: formData.email || `${uniqueId}@survey.local`, // Use provided email if available
         name: formData.name || uniqueId, // Use provided name if available
         newsletter: formData.newsletter,
