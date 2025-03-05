@@ -125,13 +125,18 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
 
     // If the survey was saved successfully, get the ID
     let surveyId = null;
-    // Ensure surveyData is not null before trying to access its properties
+    
+    // Type guard to handle the survey data
+    type SurveyRecord = { id: string, [key: string]: any };
+    
     if (surveyData) {
       if (Array.isArray(surveyData) && surveyData.length > 0) {
-        surveyId = surveyData[0]?.id;
-      } else if (typeof surveyData === 'object') {
-        // Handle case where surveyData might be a single object
-        surveyId = (surveyData as any).id;
+        // Handle array case
+        const record = surveyData[0] as SurveyRecord;
+        surveyId = record?.id;
+      } else if (typeof surveyData === 'object' && surveyData !== null) {
+        // Handle single object case
+        surveyId = (surveyData as SurveyRecord).id;
       }
     }
 
@@ -170,12 +175,16 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
         };
       }
 
-      // Ensure surveyData is not null before logging it
-      const surveyDataToLog = surveyData ? 
-        (Array.isArray(surveyData) && surveyData.length > 0 ? 
-          surveyData[0] : 
-          typeof surveyData === 'object' ? surveyData : null) 
-        : null;
+      // Prepare survey data for logging with proper type checking
+      let surveyDataToLog: SurveyRecord | null = null;
+      
+      if (surveyData) {
+        if (Array.isArray(surveyData) && surveyData.length > 0) {
+          surveyDataToLog = surveyData[0] as SurveyRecord;
+        } else if (typeof surveyData === 'object' && surveyData !== null) {
+          surveyDataToLog = surveyData as SurveyRecord;
+        }
+      }
       
       console.log('Assessment saved successfully:', {
         survey: surveyDataToLog,
