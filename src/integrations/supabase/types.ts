@@ -431,90 +431,186 @@ export type Database = {
       }
       game_sessions: {
         Row: {
+          active_upgrades: Json | null
+          automation_level: number | null
+          brand_reputation: number | null
           budget_allocation: Json | null
           burnout_risk: number | null
           business_type: string
+          cash_flow: number | null
           company_name: string
           created_at: string | null
           currency: string
+          customer_metrics: Json | null
+          customer_satisfaction: number | null
           debt_management: number | null
           diversity_level: number | null
           email: string | null
+          employee_metrics: Json | null
+          employee_satisfaction: number | null
           employee_skill_level: number | null
+          employees: Json | null
+          expenses: number | null
           financial_metrics: Json | null
           group_id: string | null
           hiring_strategy: number | null
           id: string
+          inventory: number | null
+          inventory_level: number | null
           loan_amount: number
           loan_type: string
+          loans: number | null
+          maintenance_level: number | null
+          market_share: number | null
+          marketing_budget: Json | null
+          marketing_roi: Json | null
+          month: number | null
           one_off_decisions: Json | null
+          operating_costs: Json | null
+          outsourcing_level: number | null
           perks_level: number | null
           pricing_strategy: number | null
+          product_quality: number | null
+          production_rate: number | null
           profit_distribution: Json | null
+          quality_control: number | null
           remote_work_level: number | null
+          research_points: number | null
+          revenue: number | null
           risk_management: number | null
+          sales_tax: number | null
+          shift_schedule: number | null
+          status: string | null
+          supply_chain: Json | null
+          tax_rate: number | null
           team_cohesion: number | null
+          team_satisfaction: number | null
           training_level: number | null
           updated_at: string | null
           user_name: string
+          workforce_skill: number | null
           workload_level: number | null
         }
         Insert: {
+          active_upgrades?: Json | null
+          automation_level?: number | null
+          brand_reputation?: number | null
           budget_allocation?: Json | null
           burnout_risk?: number | null
           business_type: string
+          cash_flow?: number | null
           company_name: string
           created_at?: string | null
           currency?: string
+          customer_metrics?: Json | null
+          customer_satisfaction?: number | null
           debt_management?: number | null
           diversity_level?: number | null
           email?: string | null
+          employee_metrics?: Json | null
+          employee_satisfaction?: number | null
           employee_skill_level?: number | null
+          employees?: Json | null
+          expenses?: number | null
           financial_metrics?: Json | null
           group_id?: string | null
           hiring_strategy?: number | null
           id?: string
+          inventory?: number | null
+          inventory_level?: number | null
           loan_amount?: number
           loan_type?: string
+          loans?: number | null
+          maintenance_level?: number | null
+          market_share?: number | null
+          marketing_budget?: Json | null
+          marketing_roi?: Json | null
+          month?: number | null
           one_off_decisions?: Json | null
+          operating_costs?: Json | null
+          outsourcing_level?: number | null
           perks_level?: number | null
           pricing_strategy?: number | null
+          product_quality?: number | null
+          production_rate?: number | null
           profit_distribution?: Json | null
+          quality_control?: number | null
           remote_work_level?: number | null
+          research_points?: number | null
+          revenue?: number | null
           risk_management?: number | null
+          sales_tax?: number | null
+          shift_schedule?: number | null
+          status?: string | null
+          supply_chain?: Json | null
+          tax_rate?: number | null
           team_cohesion?: number | null
+          team_satisfaction?: number | null
           training_level?: number | null
           updated_at?: string | null
           user_name: string
+          workforce_skill?: number | null
           workload_level?: number | null
         }
         Update: {
+          active_upgrades?: Json | null
+          automation_level?: number | null
+          brand_reputation?: number | null
           budget_allocation?: Json | null
           burnout_risk?: number | null
           business_type?: string
+          cash_flow?: number | null
           company_name?: string
           created_at?: string | null
           currency?: string
+          customer_metrics?: Json | null
+          customer_satisfaction?: number | null
           debt_management?: number | null
           diversity_level?: number | null
           email?: string | null
+          employee_metrics?: Json | null
+          employee_satisfaction?: number | null
           employee_skill_level?: number | null
+          employees?: Json | null
+          expenses?: number | null
           financial_metrics?: Json | null
           group_id?: string | null
           hiring_strategy?: number | null
           id?: string
+          inventory?: number | null
+          inventory_level?: number | null
           loan_amount?: number
           loan_type?: string
+          loans?: number | null
+          maintenance_level?: number | null
+          market_share?: number | null
+          marketing_budget?: Json | null
+          marketing_roi?: Json | null
+          month?: number | null
           one_off_decisions?: Json | null
+          operating_costs?: Json | null
+          outsourcing_level?: number | null
           perks_level?: number | null
           pricing_strategy?: number | null
+          product_quality?: number | null
+          production_rate?: number | null
           profit_distribution?: Json | null
+          quality_control?: number | null
           remote_work_level?: number | null
+          research_points?: number | null
+          revenue?: number | null
           risk_management?: number | null
+          sales_tax?: number | null
+          shift_schedule?: number | null
+          status?: string | null
+          supply_chain?: Json | null
+          tax_rate?: number | null
           team_cohesion?: number | null
+          team_satisfaction?: number | null
           training_level?: number | null
           updated_at?: string | null
           user_name?: string
+          workforce_skill?: number | null
           workload_level?: number | null
         }
         Relationships: []

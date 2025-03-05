@@ -23,7 +23,7 @@ interface ContactDialogProps {
   onOpenChange: (open: boolean) => void;
   riskLevel: 'Low' | 'Medium' | 'High';
   mode?: 'consultation' | 'download';
-  assessmentId?: string;
+  assessmentId?: string | null;
 }
 
 type ContactSubmission = Database['public']['Tables']['contact_submissions']['Insert'];
@@ -180,24 +180,26 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw submissionError;
       }
 
-      // Try to trigger webhook, but don't fail the whole process if it fails
-      try {
-        console.log("Triggering webhook via Edge Function...");
-        const { data: { session } } = await supabase.auth.getSession();
-        await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token}`,
-          },
-          body: JSON.stringify({
-            assessmentId,
-            contactData,
-          }),
-        });
-      } catch (webhookError) {
-        // Log the webhook error but continue with PDF generation
-        console.error('Webhook error (non-critical):', webhookError);
+      // Only try to trigger webhook if we have an assessmentId
+      if (assessmentId) {
+        try {
+          console.log("Triggering webhook via Edge Function...");
+          const { data: { session } } = await supabase.auth.getSession();
+          await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session?.access_token}`,
+            },
+            body: JSON.stringify({
+              assessmentId,
+              contactData,
+            }),
+          });
+        } catch (webhookError) {
+          // Log the webhook error but continue with PDF generation
+          console.error('Webhook error (non-critical):', webhookError);
+        }
       }
 
       // Generate and save PDF for both consultation and download modes

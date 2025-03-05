@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,9 +13,10 @@ import { jsPDF } from 'jspdf';
 
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
+  assessmentId?: string | null;
 }
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assessmentId }) => {
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
@@ -58,6 +58,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
 
   const handleDownloadClick = () => {
     setShowDownloadDialog(true);
+  };
+
+  const handleConsultClick = () => {
+    setShowContactDialog(true);
   };
 
   const NextStepsSection = () => (
@@ -149,7 +153,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       ? 'text-orange-500 bg-orange-50 dark:bg-orange-950/30' 
       : 'text-red-500 bg-red-50 dark:bg-red-950/30';
 
-  // New function to get the appropriate text color based on risk score
   const getRiskScoreTextColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
     if (percentage < 40) return 'text-green-600 dark:text-green-400';
@@ -157,7 +160,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     return 'text-red-600 dark:text-red-400';
   };
 
-  // New function to get the appropriate text color based on value score
   const getValueScoreTextColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
     if (percentage > 50) return 'text-green-600 dark:text-green-400';
@@ -165,6 +167,9 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
     if (percentage < 70) return 'text-orange-600 dark:text-orange-400';
     return 'text-red-600 dark:text-red-400';
   };
+
+  const isDialogOpen = showContactDialog || showDownloadDialog;
+  const dialogMode = showContactDialog ? 'consultation' : 'download';
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -503,17 +508,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData }) => {
       </div>
 
       <ContactDialog 
-        isOpen={showContactDialog}
-        onOpenChange={setShowContactDialog}
-        riskLevel={assessment.level}
-        mode="consultation"
-      />
-
-      <ContactDialog 
-        isOpen={showDownloadDialog}
-        onOpenChange={setShowDownloadDialog}
-        riskLevel={assessment.level}
-        mode="download"
+        isOpen={isDialogOpen} 
+        onOpenChange={setIsDialogOpen} 
+        riskLevel={assessment.level as 'Low' | 'Medium' | 'High'} 
+        mode={dialogMode}
+        assessmentId={assessmentId} 
       />
     </div>
   );

@@ -13,6 +13,7 @@ export const useRiskAssessment = () => {
   const [formData, setFormData] = useState<Partial<AssessmentData>>({
     currentProvider: false
   });
+  const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
   const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
     setFormData(prev => ({
@@ -35,12 +36,11 @@ export const useRiskAssessment = () => {
     if (step === 'operational') {
       const assessment = calculateRiskScore(formData as AssessmentData);
       console.log('Calculated assessment:', assessment);
-      const savedAssessment = await saveAssessmentResults(assessment, formData);
-      console.log('Saved assessment ID:', savedAssessment?.id);
+      const result = await saveAssessmentResults(assessment, formData);
+      console.log('Saved assessment ID:', result?.id);
       
-      if (!savedAssessment) {
-        console.log('Failed to save assessment results');
-        return;
+      if (result.id) {
+        setAssessmentId(result.id);
       }
     }
 
@@ -85,6 +85,7 @@ export const useRiskAssessment = () => {
     step,
     progress,
     formData,
+    assessmentId,
     handleInputChange,
     nextStep,
     previousStep,
