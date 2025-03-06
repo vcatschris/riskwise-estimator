@@ -364,7 +364,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
           <h4 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Industry Benchmarked Fees</h4>
           <div className="space-y-4 sm:space-y-6">
             <p className="text-sm text-muted-foreground">
-              If you're currently paying around this amount but still have a high risk score, it may be worth reviewing your setup to ensure you're getting the right level of protection and value.
+              Based on your responses, this is what you can expect to pay for a reduced/mitigated risk score. If you're already investing around this amount but still have a high risk score, it may be worth reviewing your setup to ensure you're getting the right level of protection and value.
             </p>
             <div className="flex flex-col gap-6 p-4 sm:p-6 bg-gray-50 dark:bg-gray-950/30 rounded-lg">
               <div className="text-center">
