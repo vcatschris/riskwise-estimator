@@ -879,6 +879,84 @@ export type Database = {
         }
         Relationships: []
       }
+      profit_calculator_submissions: {
+        Row: {
+          affiliate_revenue: number | null
+          created_at: string | null
+          delivery_tools: number | null
+          freelance_costs: number | null
+          gross_profit: number | null
+          gross_profit_margin: number | null
+          id: string
+          marketing_costs: number | null
+          net_profit: number | null
+          net_profit_margin: number | null
+          operating_expenses: number | null
+          operations_tools: number | null
+          project_revenue: number | null
+          retainer_revenue: number | null
+          selected_country: string | null
+          selected_currency: string | null
+          session_id: string | null
+          staffing_costs: number | null
+          tax_amount: number | null
+          total_revenue: number | null
+          training_costs: number | null
+          travel_expenses: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_revenue?: number | null
+          created_at?: string | null
+          delivery_tools?: number | null
+          freelance_costs?: number | null
+          gross_profit?: number | null
+          gross_profit_margin?: number | null
+          id?: string
+          marketing_costs?: number | null
+          net_profit?: number | null
+          net_profit_margin?: number | null
+          operating_expenses?: number | null
+          operations_tools?: number | null
+          project_revenue?: number | null
+          retainer_revenue?: number | null
+          selected_country?: string | null
+          selected_currency?: string | null
+          session_id?: string | null
+          staffing_costs?: number | null
+          tax_amount?: number | null
+          total_revenue?: number | null
+          training_costs?: number | null
+          travel_expenses?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_revenue?: number | null
+          created_at?: string | null
+          delivery_tools?: number | null
+          freelance_costs?: number | null
+          gross_profit?: number | null
+          gross_profit_margin?: number | null
+          id?: string
+          marketing_costs?: number | null
+          net_profit?: number | null
+          net_profit_margin?: number | null
+          operating_expenses?: number | null
+          operations_tools?: number | null
+          project_revenue?: number | null
+          retainer_revenue?: number | null
+          selected_country?: string | null
+          selected_currency?: string | null
+          session_id?: string | null
+          staffing_costs?: number | null
+          tax_amount?: number | null
+          total_revenue?: number | null
+          training_costs?: number | null
+          travel_expenses?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       regions: {
         Row: {
           created_at: string | null

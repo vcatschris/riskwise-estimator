@@ -159,14 +159,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
     return 'text-red-600 dark:text-red-400';
   };
 
-  const getValueScoreTextColor = (score: number, maxScore: number) => {
-    const percentage = (score / maxScore) * 100;
-    if (percentage > 50) return 'text-green-600 dark:text-green-400';
-    if (percentage < 40) return 'text-green-600 dark:text-green-400';
-    if (percentage < 70) return 'text-orange-600 dark:text-orange-400';
-    return 'text-red-600 dark:text-red-400';
-  };
-
   const isDialogOpen = showContactDialog || showDownloadDialog;
   const dialogMode = showContactDialog ? 'consultation' : 'download';
 
@@ -206,29 +198,29 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2 }}
-            className={`score-section p-4 sm:p-8 rounded-2xl shadow-lg ${riskColor}`}
+            className={`score-section p-6 sm:p-10 rounded-2xl shadow-lg ${riskColor}`}
           >
-            <h3 className="text-2xl sm:text-3xl font-bold mb-2">Risk Assessment Results</h3>
-            <p className="text-4xl sm:text-5xl font-bold mt-3 sm:mt-4">{assessment.level} Risk</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4 sm:mt-6">
+            <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-[#9b87f5]">Risk Assessment Results</h3>
+            <p className="text-4xl sm:text-6xl font-bold mt-4 sm:mt-6">{assessment.level} Risk</p>
+            <div className="flex justify-center mt-6 sm:mt-8">
               <div className="text-center">
-                <div className="py-2">
-                  <span className={`text-xl sm:text-2xl font-semibold ${getRiskScoreTextColor(assessment.total, assessment.maxPossible)}`}>
+                <div className="py-3 sm:py-4">
+                  <span className={`text-3xl sm:text-5xl font-semibold ${getRiskScoreTextColor(assessment.total, assessment.maxPossible)}`}>
                     {assessment.total}
                   </span>
-                  <span className="text-xs sm:text-sm ml-1 text-gray-500 dark:text-gray-400">
+                  <span className="text-sm sm:text-lg ml-2 text-gray-500 dark:text-gray-400">
                     / {assessment.maxPossible}
                   </span>
                 </div>
-                <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Risk Score</p>
-                <p className="text-xs font-medium px-4 mt-1">
+                <p className="text-base sm:text-xl font-bold text-[#9b87f5] mb-2 mt-3">Risk Score</p>
+                <p className="text-sm sm:text-base font-medium px-6 sm:px-8 mt-2 max-w-lg mx-auto">
                   <strong>Your Risk Score reflects the potential risks of not reviewing your IT services, with 100 indicating a high risk.</strong>
                 </p>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto mt-1">
+                    <TooltipTrigger className="text-sm text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto mt-2">
                       <span>What's this?</span>
-                      <Info className="h-3 w-3" />
+                      <Info className="h-4 w-4" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <div className="text-center space-y-2 sm:space-y-3 text-xs sm:text-sm">
@@ -239,40 +231,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
                           <li>Business Profile (33%)</li>
                           <li>Security Measures (33%)</li>
                           <li>Compliance & Support (34%)</li>
-                        </ul>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <div className="text-center">
-                <div className="py-2">
-                  <span className={`text-xl sm:text-2xl font-semibold ${getValueScoreTextColor(assessment.valueScore, assessment.maxValuePossible)}`}>
-                    {assessment.valueScore}
-                  </span>
-                  <span className="text-xs sm:text-sm ml-1 text-gray-500 dark:text-gray-400">
-                    / {assessment.maxValuePossible}
-                  </span>
-                </div>
-                <p className="text-sm font-bold text-[#9b87f5] mb-1 mt-2">Value Score</p>
-                <p className="text-xs font-medium px-4 mt-1">
-                  <strong>Your Value Score highlights the potential benefits and opportunities of making strategic changes, with 100 representing maximum value.</strong>
-                </p>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger className="text-xs text-brand-orange hover:text-brand-orange/80 flex items-center gap-1 mx-auto mt-1">
-                      <span>What's this?</span>
-                      <Info className="h-3 w-3" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <div className="text-center space-y-2 sm:space-y-3 text-xs sm:text-sm">
-                        <p className="font-medium text-purple-900 dark:text-purple-100">
-                          Value Score (0-100) indicates potential benefits from improvements
-                        </p>
-                        <ul className="space-y-1 sm:space-y-2 text-purple-800 dark:text-purple-200">
-                          <li>Business Profile Value (33%)</li>
-                          <li>Security Enhancement Value (33%)</li>
-                          <li>Compliance & Support Value (34%)</li>
                         </ul>
                       </div>
                     </TooltipContent>
