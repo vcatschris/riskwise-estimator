@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Step } from '../types/step';
 import { AssessmentData } from '../types';
@@ -18,6 +19,7 @@ export const useRiskAssessment = () => {
   const [recentAssessment, setRecentAssessment] = useState<any>(null);
   const [loadingRecent, setLoadingRecent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
   const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
     setFormData(prev => ({
@@ -57,6 +59,7 @@ export const useRiskAssessment = () => {
     
     if (step === 'operational' && !isSubmitting) {
       setIsSubmitting(true);
+      setIsGeneratingReport(true);
       try {
         const assessment = calculateRiskScore(formData as AssessmentData);
         console.log('Calculated assessment:', assessment);
@@ -66,6 +69,9 @@ export const useRiskAssessment = () => {
         if (result?.id) {
           setAssessmentId(result.id);
         }
+        
+        // Add artificial delay to simulate report generation
+        await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (error) {
         console.error('Error during assessment submission:', error);
         toast({
@@ -75,24 +81,24 @@ export const useRiskAssessment = () => {
         });
       } finally {
         setIsSubmitting(false);
+        setIsGeneratingReport(false);
+        setStep('results');
+        setProgress(100);
       }
-    }
-
-    if (step === 'business') {
-      setStep('itsupport');
-      setProgress(32);
-    } else if (step === 'itsupport') {
-      setStep('infrastructure');
-      setProgress(48);
-    } else if (step === 'infrastructure') {
-      setStep('security');
-      setProgress(64);
-    } else if (step === 'security') {
-      setStep('operational');
-      setProgress(80);
-    } else if (step === 'operational') {
-      setStep('results');
-      setProgress(100);
+    } else {
+      if (step === 'business') {
+        setStep('itsupport');
+        setProgress(32);
+      } else if (step === 'itsupport') {
+        setStep('infrastructure');
+        setProgress(48);
+      } else if (step === 'infrastructure') {
+        setStep('security');
+        setProgress(64);
+      } else if (step === 'security') {
+        setStep('operational');
+        setProgress(80);
+      }
     }
   };
 
@@ -123,6 +129,7 @@ export const useRiskAssessment = () => {
     recentAssessment,
     loadingRecent,
     isSubmitting,
+    isGeneratingReport,
     handleInputChange,
     nextStep,
     previousStep,

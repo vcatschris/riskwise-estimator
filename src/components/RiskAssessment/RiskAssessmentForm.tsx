@@ -23,6 +23,7 @@ export function RiskAssessmentForm() {
     nextStep,
     previousStep,
     showEstimate,
+    isGeneratingReport,
   } = useRiskAssessment();
 
   const { title, description } = getTitleAndDescription(step);
@@ -47,6 +48,7 @@ export function RiskAssessmentForm() {
           step={step}
           onPrevious={previousStep}
           onNext={nextStep}
+          isGeneratingReport={isGeneratingReport}
         />
       </CardFooter>
     </Card>
