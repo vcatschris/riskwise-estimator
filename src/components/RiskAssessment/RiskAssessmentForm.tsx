@@ -53,7 +53,7 @@ export function RiskAssessmentForm() {
           {step === 'infrastructure' && <InfrastructureStep formData={formData} onInputChange={handleInputChange} />}
           {step === 'security' && <SecurityStep formData={formData} onInputChange={handleInputChange} />}
           {step === 'operational' && <OperationalStep formData={formData} onInputChange={handleInputChange} />}
-          {step === 'results' && <ResultsDisplay formData={formData} assessmentId={assessmentId} assessmentResults={assessmentResults} />}
+          {step === 'results' && <ResultsDisplay formData={formData} assessmentId={assessmentId} riskLevel={assessmentResults?.level || 'Medium'} />}
         </CardContent>
         <CardFooter>
           <FormNavigation

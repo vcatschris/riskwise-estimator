@@ -22,6 +22,8 @@ serve(async (req) => {
       const requestBody = JSON.parse(requestBodyText);
       assessmentId = requestBody.assessmentId;
       contactData = requestBody.contactData;
+
+      console.log('Parsed webhook request data:', { assessmentId, contactData });
     } catch (parseError) {
       console.error('Error parsing JSON request body:', parseError);
       return new Response(
@@ -29,18 +31,16 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
-    
-    console.log('Parsed webhook request data:', { assessmentId, contactData });
 
-    if (!contactData) {
-      console.error('Missing contactData in request');
+    if (!contactData || typeof contactData !== 'object') {
+      console.error('Missing or invalid contactData in request:', contactData);
       return new Response(
-        JSON.stringify({ error: 'Missing contactData in request' }),
+        JSON.stringify({ error: 'Missing or invalid contactData in request' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
-    // Format the data for Zapier
+    // Format the data for Zapier - ensure all fields exist even if empty
     const zapierPayload = {
       name: contactData.name || 'Anonymous',
       email: contactData.email || 'noemail@example.com',
@@ -54,6 +54,7 @@ serve(async (req) => {
     };
     
     console.log('Sending data to Zapier webhook:', zapierPayload);
+    console.log('Zapier webhook URL:', 'https://hooks.zapier.com/hooks/catch/3379103/2lry0on/');
     
     // Fetch data from Zapier webhook
     const response = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {

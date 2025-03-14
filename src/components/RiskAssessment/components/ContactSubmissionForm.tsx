@@ -46,13 +46,15 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
     setIsSubmitting(true);
     
     try {
-      console.log('Submitting contact form with data:', {
+      const payload = {
         assessmentId,
         contactData: {
           ...formData,
           risk_level: riskLevel
         }
-      });
+      };
+      
+      console.log('Submitting contact form with data:', payload);
       
       // Call our Supabase edge function
       const response = await fetch('https://ytwjygdatwyyoxozqfat.supabase.co/functions/v1/assessment-webhook', {
@@ -60,17 +62,22 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          assessmentId,
-          contactData: {
-            ...formData,
-            risk_level: riskLevel
-          }
-        }),
+        body: JSON.stringify(payload),
       });
       
-      const responseData = await response.json();
-      console.log('Webhook response:', responseData);
+      // Log raw response for debugging
+      const responseText = await response.text();
+      console.log('Webhook raw response:', responseText);
+      
+      // Parse the response (if it's valid JSON)
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+        console.log('Webhook parsed response:', responseData);
+      } catch (error) {
+        console.error('Error parsing response:', error);
+        // Continue with original response text
+      }
       
       if (response.ok) {
         toast({
@@ -88,7 +95,7 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
           submission_type: 'contact',
         });
       } else {
-        throw new Error(`Failed to submit form: ${response.statusText}`);
+        throw new Error(`Failed to submit form: ${responseText}`);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
