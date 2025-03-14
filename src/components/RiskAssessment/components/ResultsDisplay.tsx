@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,9 +15,10 @@ import { jsPDF } from 'jspdf';
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
   assessmentId?: string | null;
+  riskLevel?: 'Low' | 'Medium' | 'High';
 }
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assessmentId }) => {
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assessmentId, riskLevel = 'Medium' }) => {
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
@@ -474,7 +476,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
             setShowDownloadDialog(open);
           }
         }} 
-        riskLevel={assessment.level as 'Low' | 'Medium' | 'High'} 
+        riskLevel={riskLevel || assessment.level} 
         mode={dialogMode}
         assessmentId={assessmentId} 
       />
