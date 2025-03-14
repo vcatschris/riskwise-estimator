@@ -1,4 +1,3 @@
-
 import { toast } from '@/hooks/use-toast';
 import { supabase } from "@/integrations/supabase/client";
 import { AssessmentData } from '../../types';
@@ -235,6 +234,87 @@ export const saveAssessmentResults = async (assessment: any, formData: Partial<A
       success: true,
       assessment: assessment,
       id: null
+    };
+  }
+};
+
+export const submitContactForm = async (
+  contactData: { 
+    name: string; 
+    email: string; 
+    company: string; 
+    phone?: string; 
+    newsletter: boolean;
+    submission_type: string;
+  },
+  assessmentId: string | null,
+  riskLevel: string
+) => {
+  try {
+    console.log('Submitting contact form to webhook:', {
+      assessmentId,
+      contactData: {
+        ...contactData,
+        risk_level: riskLevel
+      }
+    });
+    
+    // First try to insert into Supabase table as a backup
+    try {
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .insert([{
+          name: contactData.name,
+          company: contactData.company,
+          email: contactData.email,
+          phone: contactData.phone,
+          newsletter: contactData.newsletter,
+          risk_level: riskLevel,
+          submission_type: contactData.submission_type,
+          assessment_id: assessmentId
+        }]);
+        
+      if (error) {
+        console.warn('Failed to save contact to database, but will still try webhook:', error);
+      } else {
+        console.log('Contact saved to database:', data);
+      }
+    } catch (dbError) {
+      console.warn('Error saving to database:', dbError);
+    }
+    
+    // Then try the webhook (our main goal)
+    const response = await fetch('https://ytwjygdatwyyoxozqfat.supabase.co/functions/v1/assessment-webhook', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        assessmentId,
+        contactData: {
+          ...contactData,
+          risk_level: riskLevel
+        }
+      }),
+    });
+    
+    const responseData = await response.json();
+    console.log('Webhook response:', responseData);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to submit form: ${response.statusText}`);
+    }
+    
+    return {
+      success: true,
+      message: "Contact information submitted successfully"
+    };
+    
+  } catch (error) {
+    console.error('Error submitting contact information:', error);
+    return {
+      success: false,
+      error: error.message || "Unknown error occurred"
     };
   }
 };

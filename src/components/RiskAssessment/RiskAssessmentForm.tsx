@@ -20,6 +20,7 @@ export function RiskAssessmentForm() {
     progress,
     formData,
     assessmentId,
+    assessmentResults,
     handleInputChange,
     nextStep,
     previousStep,
@@ -52,7 +53,7 @@ export function RiskAssessmentForm() {
           {step === 'infrastructure' && <InfrastructureStep formData={formData} onInputChange={handleInputChange} />}
           {step === 'security' && <SecurityStep formData={formData} onInputChange={handleInputChange} />}
           {step === 'operational' && <OperationalStep formData={formData} onInputChange={handleInputChange} />}
-          {step === 'results' && <ResultsDisplay formData={formData} assessmentId={assessmentId} />}
+          {step === 'results' && <ResultsDisplay formData={formData} assessmentId={assessmentId} assessmentResults={assessmentResults} />}
         </CardContent>
         <CardFooter>
           <FormNavigation

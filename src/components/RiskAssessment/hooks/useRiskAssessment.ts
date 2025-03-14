@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Step } from '../types/step';
 import { AssessmentData } from '../types';
@@ -20,6 +19,7 @@ export const useRiskAssessment = () => {
   const [loadingRecent, setLoadingRecent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [assessmentResults, setAssessmentResults] = useState<any>(null);
 
   const handleInputChange = (field: keyof AssessmentData, value: string | boolean) => {
     setFormData(prev => ({
@@ -63,6 +63,8 @@ export const useRiskAssessment = () => {
       try {
         const assessment = calculateRiskScore(formData as AssessmentData);
         console.log('Calculated assessment:', assessment);
+        setAssessmentResults(assessment);
+        
         const result = await saveAssessmentResults(assessment, formData);
         console.log('Saved assessment result:', result);
         
@@ -130,6 +132,7 @@ export const useRiskAssessment = () => {
     loadingRecent,
     isSubmitting,
     isGeneratingReport,
+    assessmentResults,
     handleInputChange,
     nextStep,
     previousStep,

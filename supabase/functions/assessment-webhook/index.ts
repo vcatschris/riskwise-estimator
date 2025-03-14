@@ -14,27 +14,54 @@ serve(async (req) => {
 
   try {
     // Get the form data and assessment ID from the request
-    const { assessmentId, contactData } = await req.json();
-    console.log('Received webhook request:', { assessmentId, contactData });
+    const requestBodyText = await req.text();
+    console.log('Raw request body:', requestBodyText);
+    
+    let assessmentId, contactData;
+    try {
+      const requestBody = JSON.parse(requestBodyText);
+      assessmentId = requestBody.assessmentId;
+      contactData = requestBody.contactData;
+    } catch (parseError) {
+      console.error('Error parsing JSON request body:', parseError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body', details: parseError.message }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    
+    console.log('Parsed webhook request data:', { assessmentId, contactData });
 
+    if (!contactData) {
+      console.error('Missing contactData in request');
+      return new Response(
+        JSON.stringify({ error: 'Missing contactData in request' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
+    // Format the data for Zapier
+    const zapierPayload = {
+      name: contactData.name || 'Anonymous',
+      email: contactData.email || 'noemail@example.com',
+      company: contactData.company || 'Unknown',
+      phone: contactData.phone || 'Not provided',
+      newsletter: contactData.newsletter === true,
+      submission_type: contactData.submission_type || 'website',
+      risk_level: contactData.risk_level || 'Unknown',
+      assessment_id: assessmentId || 'No ID',
+      submission_date: new Date().toISOString()
+    };
+    
+    console.log('Sending data to Zapier webhook:', zapierPayload);
+    
     // Fetch data from Zapier webhook
-    console.log('Sending data to Zapier webhook');
     const response = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        name: contactData.name,
-        email: contactData.email,
-        company: contactData.company,
-        phone: contactData.phone,
-        newsletter: contactData.newsletter,
-        submission_type: contactData.submission_type,
-        risk_level: contactData.risk_level,
-        assessment_id: assessmentId,
-        submission_date: new Date().toISOString()
-      }),
+      body: JSON.stringify(zapierPayload),
     });
 
     // Get the response body for more detailed error information
@@ -47,7 +74,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true }),
+      JSON.stringify({ success: true, message: "Data successfully sent to Zapier" }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 
