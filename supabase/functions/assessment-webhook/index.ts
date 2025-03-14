@@ -15,8 +15,10 @@ serve(async (req) => {
   try {
     // Get the form data and assessment ID from the request
     const { assessmentId, contactData } = await req.json();
+    console.log('Received webhook request:', { assessmentId, contactData });
 
     // Fetch data from Zapier webhook
+    console.log('Sending data to Zapier webhook');
     const response = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
       method: 'POST',
       headers: {
@@ -35,8 +37,13 @@ serve(async (req) => {
       }),
     });
 
+    // Get the response body for more detailed error information
+    const responseBody = await response.text();
+    console.log('Zapier webhook response status:', response.status);
+    console.log('Zapier webhook response body:', responseBody);
+
     if (!response.ok) {
-      throw new Error(`Zapier webhook failed: ${response.statusText}`);
+      throw new Error(`Zapier webhook failed: ${response.status} ${response.statusText}. Response: ${responseBody}`);
     }
 
     return new Response(
