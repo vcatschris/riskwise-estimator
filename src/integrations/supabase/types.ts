@@ -9,6 +9,81 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      anonymous_financial_metrics: {
+        Row: {
+          business_type: string | null
+          cash_flow_trend: string | null
+          created_at: string
+          currency: string | null
+          data_source: string | null
+          document_type: string | null
+          expense_categories: Json | null
+          file_count: number | null
+          gross_margin: number | null
+          gross_profit: number | null
+          id: string
+          industry: string | null
+          period_end: string | null
+          period_start: string | null
+          profit_trend: string | null
+          revenue_trend: string | null
+          total_cash_inflow: number | null
+          total_cash_outflow: number | null
+          total_expenses: number | null
+          total_net_cash_flow: number | null
+          total_profit_loss: number | null
+          total_revenue: number | null
+        }
+        Insert: {
+          business_type?: string | null
+          cash_flow_trend?: string | null
+          created_at?: string
+          currency?: string | null
+          data_source?: string | null
+          document_type?: string | null
+          expense_categories?: Json | null
+          file_count?: number | null
+          gross_margin?: number | null
+          gross_profit?: number | null
+          id?: string
+          industry?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          profit_trend?: string | null
+          revenue_trend?: string | null
+          total_cash_inflow?: number | null
+          total_cash_outflow?: number | null
+          total_expenses?: number | null
+          total_net_cash_flow?: number | null
+          total_profit_loss?: number | null
+          total_revenue?: number | null
+        }
+        Update: {
+          business_type?: string | null
+          cash_flow_trend?: string | null
+          created_at?: string
+          currency?: string | null
+          data_source?: string | null
+          document_type?: string | null
+          expense_categories?: Json | null
+          file_count?: number | null
+          gross_margin?: number | null
+          gross_profit?: number | null
+          id?: string
+          industry?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          profit_trend?: string | null
+          revenue_trend?: string | null
+          total_cash_inflow?: number | null
+          total_cash_outflow?: number | null
+          total_expenses?: number | null
+          total_net_cash_flow?: number | null
+          total_profit_loss?: number | null
+          total_revenue?: number | null
+        }
+        Relationships: []
+      }
       brand_guides: {
         Row: {
           accent_color: string | null
@@ -375,6 +450,42 @@ export type Database = {
           total_score?: number
           updated_at?: string | null
           user_name?: string
+        }
+        Relationships: []
+      }
+      financial_files: {
+        Row: {
+          business_type: string | null
+          created_at: string | null
+          document_type: string | null
+          file_name: string
+          file_size: number
+          id: string
+          source: string | null
+          template: string | null
+          user_id: string | null
+        }
+        Insert: {
+          business_type?: string | null
+          created_at?: string | null
+          document_type?: string | null
+          file_name: string
+          file_size: number
+          id?: string
+          source?: string | null
+          template?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          business_type?: string | null
+          created_at?: string | null
+          document_type?: string | null
+          file_name?: string
+          file_size?: number
+          id?: string
+          source?: string | null
+          template?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -876,6 +987,45 @@ export type Database = {
           updated_at?: string | null
           user_name?: string
           venture_name?: string
+        }
+        Relationships: []
+      }
+      processed_financial_data: {
+        Row: {
+          analysis_results: Json | null
+          business_type: string
+          created_at: string | null
+          document_type: string
+          file_name: string
+          file_type: string
+          id: string
+          processed_data: Json
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          analysis_results?: Json | null
+          business_type?: string
+          created_at?: string | null
+          document_type: string
+          file_name: string
+          file_type: string
+          id?: string
+          processed_data: Json
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          analysis_results?: Json | null
+          business_type?: string
+          created_at?: string | null
+          document_type?: string
+          file_name?: string
+          file_type?: string
+          id?: string
+          processed_data?: Json
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

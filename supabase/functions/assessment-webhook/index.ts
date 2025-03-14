@@ -17,7 +17,7 @@ serve(async (req) => {
     const { assessmentId, contactData } = await req.json();
 
     // Fetch data from Zapier webhook
-    const response = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2wpsy44/', {
+    const response = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
