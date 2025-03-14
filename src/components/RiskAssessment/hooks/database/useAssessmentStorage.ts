@@ -1,3 +1,4 @@
+
 import { toast } from '@/hooks/use-toast';
 import { supabase } from "@/integrations/supabase/client";
 import { AssessmentData } from '../../types';
@@ -283,8 +284,47 @@ export const submitContactForm = async (
       console.warn('Error saving to database:', dbError);
     }
     
-    // Then try the webhook (our main goal)
-    const response = await fetch('https://ytwjygdatwyyoxozqfat.supabase.co/functions/v1/assessment-webhook', {
+    // Try direct call to Zapier webhook first
+    try {
+      console.log("Calling Zapier webhook directly...");
+      const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: contactData.name || 'Anonymous',
+          email: contactData.email || 'noemail@example.com',
+          company: contactData.company || 'Unknown',
+          phone: contactData.phone || 'Not provided',
+          newsletter: contactData.newsletter === true,
+          submission_type: contactData.submission_type || 'website',
+          risk_level: riskLevel || 'Unknown',
+          assessment_id: assessmentId || 'No ID',
+          submission_date: new Date().toISOString()
+        }),
+      });
+      
+      console.log("Direct Zapier response status:", directZapierResponse.status);
+      try {
+        const directResponseText = await directZapierResponse.text();
+        console.log("Direct Zapier response:", directResponseText);
+      } catch (textError) {
+        console.log("Could not get response text from Zapier direct call");
+      }
+      
+      if (directZapierResponse.ok) {
+        return {
+          success: true,
+          message: "Contact information submitted successfully via direct Zapier webhook"
+        };
+      }
+    } catch (directError) {
+      console.error("Error calling Zapier directly:", directError);
+    }
+    
+    // Then try the webhook (our backup)
+    const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -298,18 +338,32 @@ export const submitContactForm = async (
       }),
     });
     
-    const responseData = await response.json();
-    console.log('Webhook response:', responseData);
-    
-    if (!response.ok) {
-      throw new Error(`Failed to submit form: ${response.statusText}`);
+    try {
+      const responseData = await response.json();
+      console.log('Webhook response:', responseData);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to submit form: ${response.statusText}`);
+      }
+      
+      return {
+        success: true,
+        message: "Contact information submitted successfully via edge function"
+      };
+    } catch (jsonError) {
+      console.error('Error parsing JSON response:', jsonError);
+      const textResponse = await response.text();
+      console.log('Raw response text:', textResponse);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to submit form: ${response.statusText} (${textResponse})`);
+      }
+      
+      return {
+        success: true,
+        message: "Contact information submitted successfully (no JSON response)"
+      };
     }
-    
-    return {
-      success: true,
-      message: "Contact information submitted successfully"
-    };
-    
   } catch (error) {
     console.error('Error submitting contact information:', error);
     return {

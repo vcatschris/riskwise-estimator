@@ -56,8 +56,37 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
       
       console.log('Submitting contact form with data:', payload);
       
-      // Call our Supabase edge function
-      const response = await fetch('https://ytwjygdatwyyoxozqfat.supabase.co/functions/v1/assessment-webhook', {
+      // Try direct call to Zapier webhook first
+      try {
+        console.log("Calling Zapier webhook directly...");
+        const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name || 'Anonymous',
+            email: formData.email || 'noemail@example.com',
+            company: formData.company || 'Unknown',
+            phone: formData.phone || 'Not provided',
+            newsletter: formData.newsletter === true,
+            submission_type: formData.submission_type || 'website',
+            risk_level: riskLevel || 'Unknown',
+            assessment_id: assessmentId || 'No ID',
+            submission_date: new Date().toISOString()
+          }),
+        });
+        
+        console.log("Direct Zapier response status:", directZapierResponse.status);
+        const directResponseText = await directZapierResponse.text();
+        console.log("Direct Zapier response:", directResponseText);
+      } catch (directError) {
+        console.error("Error calling Zapier directly:", directError);
+      }
+      
+      // Call our Supabase edge function as backup
+      console.log("Calling Supabase edge function...");
+      const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

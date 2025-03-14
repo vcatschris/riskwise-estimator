@@ -56,7 +56,7 @@ serve(async (req) => {
     console.log('Sending data to Zapier webhook:', zapierPayload);
     console.log('Zapier webhook URL:', 'https://hooks.zapier.com/hooks/catch/3379103/2lry0on/');
     
-    // Fetch data from Zapier webhook
+    // Using the direct Zapier URL to ensure it's correctly targeted
     const response = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
       method: 'POST',
       headers: {

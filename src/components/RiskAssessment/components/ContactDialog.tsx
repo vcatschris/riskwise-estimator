@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -177,29 +176,53 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 
       if (submissionError) {
         console.error('Database submission error:', submissionError);
-        throw submissionError;
+        // Continue even if database submission fails
+      }
+
+      // Try direct call to Zapier webhook first
+      try {
+        console.log("Calling Zapier webhook directly...");
+        const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: contactData.name || 'Anonymous',
+            email: contactData.email || 'noemail@example.com',
+            company: contactData.company || 'Unknown',
+            phone: contactData.phone || 'Not provided',
+            newsletter: contactData.newsletter === true,
+            submission_type: contactData.submission_type || 'website',
+            risk_level: riskLevel || 'Unknown',
+            assessment_id: assessmentId || 'No ID',
+            submission_date: new Date().toISOString()
+          }),
+        });
+        
+        console.log("Direct Zapier response status:", directZapierResponse.status);
+        const directResponseText = await directZapierResponse.text();
+        console.log("Direct Zapier response:", directResponseText);
+      } catch (directError) {
+        console.error("Error calling Zapier directly:", directError);
       }
 
       // Only try to trigger webhook if we have an assessmentId
-      if (assessmentId) {
-        try {
-          console.log("Triggering webhook via Edge Function...");
-          const { data: { session } } = await supabase.auth.getSession();
-          await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session?.access_token}`,
-            },
-            body: JSON.stringify({
-              assessmentId,
-              contactData,
-            }),
-          });
-        } catch (webhookError) {
-          // Log the webhook error but continue with PDF generation
-          console.error('Webhook error (non-critical):', webhookError);
-        }
+      try {
+        console.log("Triggering webhook via Edge Function...");
+        await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            assessmentId,
+            contactData,
+          }),
+        });
+      } catch (webhookError) {
+        // Log the webhook error but continue with PDF generation
+        console.error('Webhook error (non-critical):', webhookError);
       }
 
       // Generate and save PDF for both consultation and download modes
