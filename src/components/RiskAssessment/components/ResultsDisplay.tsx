@@ -83,9 +83,14 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
                 {getCtaDescription()}
               </p>
               {isEligibleForTrial() && (
-                <p className="text-brand-orange text-sm font-medium text-center px-2">
-                  ✨ Based on your answers, your business is eligible for a no-obligation 30-day free trial ✨
-                </p>
+                <a 
+                  href="https://supportstack.com/services/free-trial/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block text-base sm:text-lg font-semibold text-center px-2 py-3 mt-3 bg-[#F1F0FB] text-brand-orange rounded-lg hover:bg-[#E5DEFF] transition-colors"
+                >
+                  ✨ CLAIM YOUR FREE 30-DAY TRIAL ✨
+                </a>
               )}
             </div>
           </div>
