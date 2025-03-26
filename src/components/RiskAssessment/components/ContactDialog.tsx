@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -23,6 +24,7 @@ interface ContactDialogProps {
   riskLevel: 'Low' | 'Medium' | 'High';
   mode?: 'consultation' | 'download';
   assessmentId?: string | null;
+  surveyData?: object;
 }
 
 type ContactSubmission = Database['public']['Tables']['contact_submissions']['Insert'];
@@ -32,7 +34,8 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
   onOpenChange, 
   riskLevel,
   mode = 'consultation',
-  assessmentId
+  assessmentId,
+  surveyData = {}
 }) => {
   const [newsletter, setNewsletter] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -196,7 +199,8 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
             submission_type: contactData.submission_type || 'website',
             risk_level: riskLevel || 'Unknown',
             assessment_id: assessmentId || 'No ID',
-            submission_date: new Date().toISOString()
+            submission_date: new Date().toISOString(),
+            survey_data_json: JSON.stringify(surveyData || {})
           }),
         });
         
@@ -217,7 +221,10 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           },
           body: JSON.stringify({
             assessmentId,
-            contactData,
+            contactData: {
+              ...contactData,
+              survey_data_json: JSON.stringify(surveyData || {})
+            },
           }),
         });
       } catch (webhookError) {
@@ -299,6 +306,13 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
               Subscribe to our newsletter for security tips and updates
             </Label>
           </div>
+          
+          <input 
+            type="hidden" 
+            name="survey_data_json" 
+            value={JSON.stringify(surveyData || {})} 
+          />
+          
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Processing...' : mode === 'download' ? 'Download Report' : 'Request Consultation & Download Report'}
           </Button>

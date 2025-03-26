@@ -10,9 +10,10 @@ import { Loader2 } from 'lucide-react';
 interface ContactSubmissionFormProps {
   assessmentId: string | null;
   riskLevel: string;
+  surveyData: object;
 }
 
-export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmissionFormProps) {
+export function ContactSubmissionForm({ assessmentId, riskLevel, surveyData }: ContactSubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -21,6 +22,7 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
     phone: '',
     newsletter: false,
     submission_type: 'contact',
+    survey_data_json: JSON.stringify(surveyData || {})
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +52,8 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
         assessmentId,
         contactData: {
           ...formData,
-          risk_level: riskLevel
+          risk_level: riskLevel,
+          survey_data_json: JSON.stringify(surveyData || {})
         }
       };
       
@@ -73,7 +76,8 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
             submission_type: formData.submission_type || 'website',
             risk_level: riskLevel || 'Unknown',
             assessment_id: assessmentId || 'No ID',
-            submission_date: new Date().toISOString()
+            submission_date: new Date().toISOString(),
+            survey_data_json: JSON.stringify(surveyData || {})
           }),
         });
         
@@ -122,6 +126,7 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
           phone: '',
           newsletter: false,
           submission_type: 'contact',
+          survey_data_json: JSON.stringify(surveyData || {})
         });
       } else {
         throw new Error(`Failed to submit form: ${responseText}`);
@@ -202,6 +207,12 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
           Subscribe to our newsletter
         </Label>
       </div>
+      
+      <input 
+        type="hidden" 
+        name="survey_data_json" 
+        value={JSON.stringify(surveyData || {})} 
+      />
       
       <Button type="submit" disabled={isSubmitting} className="w-full">
         {isSubmitting ? (

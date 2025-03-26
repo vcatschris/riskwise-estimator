@@ -50,7 +50,8 @@ serve(async (req) => {
       submission_type: contactData.submission_type || 'website',
       risk_level: contactData.risk_level || 'Unknown',
       assessment_id: assessmentId || 'No ID',
-      submission_date: new Date().toISOString()
+      submission_date: new Date().toISOString(),
+      survey_data_json: contactData.survey_data_json || '{}'
     };
     
     console.log('Sending data to Zapier webhook:', zapierPayload);

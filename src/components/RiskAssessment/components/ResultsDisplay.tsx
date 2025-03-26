@@ -9,6 +9,7 @@ import { calculatePricing } from '../calculatePricing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ContactDialog } from './ContactDialog';
+import { ContactSubmissionForm } from './ContactSubmissionForm';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
@@ -16,13 +17,52 @@ interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
   assessmentId?: string | null;
   riskLevel?: 'Low' | 'Medium' | 'High';
+  surveyData?: object;
 }
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assessmentId, riskLevel = 'Medium' }) => {
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ 
+  formData, 
+  assessmentId, 
+  riskLevel = 'Medium',
+  surveyData = {}
+}) => {
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const assessment = calculateRiskScore(formData as AssessmentData);
   const pricing = calculatePricing(formData as AssessmentData);
+  
+  // Format survey data for submission
+  const formattedSurveyData = {
+    questions: {
+      businessProfile: {
+        businessName: formData.businessName || '',
+        industry: formData.industry || '',
+        businessSize: formData.businessSize || '',
+        currentProvider: formData.currentProvider || false,
+        providerDuration: formData.providerDuration || '',
+        cloudProvider: formData.cloudProvider || ''
+      },
+      itSupport: {
+        sensitiveData: formData.sensitiveData || '',
+        lastAudit: formData.lastAudit || ''
+      },
+      security: {
+        mfaEnabled: formData.mfaEnabled || '',
+        backupFrequency: formData.backupFrequency || '',
+        dataRegulations: formData.dataRegulations || ''
+      },
+      operational: {
+        itIssues: formData.itIssues || ''
+      }
+    },
+    results: {
+      riskLevel: assessment.level,
+      riskScore: assessment.total,
+      maxPossibleScore: assessment.maxPossible,
+      valueScore: assessment.valueScore,
+      maxValuePossible: assessment.maxValuePossible
+    }
+  };
 
   const getCtaText = () => {
     switch (assessment.level) {
@@ -472,6 +512,15 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
         <NextStepsSection />
       </div>
 
+      {/* Embedded Contact Submission Form */}
+      <div className="mt-8">
+        <ContactSubmissionForm 
+          assessmentId={assessmentId} 
+          riskLevel={riskLevel} 
+          surveyData={formattedSurveyData}
+        />
+      </div>
+
       <ContactDialog 
         isOpen={isDialogOpen} 
         onOpenChange={(open) => {
@@ -483,7 +532,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ formData, assess
         }} 
         riskLevel={riskLevel || assessment.level} 
         mode={dialogMode}
-        assessmentId={assessmentId} 
+        assessmentId={assessmentId}
+        surveyData={formattedSurveyData}
       />
     </div>
   );
