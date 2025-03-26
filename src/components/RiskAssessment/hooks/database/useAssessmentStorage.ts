@@ -1,4 +1,3 @@
-
 import { toast } from '@/hooks/use-toast';
 import { supabase } from "@/integrations/supabase/client";
 import { AssessmentData } from '../../types';
@@ -64,10 +63,8 @@ export const getRecentAssessment = async () => {
   }
 };
 
-// Define a type for the survey data record
 type SurveyRecord = { id: string, [key: string]: any };
 
-// Define a type for the survey data array to avoid 'never' type issues
 type SurveyDataArray = SurveyRecord[];
 
 export const saveAssessmentResults = async (assessment: any, formData: Partial<AssessmentData>) => {
@@ -260,6 +257,44 @@ export const submitContactForm = async (
       }
     });
     
+    // Fetch survey data if assessmentId is available
+    let surveyData = null;
+    if (assessmentId) {
+      try {
+        // Fetch the survey data
+        const { data: surveyRecord, error: surveyError } = await supabase
+          .from('ss_risk_survey')
+          .select('*')
+          .eq('id', assessmentId)
+          .single();
+        
+        if (surveyError) {
+          console.error('Error fetching survey data:', surveyError);
+        } else {
+          // Fetch the detailed results
+          const { data: resultData, error: resultError } = await supabase
+            .from('ss_risk_results')
+            .select('*')
+            .eq('survey_id', assessmentId)
+            .single();
+          
+          if (resultError) {
+            console.error('Error fetching result data:', resultError);
+          }
+          
+          // Combine the data
+          surveyData = {
+            survey: surveyRecord,
+            results: resultData || null
+          };
+          
+          console.log('Retrieved survey data for submission:', surveyData);
+        }
+      } catch (fetchError) {
+        console.error('Error fetching survey data:', fetchError);
+      }
+    }
+    
     // First try to insert into Supabase table as a backup
     try {
       const { data, error } = await supabase
@@ -287,22 +322,43 @@ export const submitContactForm = async (
     // Try direct call to Zapier webhook first
     try {
       console.log("Calling Zapier webhook directly...");
+      const enhancedZapierPayload = {
+        name: contactData.name || 'Anonymous',
+        email: contactData.email || 'noemail@example.com',
+        company: contactData.company || 'Unknown',
+        phone: contactData.phone || 'Not provided',
+        newsletter: contactData.newsletter === true,
+        submission_type: contactData.submission_type || 'website',
+        risk_level: riskLevel || 'Unknown',
+        assessment_id: assessmentId || 'No ID',
+        submission_date: new Date().toISOString(),
+        
+        // Include survey data if available
+        survey_data: surveyData ? {
+          business_name: surveyData.survey?.business_name || '',
+          industry: surveyData.survey?.industry || '',
+          business_size: surveyData.survey?.business_size || '',
+          risk_score: surveyData.survey?.risk_score || 0,
+          risk_level: surveyData.survey?.risk_level || '',
+          value_score: surveyData.survey?.value_score || 0,
+          created_at: surveyData.survey?.created_at || '',
+          
+          // Include key result details if available
+          results_summary: surveyData.results ? {
+            executive_summary: surveyData.results.executive_summary || null,
+            risk_level: surveyData.results.risk_level || '',
+            risk_score: surveyData.results.risk_score || 0,
+            value_score: surveyData.results.value_score || 0,
+          } : null
+        } : null
+      };
+      
       const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: contactData.name || 'Anonymous',
-          email: contactData.email || 'noemail@example.com',
-          company: contactData.company || 'Unknown',
-          phone: contactData.phone || 'Not provided',
-          newsletter: contactData.newsletter === true,
-          submission_type: contactData.submission_type || 'website',
-          risk_level: riskLevel || 'Unknown',
-          assessment_id: assessmentId || 'No ID',
-          submission_date: new Date().toISOString()
-        }),
+        body: JSON.stringify(enhancedZapierPayload),
       });
       
       console.log("Direct Zapier response status:", directZapierResponse.status);
@@ -334,7 +390,8 @@ export const submitContactForm = async (
         contactData: {
           ...contactData,
           risk_level: riskLevel
-        }
+        },
+        surveyData
       }),
     });
     

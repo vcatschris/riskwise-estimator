@@ -17,13 +17,14 @@ serve(async (req) => {
     const requestBodyText = await req.text();
     console.log('Raw request body:', requestBodyText);
     
-    let assessmentId, contactData;
+    let assessmentId, contactData, surveyData;
     try {
       const requestBody = JSON.parse(requestBodyText);
       assessmentId = requestBody.assessmentId;
       contactData = requestBody.contactData;
+      surveyData = requestBody.surveyData;
 
-      console.log('Parsed webhook request data:', { assessmentId, contactData });
+      console.log('Parsed webhook request data:', { assessmentId, contactData, surveyData });
     } catch (parseError) {
       console.error('Error parsing JSON request body:', parseError);
       return new Response(
@@ -42,6 +43,7 @@ serve(async (req) => {
 
     // Format the data for Zapier - ensure all fields exist even if empty
     const zapierPayload = {
+      // Contact data
       name: contactData.name || 'Anonymous',
       email: contactData.email || 'noemail@example.com',
       company: contactData.company || 'Unknown',
@@ -50,7 +52,26 @@ serve(async (req) => {
       submission_type: contactData.submission_type || 'website',
       risk_level: contactData.risk_level || 'Unknown',
       assessment_id: assessmentId || 'No ID',
-      submission_date: new Date().toISOString()
+      submission_date: new Date().toISOString(),
+      
+      // Survey data if available
+      survey_data: surveyData ? {
+        business_name: surveyData.survey?.business_name || '',
+        industry: surveyData.survey?.industry || '',
+        business_size: surveyData.survey?.business_size || '',
+        risk_score: surveyData.survey?.risk_score || 0,
+        risk_level: surveyData.survey?.risk_level || '',
+        value_score: surveyData.survey?.value_score || 0,
+        created_at: surveyData.survey?.created_at || '',
+        
+        // Include some key result details if available
+        results_summary: surveyData.results ? {
+          executive_summary: surveyData.results.executive_summary || null,
+          risk_level: surveyData.results.risk_level || '',
+          risk_score: surveyData.results.risk_score || 0,
+          value_score: surveyData.results.value_score || 0,
+        } : null
+      } : null
     };
     
     console.log('Sending data to Zapier webhook:', zapierPayload);

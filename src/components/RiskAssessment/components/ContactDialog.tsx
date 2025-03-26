@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -36,7 +36,51 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 }) => {
   const [newsletter, setNewsletter] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [surveyData, setSurveyData] = useState<any>(null);
   const { toast } = useToast();
+  
+  useEffect(() => {
+    const fetchSurveyData = async () => {
+      if (!isOpen || !assessmentId) return;
+      
+      try {
+        console.log('Fetching survey data for ContactDialog, assessment ID:', assessmentId);
+        
+        const { data: surveyData, error: surveyError } = await supabase
+          .from('ss_risk_survey')
+          .select('*')
+          .eq('id', assessmentId)
+          .single();
+        
+        if (surveyError) {
+          console.error('Error fetching survey data in ContactDialog:', surveyError);
+          return;
+        }
+        
+        const { data: resultData, error: resultError } = await supabase
+          .from('ss_risk_results')
+          .select('*')
+          .eq('survey_id', assessmentId)
+          .single();
+        
+        if (resultError) {
+          console.error('Error fetching result data in ContactDialog:', resultError);
+        }
+        
+        const combinedData = {
+          survey: surveyData,
+          results: resultData || null
+        };
+        
+        console.log('Retrieved survey data for ContactDialog:', combinedData);
+        setSurveyData(combinedData);
+      } catch (error) {
+        console.error('Error in fetchSurveyData for ContactDialog:', error);
+      }
+    };
+    
+    fetchSurveyData();
+  }, [isOpen, assessmentId]);
   
   const generatePDF = async () => {
     try {
@@ -48,7 +92,6 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         throw new Error('Risk report element not found');
       }
 
-      // Create a temporary container for the cloned content
       const container = document.createElement('div');
       container.style.position = 'absolute';
       container.style.top = '-9999px';
@@ -58,17 +101,14 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
       container.style.overflow = 'visible';
       document.body.appendChild(container);
       
-      // Clone the report element to manipulate it without affecting the UI
       const cloneReport = reportElement.cloneNode(true) as HTMLElement;
       container.appendChild(cloneReport);
       
-      // Force all content to be visible in the clone
       cloneReport.style.display = 'block';
       cloneReport.style.visibility = 'visible';
       cloneReport.style.width = reportElement.offsetWidth + 'px';
       cloneReport.style.height = 'auto';
       
-      // Pre-process all score badges and ensure their visibility
       const badges = cloneReport.querySelectorAll('[class*="rounded-full border"]');
       badges.forEach((badge) => {
         if (badge instanceof HTMLElement) {
@@ -76,21 +116,15 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           badge.style.visibility = 'visible';
           badge.style.opacity = '1';
           
-          // Find score values and ensure they're visible
           const scoreElements = badge.querySelectorAll('.score-value, .score-max, [class*="font-semibold"], [class*="text-xs"], [class*="text-sm"]');
           scoreElements.forEach((element) => {
             if (element instanceof HTMLElement) {
-              // Store the original text content
               const originalText = element.textContent;
-              
-              // Reset the element to ensure proper rendering
               element.style.display = 'inline';
               element.style.visibility = 'visible';
               element.style.opacity = '1';
               element.style.color = '#000000';
               element.style.fontWeight = '700';
-              
-              // Ensure text content is preserved
               if (originalText) {
                 element.textContent = originalText;
               }
@@ -99,32 +133,27 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         }
       });
       
-      // Wait for DOM to update
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Use html2canvas with proper settings
       const canvas = await html2canvas(cloneReport, {
-        scale: 2, // Higher scale for better quality
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: true,
         backgroundColor: '#ffffff',
         ignoreElements: (element) => {
-          // Don't ignore elements with score values
           if (element.classList && 
              (element.classList.contains('score-value') || 
               element.classList.contains('score-max') ||
               element.classList.contains('font-semibold'))) {
             return false;
           }
-          // Allow hiding of elements that we don't want in the PDF
           return element.classList?.contains('pdf-ignore') || false;
         }
       });
       
       console.log('Canvas generated successfully');
       
-      // Create PDF with proper dimensions
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
@@ -134,11 +163,9 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
         format: [imgWidth, imgHeight]
       });
       
-      // Add the canvas image to the PDF
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
       console.log('PDF created successfully');
       
-      // Clean up the temporary container
       document.body.removeChild(container);
       
       return pdf;
@@ -176,40 +203,57 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 
       if (submissionError) {
         console.error('Database submission error:', submissionError);
-        // Continue even if database submission fails
+        return;
       }
 
-      // Try direct call to Zapier webhook first
       try {
-        console.log("Calling Zapier webhook directly...");
+        console.log("Calling Zapier webhook directly from ContactDialog...");
+        const enhancedZapierPayload = {
+          name: contactData.name || 'Anonymous',
+          email: contactData.email || 'noemail@example.com',
+          company: contactData.company || 'Unknown',
+          phone: contactData.phone || 'Not provided',
+          newsletter: contactData.newsletter === true,
+          submission_type: contactData.submission_type || 'website',
+          risk_level: riskLevel || 'Unknown',
+          assessment_id: assessmentId || 'No ID',
+          submission_date: new Date().toISOString(),
+          
+          survey_data: surveyData ? {
+            business_name: surveyData.survey?.business_name || '',
+            industry: surveyData.survey?.industry || '',
+            business_size: surveyData.survey?.business_size || '',
+            risk_score: surveyData.survey?.risk_score || 0,
+            risk_level: surveyData.survey?.risk_level || '',
+            value_score: surveyData.survey?.value_score || 0,
+            created_at: surveyData.survey?.created_at || '',
+            
+            results_summary: surveyData.results ? {
+              executive_summary: surveyData.results.executive_summary || null,
+              risk_level: surveyData.results.risk_level || '',
+              risk_score: surveyData.results.risk_score || 0,
+              value_score: surveyData.results.value_score || 0,
+            } : null
+          } : null
+        };
+        
         const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            name: contactData.name || 'Anonymous',
-            email: contactData.email || 'noemail@example.com',
-            company: contactData.company || 'Unknown',
-            phone: contactData.phone || 'Not provided',
-            newsletter: contactData.newsletter === true,
-            submission_type: contactData.submission_type || 'website',
-            risk_level: riskLevel || 'Unknown',
-            assessment_id: assessmentId || 'No ID',
-            submission_date: new Date().toISOString()
-          }),
+          body: JSON.stringify(enhancedZapierPayload),
         });
         
-        console.log("Direct Zapier response status:", directZapierResponse.status);
+        console.log("Direct Zapier response status from ContactDialog:", directZapierResponse.status);
         const directResponseText = await directZapierResponse.text();
-        console.log("Direct Zapier response:", directResponseText);
+        console.log("Direct Zapier response from ContactDialog:", directResponseText);
       } catch (directError) {
-        console.error("Error calling Zapier directly:", directError);
+        console.error("Error calling Zapier directly from ContactDialog:", directError);
       }
 
-      // Only try to trigger webhook if we have an assessmentId
       try {
-        console.log("Triggering webhook via Edge Function...");
+        console.log("Triggering webhook via Edge Function from ContactDialog...");
         await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
           method: 'POST',
           headers: {
@@ -218,14 +262,13 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           body: JSON.stringify({
             assessmentId,
             contactData,
+            surveyData
           }),
         });
       } catch (webhookError) {
-        // Log the webhook error but continue with PDF generation
-        console.error('Webhook error (non-critical):', webhookError);
+        console.error('Webhook error (non-critical) from ContactDialog:', webhookError);
       }
 
-      // Generate and save PDF for both consultation and download modes
       try {
         const pdf = await generatePDF();
         pdf.save('IT_Security_Assessment_Report.pdf');
@@ -245,7 +288,7 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 
       onOpenChange(false);
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error('Submission error in ContactDialog:', error);
       toast({
         title: "Error",
         description: "Failed to process your request. Please try again.",
