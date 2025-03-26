@@ -7,8 +7,9 @@ import { CategoryDetails } from "./ResultsStep/CategoryDetails";
 import { CostEstimate } from "./ResultsStep/CostEstimate";
 import { ContactSubmissionForm } from "./ContactSubmissionForm";
 import { ContactDialog } from "./ContactDialog";
-import { AssessmentData } from '../types';
-import type { ExecutiveSummary as ExecutiveSummaryType } from '../types';
+import { AssessmentData, RiskScore } from '../types';
+import { calculateRiskScore } from '../calculateScore';
+import { calculateCosts } from '../calculatePricing';
 
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
@@ -19,19 +20,25 @@ interface ResultsDisplayProps {
 
 export function ResultsDisplay({ formData, assessmentId, riskLevel, surveyDataJson }: ResultsDisplayProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  
+  // Generate the assessment data if not already available
+  const assessment: RiskScore = calculateRiskScore(formData as AssessmentData);
+  
+  // Calculate costs based on form data
+  const costs = calculateCosts(formData as AssessmentData);
 
   return (
     <div id="risk-report" className="flex flex-col space-y-8">
       <div className="flex flex-col space-y-4">
         <h2 className="text-2xl font-bold">Your IT Security Assessment Results</h2>
         
-        <ScoreSection />
+        <ScoreSection assessment={assessment} />
         
         <div className="mt-4 mb-8">
-          <ExecutiveSummary />
+          <ExecutiveSummary assessment={assessment} />
         </div>
         
-        <CategoryDetails />
+        <CategoryDetails assessment={assessment} />
         
         <div className="flex justify-center mt-8 gap-4">
           <Button 
@@ -43,7 +50,7 @@ export function ResultsDisplay({ formData, assessmentId, riskLevel, surveyDataJs
           </Button>
         </div>
         
-        <CostEstimate />
+        <CostEstimate costs={costs} formData={formData} />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
