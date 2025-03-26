@@ -41,6 +41,9 @@ serve(async (req) => {
       );
     }
 
+    // Debug log to see what survey data we received
+    console.log('Survey data received in webhook:', JSON.stringify(surveyData, null, 2));
+
     // Format the data for Zapier - ensure all fields exist even if empty
     const zapierPayload = {
       // Contact data
@@ -54,8 +57,8 @@ serve(async (req) => {
       assessment_id: assessmentId || 'No ID',
       submission_date: new Date().toISOString(),
       
-      // Survey data if available
-      survey_data: surveyData && Object.keys(surveyData).length > 0 ? {
+      // Survey data if available - restructured for reliability
+      survey_data: surveyData && typeof surveyData === 'object' ? {
         business_name: surveyData.survey?.business_name || '',
         industry: surveyData.survey?.industry || '',
         business_size: surveyData.survey?.business_size || '',
@@ -64,7 +67,7 @@ serve(async (req) => {
         value_score: surveyData.survey?.value_score || 0,
         created_at: surveyData.survey?.created_at || '',
         
-        // Include some key result details if available
+        // Include key result details if available
         results_summary: surveyData.results ? {
           executive_summary: surveyData.results.executive_summary || null,
           risk_level: surveyData.results.risk_level || '',
@@ -74,7 +77,7 @@ serve(async (req) => {
       } : null
     };
     
-    console.log('Sending data to Zapier webhook:', zapierPayload);
+    console.log('Sending data to Zapier webhook:', JSON.stringify(zapierPayload, null, 2));
     console.log('Zapier webhook URL:', 'https://hooks.zapier.com/hooks/catch/3379103/2lry0on/');
     
     // Using the direct Zapier URL to ensure it's correctly targeted

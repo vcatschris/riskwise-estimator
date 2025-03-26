@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -105,7 +104,7 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
         surveyData: surveyData // Include the survey data in the payload
       };
       
-      console.log('Submitting contact form with combined data:', payload);
+      console.log('Submitting contact form with combined data:', JSON.stringify(payload, null, 2));
       
       // Try direct call to Zapier webhook first
       try {
@@ -143,6 +142,8 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
             } : null
           } : null
         };
+        
+        console.log("Direct Zapier payload:", JSON.stringify(enhancedZapierPayload, null, 2));
         
         const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
           method: 'POST',
