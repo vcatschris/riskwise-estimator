@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -272,7 +271,7 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           </DialogTitle>
           <DialogDescription>
             {mode === 'download' 
-              ? 'Complete your details to receive your detailed IT security assessment report.'
+              ? 'Complete your details to receive your detailed IT security assessment report. By submitting, you agree that we may contact you if we can help with your IT security needs.'
               : 'Tell us a bit about yourself so we can help secure your business better.'}
           </DialogDescription>
         </DialogHeader>
