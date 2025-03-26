@@ -55,7 +55,7 @@ serve(async (req) => {
       submission_date: new Date().toISOString(),
       
       // Survey data if available
-      survey_data: surveyData ? {
+      survey_data: surveyData && Object.keys(surveyData).length > 0 ? {
         business_name: surveyData.survey?.business_name || '',
         industry: surveyData.survey?.industry || '',
         business_size: surveyData.survey?.business_size || '',
