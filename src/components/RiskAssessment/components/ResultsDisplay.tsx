@@ -9,7 +9,7 @@ import { ContactSubmissionForm } from "./ContactSubmissionForm";
 import { ContactDialog } from "./ContactDialog";
 import { AssessmentData, RiskScore } from '../types';
 import { calculateRiskScore } from '../calculateScore';
-import { calculateCosts } from '../calculatePricing';
+import { calculatePricing } from '../calculatePricing';
 
 interface ResultsDisplayProps {
   formData: Partial<AssessmentData>;
@@ -25,7 +25,7 @@ export function ResultsDisplay({ formData, assessmentId, riskLevel, surveyDataJs
   const assessment: RiskScore = calculateRiskScore(formData as AssessmentData);
   
   // Calculate costs based on form data
-  const costs = calculateCosts(formData as AssessmentData);
+  const costs = calculatePricing(formData as AssessmentData);
 
   return (
     <div id="risk-report" className="flex flex-col space-y-8">
