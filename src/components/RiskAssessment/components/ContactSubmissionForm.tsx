@@ -10,10 +10,9 @@ import { Loader2 } from 'lucide-react';
 interface ContactSubmissionFormProps {
   assessmentId: string | null;
   riskLevel: string;
-  surveyDataJson?: string | null;
 }
 
-export function ContactSubmissionForm({ assessmentId, riskLevel, surveyDataJson }: ContactSubmissionFormProps) {
+export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -47,31 +46,35 @@ export function ContactSubmissionForm({ assessmentId, riskLevel, surveyDataJson 
     setIsSubmitting(true);
     
     try {
-      console.log("Form submission with survey data length:", surveyDataJson?.length || 0);
-      
-      // Create the payload to send directly to Zapier
-      const zapierPayload = {
-        name: formData.name,
-        email: formData.email,
-        company: formData.company,
-        phone: formData.phone || 'Not provided',
-        newsletter: formData.newsletter,
-        submission_type: formData.submission_type,
-        risk_level: riskLevel,
-        assessment_id: assessmentId || 'No ID',
-        submission_date: new Date().toISOString(),
-        survey_data_json: surveyDataJson || '' // Include the serialized survey data
+      const payload = {
+        assessmentId,
+        contactData: {
+          ...formData,
+          risk_level: riskLevel
+        }
       };
       
-      console.log("Calling Zapier webhook directly...");
+      console.log('Submitting contact form with data:', payload);
       
+      // Try direct call to Zapier webhook first
       try {
+        console.log("Calling Zapier webhook directly...");
         const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(zapierPayload),
+          body: JSON.stringify({
+            name: formData.name || 'Anonymous',
+            email: formData.email || 'noemail@example.com',
+            company: formData.company || 'Unknown',
+            phone: formData.phone || 'Not provided',
+            newsletter: formData.newsletter === true,
+            submission_type: formData.submission_type || 'website',
+            risk_level: riskLevel || 'Unknown',
+            assessment_id: assessmentId || 'No ID',
+            submission_date: new Date().toISOString()
+          }),
         });
         
         console.log("Direct Zapier response status:", directZapierResponse.status);
@@ -81,24 +84,14 @@ export function ContactSubmissionForm({ assessmentId, riskLevel, surveyDataJson 
         console.error("Error calling Zapier directly:", directError);
       }
       
-      // Create the payload for the edge function as backup
-      const edgeFunctionPayload = {
-        assessmentId,
-        contactData: {
-          ...formData,
-          risk_level: riskLevel
-        },
-        survey_data_json: surveyDataJson // Pass raw JSON string to edge function
-      };
-      
+      // Call our Supabase edge function as backup
       console.log("Calling Supabase edge function...");
-      
       const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(edgeFunctionPayload),
+        body: JSON.stringify(payload),
       });
       
       // Log raw response for debugging
@@ -112,6 +105,7 @@ export function ContactSubmissionForm({ assessmentId, riskLevel, surveyDataJson 
         console.log('Webhook parsed response:', responseData);
       } catch (error) {
         console.error('Error parsing response:', error);
+        // Continue with original response text
       }
       
       if (response.ok) {
@@ -150,13 +144,6 @@ export function ContactSubmissionForm({ assessmentId, riskLevel, surveyDataJson 
       <p className="text-sm text-gray-500 mb-4">
         Leave your details and we'll contact you to discuss your IT needs.
       </p>
-      
-      {/* Hidden field for survey data */}
-      <input 
-        type="hidden" 
-        name="survey_data_json" 
-        value={surveyDataJson || ''} 
-      />
       
       <div className="space-y-2">
         <Label htmlFor="name">Name *</Label>

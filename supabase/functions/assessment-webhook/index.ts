@@ -17,18 +17,13 @@ serve(async (req) => {
     const requestBodyText = await req.text();
     console.log('Raw request body:', requestBodyText);
     
-    let assessmentId, contactData, survey_data_json;
+    let assessmentId, contactData;
     try {
       const requestBody = JSON.parse(requestBodyText);
       assessmentId = requestBody.assessmentId;
       contactData = requestBody.contactData;
-      survey_data_json = requestBody.survey_data_json;
 
-      console.log('Parsed webhook request data:', { 
-        assessmentId, 
-        contactData, 
-        survey_data_json_length: survey_data_json ? survey_data_json.length : 0 
-      });
+      console.log('Parsed webhook request data:', { assessmentId, contactData });
     } catch (parseError) {
       console.error('Error parsing JSON request body:', parseError);
       return new Response(
@@ -45,9 +40,8 @@ serve(async (req) => {
       );
     }
 
-    // Format the data for Zapier
+    // Format the data for Zapier - ensure all fields exist even if empty
     const zapierPayload = {
-      // Contact data
       name: contactData.name || 'Anonymous',
       email: contactData.email || 'noemail@example.com',
       company: contactData.company || 'Unknown',
@@ -56,17 +50,10 @@ serve(async (req) => {
       submission_type: contactData.submission_type || 'website',
       risk_level: contactData.risk_level || 'Unknown',
       assessment_id: assessmentId || 'No ID',
-      submission_date: new Date().toISOString(),
-      
-      // Include the raw survey data JSON string
-      survey_data_json: survey_data_json || ''
+      submission_date: new Date().toISOString()
     };
     
-    console.log('Sending data to Zapier webhook:', JSON.stringify({
-      ...zapierPayload,
-      survey_data_json_length: zapierPayload.survey_data_json.length
-    }, null, 2));
-    
+    console.log('Sending data to Zapier webhook:', zapierPayload);
     console.log('Zapier webhook URL:', 'https://hooks.zapier.com/hooks/catch/3379103/2lry0on/');
     
     // Using the direct Zapier URL to ensure it's correctly targeted
