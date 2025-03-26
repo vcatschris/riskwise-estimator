@@ -237,6 +237,8 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           } : null
         };
         
+        console.log("Direct Zapier payload from ContactDialog:", JSON.stringify(enhancedZapierPayload, null, 2));
+        
         const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
           method: 'POST',
           headers: {
