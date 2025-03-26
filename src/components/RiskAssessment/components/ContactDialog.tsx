@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,6 @@ import { supabase } from "@/integrations/supabase/client";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import type { Database } from "@/integrations/supabase/types";
-import type { ExecutiveSummary } from '../types';
 
 interface ContactDialogProps {
   isOpen: boolean;
@@ -23,6 +22,7 @@ interface ContactDialogProps {
   riskLevel: 'Low' | 'Medium' | 'High';
   mode?: 'consultation' | 'download';
   assessmentId?: string | null;
+  surveyDataJson?: string | null;
 }
 
 type ContactSubmission = Database['public']['Tables']['contact_submissions']['Insert'];
@@ -32,55 +32,12 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
   onOpenChange, 
   riskLevel,
   mode = 'consultation',
-  assessmentId
+  assessmentId,
+  surveyDataJson
 }) => {
   const [newsletter, setNewsletter] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [surveyData, setSurveyData] = useState<any>(null);
   const { toast } = useToast();
-  
-  useEffect(() => {
-    const fetchSurveyData = async () => {
-      if (!isOpen || !assessmentId) return;
-      
-      try {
-        console.log('Fetching survey data for ContactDialog, assessment ID:', assessmentId);
-        
-        const { data: surveyData, error: surveyError } = await supabase
-          .from('ss_risk_survey')
-          .select('*')
-          .eq('id', assessmentId)
-          .single();
-        
-        if (surveyError) {
-          console.error('Error fetching survey data in ContactDialog:', surveyError);
-          return;
-        }
-        
-        const { data: resultData, error: resultError } = await supabase
-          .from('ss_risk_results')
-          .select('*')
-          .eq('survey_id', assessmentId)
-          .single();
-        
-        if (resultError) {
-          console.error('Error fetching result data in ContactDialog:', resultError);
-        }
-        
-        const combinedData = {
-          survey: surveyData,
-          results: resultData || null
-        };
-        
-        console.log('Retrieved survey data for ContactDialog:', combinedData);
-        setSurveyData(combinedData);
-      } catch (error) {
-        console.error('Error in fetchSurveyData for ContactDialog:', error);
-      }
-    };
-    
-    fetchSurveyData();
-  }, [isOpen, assessmentId]);
   
   const generatePDF = async () => {
     try {
@@ -203,12 +160,13 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
 
       if (submissionError) {
         console.error('Database submission error:', submissionError);
-        return;
       }
 
       try {
         console.log("Calling Zapier webhook directly from ContactDialog...");
-        const enhancedZapierPayload = {
+        console.log("Survey data JSON length:", surveyDataJson?.length || 0);
+        
+        const zapierPayload = {
           name: contactData.name || 'Anonymous',
           email: contactData.email || 'noemail@example.com',
           company: contactData.company || 'Unknown',
@@ -218,33 +176,17 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           risk_level: riskLevel || 'Unknown',
           assessment_id: assessmentId || 'No ID',
           submission_date: new Date().toISOString(),
-          
-          survey_data: surveyData ? {
-            business_name: surveyData.survey?.business_name || '',
-            industry: surveyData.survey?.industry || '',
-            business_size: surveyData.survey?.business_size || '',
-            risk_score: surveyData.survey?.risk_score || 0,
-            risk_level: surveyData.survey?.risk_level || '',
-            value_score: surveyData.survey?.value_score || 0,
-            created_at: surveyData.survey?.created_at || '',
-            
-            results_summary: surveyData.results ? {
-              executive_summary: surveyData.results.executive_summary || null,
-              risk_level: surveyData.results.risk_level || '',
-              risk_score: surveyData.results.risk_score || 0,
-              value_score: surveyData.results.value_score || 0,
-            } : null
-          } : null
+          survey_data_json: surveyDataJson || '' // Include the serialized survey data
         };
         
-        console.log("Direct Zapier payload from ContactDialog:", JSON.stringify(enhancedZapierPayload, null, 2));
+        console.log("Direct Zapier payload from ContactDialog:", JSON.stringify(zapierPayload, null, 2));
         
         const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(enhancedZapierPayload),
+          body: JSON.stringify(zapierPayload),
         });
         
         console.log("Direct Zapier response status from ContactDialog:", directZapierResponse.status);
@@ -264,7 +206,7 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           body: JSON.stringify({
             assessmentId,
             contactData,
-            surveyData
+            survey_data_json: surveyDataJson
           }),
         });
       } catch (webhookError) {
@@ -315,6 +257,13 @@ export const ContactDialog: React.FC<ContactDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Hidden field for survey data */}
+          <input 
+            type="hidden" 
+            name="survey_data_json" 
+            value={surveyDataJson || ''} 
+          />
+          
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" name="name" placeholder="Your name" required />

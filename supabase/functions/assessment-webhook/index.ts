@@ -1,5 +1,4 @@
 
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
@@ -18,14 +17,18 @@ serve(async (req) => {
     const requestBodyText = await req.text();
     console.log('Raw request body:', requestBodyText);
     
-    let assessmentId, contactData, surveyData;
+    let assessmentId, contactData, survey_data_json;
     try {
       const requestBody = JSON.parse(requestBodyText);
       assessmentId = requestBody.assessmentId;
       contactData = requestBody.contactData;
-      surveyData = requestBody.surveyData;
+      survey_data_json = requestBody.survey_data_json;
 
-      console.log('Parsed webhook request data:', { assessmentId, contactData, surveyData });
+      console.log('Parsed webhook request data:', { 
+        assessmentId, 
+        contactData, 
+        survey_data_json_length: survey_data_json ? survey_data_json.length : 0 
+      });
     } catch (parseError) {
       console.error('Error parsing JSON request body:', parseError);
       return new Response(
@@ -42,10 +45,7 @@ serve(async (req) => {
       );
     }
 
-    // Debug log to see what survey data we received
-    console.log('Survey data received in webhook:', JSON.stringify(surveyData, null, 2));
-
-    // Format the data for Zapier - ensure all fields exist even if empty
+    // Format the data for Zapier
     const zapierPayload = {
       // Contact data
       name: contactData.name || 'Anonymous',
@@ -58,27 +58,15 @@ serve(async (req) => {
       assessment_id: assessmentId || 'No ID',
       submission_date: new Date().toISOString(),
       
-      // Survey data if available - restructured for reliability
-      survey_data: surveyData && typeof surveyData === 'object' ? {
-        business_name: surveyData.survey?.business_name || '',
-        industry: surveyData.survey?.industry || '',
-        business_size: surveyData.survey?.business_size || '',
-        risk_score: surveyData.survey?.risk_score || 0,
-        risk_level: surveyData.survey?.risk_level || '',
-        value_score: surveyData.survey?.value_score || 0,
-        created_at: surveyData.survey?.created_at || '',
-        
-        // Include key result details if available
-        results_summary: surveyData.results ? {
-          executive_summary: surveyData.results.executive_summary || null,
-          risk_level: surveyData.results.risk_level || '',
-          risk_score: surveyData.results.risk_score || 0,
-          value_score: surveyData.results.value_score || 0,
-        } : null
-      } : null
+      // Include the raw survey data JSON string
+      survey_data_json: survey_data_json || ''
     };
     
-    console.log('Sending data to Zapier webhook:', JSON.stringify(zapierPayload, null, 2));
+    console.log('Sending data to Zapier webhook:', JSON.stringify({
+      ...zapierPayload,
+      survey_data_json_length: zapierPayload.survey_data_json.length
+    }, null, 2));
+    
     console.log('Zapier webhook URL:', 'https://hooks.zapier.com/hooks/catch/3379103/2lry0on/');
     
     // Using the direct Zapier URL to ensure it's correctly targeted

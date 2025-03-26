@@ -30,6 +30,13 @@ export function RiskAssessmentForm() {
 
   const { title, description } = getTitleAndDescription(step);
 
+  // Prepare the serialized survey data that will be passed to forms
+  const surveyDataJson = assessmentResults ? JSON.stringify({
+    formData,
+    assessmentId,
+    results: assessmentResults
+  }) : null;
+
   return (
     <div className="relative w-full">
       {isGeneratingReport && (
@@ -53,7 +60,14 @@ export function RiskAssessmentForm() {
           {step === 'infrastructure' && <InfrastructureStep formData={formData} onInputChange={handleInputChange} />}
           {step === 'security' && <SecurityStep formData={formData} onInputChange={handleInputChange} />}
           {step === 'operational' && <OperationalStep formData={formData} onInputChange={handleInputChange} />}
-          {step === 'results' && <ResultsDisplay formData={formData} assessmentId={assessmentId} riskLevel={assessmentResults?.level || 'Medium'} />}
+          {step === 'results' && (
+            <ResultsDisplay 
+              formData={formData} 
+              assessmentId={assessmentId} 
+              riskLevel={assessmentResults?.level || 'Medium'} 
+              surveyDataJson={surveyDataJson}
+            />
+          )}
         </CardContent>
         <CardFooter>
           <FormNavigation

@@ -1,21 +1,20 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { supabase } from "@/integrations/supabase/client";
 
 interface ContactSubmissionFormProps {
   assessmentId: string | null;
   riskLevel: string;
+  surveyDataJson?: string | null;
 }
 
-export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmissionFormProps) {
+export function ContactSubmissionForm({ assessmentId, riskLevel, surveyDataJson }: ContactSubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [surveyData, setSurveyData] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,53 +23,6 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
     newsletter: false,
     submission_type: 'contact',
   });
-
-  // Fetch survey data when assessmentId changes
-  useEffect(() => {
-    const fetchSurveyData = async () => {
-      if (!assessmentId) return;
-      
-      try {
-        console.log('Fetching survey data for assessment ID:', assessmentId);
-        
-        // Fetch the survey data
-        const { data: surveyData, error: surveyError } = await supabase
-          .from('ss_risk_survey')
-          .select('*')
-          .eq('id', assessmentId)
-          .single();
-        
-        if (surveyError) {
-          console.error('Error fetching survey data:', surveyError);
-          return;
-        }
-        
-        // Fetch the detailed results
-        const { data: resultData, error: resultError } = await supabase
-          .from('ss_risk_results')
-          .select('*')
-          .eq('survey_id', assessmentId)
-          .single();
-        
-        if (resultError) {
-          console.error('Error fetching result data:', resultError);
-        }
-        
-        // Combine the data
-        const combinedData = {
-          survey: surveyData,
-          results: resultData || null
-        };
-        
-        console.log('Retrieved survey data:', combinedData);
-        setSurveyData(combinedData);
-      } catch (error) {
-        console.error('Error in fetchSurveyData:', error);
-      }
-    };
-    
-    fetchSurveyData();
-  }, [assessmentId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -95,51 +47,31 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
     setIsSubmitting(true);
     
     try {
-      // Create the enhanced Zapier payload that includes survey data
-      const enhancedZapierPayload = {
-        // Contact form data
-        name: formData.name || 'Anonymous',
-        email: formData.email || 'noemail@example.com',
-        company: formData.company || 'Unknown',
+      console.log("Form submission with survey data length:", surveyDataJson?.length || 0);
+      
+      // Create the payload to send directly to Zapier
+      const zapierPayload = {
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
         phone: formData.phone || 'Not provided',
-        newsletter: formData.newsletter === true,
-        submission_type: formData.submission_type || 'website',
-        risk_level: riskLevel || 'Unknown',
+        newsletter: formData.newsletter,
+        submission_type: formData.submission_type,
+        risk_level: riskLevel,
         assessment_id: assessmentId || 'No ID',
         submission_date: new Date().toISOString(),
-        
-        // Include key survey fields that might be useful for Zapier automation
-        survey_data: surveyData ? {
-          business_name: surveyData.survey?.business_name || '',
-          industry: surveyData.survey?.industry || '',
-          business_size: surveyData.survey?.business_size || '',
-          risk_score: surveyData.survey?.risk_score || 0,
-          risk_level: surveyData.survey?.risk_level || '',
-          value_score: surveyData.survey?.value_score || 0,
-          created_at: surveyData.survey?.created_at || '',
-          
-          // Include some key result details if available
-          results_summary: surveyData.results ? {
-            executive_summary: surveyData.results.executive_summary || null,
-            risk_level: surveyData.results.risk_level || '',
-            risk_score: surveyData.results.risk_score || 0,
-            value_score: surveyData.results.value_score || 0,
-          } : null
-        } : null
+        survey_data_json: surveyDataJson || '' // Include the serialized survey data
       };
       
-      console.log("Direct Zapier payload:", JSON.stringify(enhancedZapierPayload, null, 2));
+      console.log("Calling Zapier webhook directly...");
       
-      // Try direct call to Zapier webhook first
       try {
-        console.log("Calling Zapier webhook directly with combined data...");
-        
         const directZapierResponse = await fetch('https://hooks.zapier.com/hooks/catch/3379103/2lry0on/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(enhancedZapierPayload),
+          body: JSON.stringify(zapierPayload),
         });
         
         console.log("Direct Zapier response status:", directZapierResponse.status);
@@ -149,19 +81,17 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
         console.error("Error calling Zapier directly:", directError);
       }
       
-      // Create the payload for our edge function as backup
+      // Create the payload for the edge function as backup
       const edgeFunctionPayload = {
         assessmentId,
         contactData: {
           ...formData,
           risk_level: riskLevel
         },
-        // Include the survey data directly in the edge function payload
-        surveyData: surveyData
+        survey_data_json: surveyDataJson // Pass raw JSON string to edge function
       };
       
-      console.log("Calling Supabase edge function with combined data...");
-      console.log("Edge function payload:", JSON.stringify(edgeFunctionPayload, null, 2));
+      console.log("Calling Supabase edge function...");
       
       const response = await fetch('https://ytwjygdatwyyoxozqfat.functions.supabase.co/assessment-webhook', {
         method: 'POST',
@@ -182,7 +112,6 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
         console.log('Webhook parsed response:', responseData);
       } catch (error) {
         console.error('Error parsing response:', error);
-        // Continue with original response text
       }
       
       if (response.ok) {
@@ -221,6 +150,13 @@ export function ContactSubmissionForm({ assessmentId, riskLevel }: ContactSubmis
       <p className="text-sm text-gray-500 mb-4">
         Leave your details and we'll contact you to discuss your IT needs.
       </p>
+      
+      {/* Hidden field for survey data */}
+      <input 
+        type="hidden" 
+        name="survey_data_json" 
+        value={surveyDataJson || ''} 
+      />
       
       <div className="space-y-2">
         <Label htmlFor="name">Name *</Label>
